@@ -395,7 +395,7 @@ sns.lineplot(data=merged_df, x="step", y="nino34", label="Traditional Niño 3.4"
 ax.set_xlabel(" ", color='white', fontsize=14)
 ax.set_ylabel(" ", color='white', fontsize=14)
 ax.tick_params(axis='both', colors='white', labelsize=30)  # Adjusted
-plt.title("Traditional Niño 3.4 Index & Relative Niño 3.4 Index C3S Forecast", fontsize=40, loc="left", color='white', weight="bold", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
+plt.title("Traditional Niño 3.4 index & relative Niño 3.4 index C3S forecast", fontsize=40, loc="left", color='white', weight="bold", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
 plt.title("Init: {}".format(month1), fontsize=30, loc="right", color='white', weight="bold", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
 
 ax.tick_params(left=False, bottom=False, right=False, top=False, width=2, colors="white")  # Remove tick marks

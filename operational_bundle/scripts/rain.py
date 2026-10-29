@@ -138,6 +138,7 @@ import cartopy.feature as cfeature
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
+from shapely.geometry import box
 from cartopy.io import shapereader
 
 # %% Notebook cell 2
@@ -525,7 +526,7 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, edgecolor='black', alpha=0.2)
 ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 
-plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" rainfall anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
@@ -535,7 +536,7 @@ for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
 # Add a legend for labels
-legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+legend_labels = {"#1a7e76": "Wetter than average", "#a5691b": "Drier"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -599,7 +600,7 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, edgecolor='black', alpha=0.2)
 ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 
-plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" rainfall anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
@@ -609,7 +610,7 @@ for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
 # Add a legend for labels
-legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+legend_labels = {"#1a7e76": "Wetter than average", "#a5691b": "Drier"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -674,26 +675,17 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, edgecolor='black', alpha=0.2)
 ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.xlabels_bottom = True
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([0, 10, 20, 30, 40, 50])
-gl.xlocator = mticker.FixedLocator([-180, -160, -140, -120, -100, -80, -60, -40, -20, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 16, 'color': 'white'}
-gl.ylabel_style = {'size': 16, 'color': 'white'}
 
-plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" rainfall anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
@@ -702,7 +694,7 @@ for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
 # Add a legend for labels
-legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+legend_labels = {"#1a7e76": "Wetter than average", "#a5691b": "Drier"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -767,26 +759,17 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, edgecolor='black', alpha=0.2)
 ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.xlabels_bottom = True
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([0, 10, 20, 30, 40, 50])
-gl.xlocator = mticker.FixedLocator([-180, -160, -140, -120, -100, -80, -60, -40, -20, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 16, 'color': 'white'}
-gl.ylabel_style = {'size': 16, 'color': 'white'}
 
-plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" rainfall anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
@@ -795,7 +778,7 @@ for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
     
 # Add a legend for labels
-legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+legend_labels = {"#1a7e76": "Wetter than average", "#a5691b": "Drier"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -863,7 +846,7 @@ ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" rainfall anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
@@ -873,7 +856,7 @@ for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
 # Add a legend for labels
-legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+legend_labels = {"#1a7e76": "Wetter than average", "#a5691b": "Drier"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -941,7 +924,7 @@ ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" rainfall anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
@@ -951,7 +934,7 @@ for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
 # Add a legend for labels
-legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+legend_labels = {"#1a7e76": "Wetter than average", "#a5691b": "Drier"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]

@@ -349,7 +349,7 @@ cbar = ax[0].collections[0].colorbar
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members with Sea Surface Temperature Anomaly >2.0°C in NINO34 region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members with sea surface temperature anomaly >2.0°C in NINO34 region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -404,7 +404,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {nino34_max:.2f}°C | Min: {nino34_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure
@@ -451,7 +451,7 @@ cbar = ax[0].collections[0].colorbar
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members with Sea Surface Temperature Anomaly >1.0°C in NINO34 region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members with sea surface temperature anomaly >1.0°C in NINO34 region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -506,7 +506,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {nino34_max:.2f}°C | Min: {nino34_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure
@@ -549,7 +549,7 @@ cbar = ax[0].collections[0].colorbar
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members with Sea Surface Temperature Anomaly >1.5°C in NINO34 region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members with sea surface temperature anomaly >1.5°C in NINO34 region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -604,7 +604,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {nino34_max:.2f}°C | Min: {nino34_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure
@@ -647,7 +647,7 @@ cbar = ax[0].collections[0].colorbar
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members with Sea Surface Temperature Anomaly <-1.0°C in NINO34 region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members with sea surface temperature anomaly <-1.0°C in NINO34 region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -702,7 +702,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {nino34_max:.2f}°C | Min: {nino34_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure
@@ -756,7 +756,7 @@ cbar = ax[0].collections[0].colorbar
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members with Sea Surface Temperature Anomaly >0.5°C in IOD east region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members with sea surface temperature anomaly >0.5°C in IOD east region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -811,7 +811,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in IOD east region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in IOD east region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {iode_max:.2f}°C | Min: {iode_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure
@@ -854,7 +854,7 @@ cbar = ax[0].collections[0].colorbar
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members with Sea Surface Temperature Anomaly <-0.5°C in IOD east region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members with sea surface temperature anomaly <-0.5°C in IOD east region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -909,7 +909,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in IOD east region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in IOD east region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {iode_max:.2f}°C | Min: {iode_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure
@@ -968,7 +968,7 @@ cbar.ax.tick_params(labelsize=20, length=0)
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members' Sea Surface Temperature Anomaly (°C) in Gulf of Mexico [98-82W, 20-31N]", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members' sea surface temperature anomaly (°C) in Gulf of Mexico [98-82W, 20-31N]", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -1024,7 +1024,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Sea Surface Temperature Anomaly (°C, black) in Gulf of Mexico [98-82W, 20-31N] | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median sea surface temperature anomaly (°C, black) in Gulf of Mexico [98-82W, 20-31N] | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 ax[1].set_title(f'{month1}-{month6} - Max: {box_max:.2f}°C | Min: {box_min:.2f}°C', loc='right', color='k', fontsize=20)
 
 # adjust the layout of the figure

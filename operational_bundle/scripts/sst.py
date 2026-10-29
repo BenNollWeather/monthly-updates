@@ -144,6 +144,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
+from shapely.geometry import box
 from cartopy.io import shapereader
 from metpy.plots import USCOUNTIES
 import cmocean
@@ -414,31 +415,16 @@ for i in range(len(sst)):
 
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-    levels = np.linspace(-2, 2, 60)
+    levels = np.linspace(-4, 4, 17)
+    cmap = cmocean.cm.balance.copy()
+    cmap.set_under(cmap(0.0))
+    cmap.set_over(cmap(1.0))
+    ax.set_facecolor('k')
 
-    data = plt.contourf(lons, lats, sst[i], levels=levels, cmap=cmocean.cm.balance, transform=ccrs.PlateCarree(), extend='both')
+    field = np.clip(sst[i], levels[0], levels[-1])
+    data = plt.contourf(lons, lats, field, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-    ax.add_feature(cfeature.NaturalEarthFeature(
-        category='cultural',
-        name='admin_0_countries',
-        scale='10m',
-        facecolor='none',
-        edgecolor='k',
-        linewidth=1
-    ), zorder=21)
     
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-    gl.xlabels_top = False
-    gl.top_labels = False
-    gl.ylabels_right = False
-    gl.right_labels = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 12, 'color': 'white'}
-    gl.ylabel_style = {'size': 12, 'color': 'white'}
 
     # Add shapefiles
     shape1 = shape1
@@ -478,19 +464,21 @@ for i in range(len(sst)):
 
 #     ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, zorder=100, bbox=dict(facecolor='k', alpha=0, edgecolor='black', boxstyle='square', pad=0.1))
 
-    shape7 = shape7
-    shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-    ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+    mdr_feature = ShapelyFeature(
+        [box(280.0, 10.0, 340.0, 20.0)],
+        ccrs.PlateCarree(),
+        facecolor='none',
+        edgecolor='k',
+    )
+    ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 #     ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, zorder=100, bbox=dict(facecolor='k', alpha=0, edgecolor='black', boxstyle='square', pad=0.1))
 
-    ax.add_feature(cfeature.LAND.with_scale('50m'), color='dimgray', edgecolor='k', zorder=20)
-    ax.add_feature(cfeature.COASTLINE, edgecolor='k', linewidth=1, zorder=21)
-    ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.4, zorder=21)
+    ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
 
-    plt.title('C3S Sea Surface Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('C3S sea surface temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
-    cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+    cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend='both')
     cbar.ax.tick_params(labelsize=24, labelcolor="white") 
     cbar.ax.set_facecolor([1,1,1,0])
     
@@ -526,39 +514,22 @@ for i in range(len(sst)):
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     ax.set_extent([240, 358, -5, 40])
 
-    levels = np.linspace(-2, 2, 60)
+    levels = np.linspace(-4, 4, 17)
+    cmap = cmocean.cm.balance.copy()
+    cmap.set_under(cmap(0.0))
+    cmap.set_over(cmap(1.0))
+    ax.set_facecolor('k')
 
-    data = plt.contourf(lons, lats, sst[i], levels=levels, cmap=cmocean.cm.balance, transform=ccrs.PlateCarree(), extend='both')
+    field = np.clip(sst[i], levels[0], levels[-1])
+    data = plt.contourf(lons, lats, field, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-    ax.add_feature(cfeature.NaturalEarthFeature(
-        category='cultural',
-        name='admin_0_countries',
-        scale='10m',
-        facecolor='none',
-        edgecolor='k',
-        linewidth=1
-    ), zorder=21)
 
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-    gl.xlabels_top = False
-    gl.top_labels = False
-    gl.ylabels_right = False
-    gl.right_labels = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 12, 'color': 'white'}
-    gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-    ax.add_feature(cfeature.LAND.with_scale('50m'), color='dimgray', edgecolor='k', zorder=20)
-    ax.add_feature(cfeature.COASTLINE, edgecolor='k', linewidth=1, zorder=21)
-    ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.4, zorder=21)
+    ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
 
-    plt.title('C3S Sea Surface Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('C3S sea surface temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
-    cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+    cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend='both')
     cbar.ax.tick_params(labelsize=24, labelcolor="white") 
     cbar.ax.set_facecolor([1,1,1,0])
 
@@ -591,39 +562,22 @@ fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-levels = np.linspace(-2, 2, 60)
+levels = np.linspace(-4, 4, 17)
+cmap = cmocean.cm.balance.copy()
+cmap.set_under(cmap(0.0))
+cmap.set_over(cmap(1.0))
+ax.set_facecolor('k')
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.balance, transform=ccrs.PlateCarree(), extend='both')
+field = np.clip(season1, levels[0], levels[-1])
+data = plt.contourf(lons, lats, field, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-ax.add_feature(cfeature.NaturalEarthFeature(
-    category='cultural',
-    name='admin_0_countries',
-    scale='10m',
-    facecolor='none',
-    edgecolor='k',
-    linewidth=1
-), zorder=21)
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-ax.add_feature(cfeature.LAND.with_scale('50m'), color='dimgray', edgecolor='k', zorder=20)
-ax.add_feature(cfeature.COASTLINE, edgecolor='k', linewidth=1, zorder=21)
-ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.4, zorder=21)
+ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
 
-plt.title('C3S Sea Surface Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S sea surface temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend='both')
 cbar.ax.tick_params(labelsize=24, labelcolor="white") 
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -648,39 +602,22 @@ fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-levels = np.linspace(-2, 2, 60)
+levels = np.linspace(-4, 4, 17)
+cmap = cmocean.cm.balance.copy()
+cmap.set_under(cmap(0.0))
+cmap.set_over(cmap(1.0))
+ax.set_facecolor('k')
 
-data = plt.contourf(lons, lats, season2, levels=levels, cmap=cmocean.cm.balance, transform=ccrs.PlateCarree(), extend='both')
+field = np.clip(season2, levels[0], levels[-1])
+data = plt.contourf(lons, lats, field, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-ax.add_feature(cfeature.NaturalEarthFeature(
-    category='cultural',
-    name='admin_0_countries',
-    scale='10m',
-    facecolor='none',
-    edgecolor='k',
-    linewidth=1
-), zorder=21)
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-ax.add_feature(cfeature.LAND.with_scale('50m'), color='dimgray', edgecolor='k', zorder=20)
-ax.add_feature(cfeature.COASTLINE, edgecolor='k', linewidth=1, zorder=21)
-ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.4, zorder=21)
+ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
 
-plt.title('C3S Sea Surface Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S sea surface temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend='both')
 cbar.ax.tick_params(labelsize=24, labelcolor="white") 
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -705,22 +642,17 @@ fig = plt.figure(figsize=(30, 20))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=270))
 
-levels = np.linspace(-2, 2, 60)
+levels = np.linspace(-4, 4, 17)
+cmap = cmocean.cm.balance.copy()
+cmap.set_under(cmap(0.0))
+cmap.set_over(cmap(1.0))
+ax.set_facecolor('k')
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.balance, transform=ccrs.PlateCarree(), extend='both')
+field = np.clip(season1, levels[0], levels[-1])
+data = plt.contourf(lons, lats, field, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-ax.add_feature(cfeature.NaturalEarthFeature(
-    category='cultural',
-    name='admin_0_countries',
-    scale='10m',
-    facecolor='none',
-    edgecolor='k',
-    linewidth=1
-), zorder=21)
 
-ax.add_feature(cfeature.LAND.with_scale('50m'), color='dimgray', edgecolor='k', zorder=20)
-ax.add_feature(cfeature.COASTLINE, edgecolor='k', linewidth=1, zorder=21)
-ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.4, zorder=21)
+ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
 
 ax.text(0.01, 0.02, 'BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, backgroundcolor='.75', fontsize=20)
 fig.patch.set_facecolor('k')
@@ -965,7 +897,7 @@ ax = sns.lineplot(data=climate_df_mean, linestyle='--', linewidth=15, color="whi
 ax.set_ylim(climate_df.values.min()-0.5, climate_df.values.max()+0.5)
 
 # Customize the plot
-ax.set_title("Niño 3.4 Index Outlook", color='white', fontsize=50, weight='bold', loc="left", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
+ax.set_title("Niño 3.4 index outlook", color='white', fontsize=50, weight='bold', loc="left", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
 ax.set_title("Max: {}°C | Min: {}°C".format(maximum_rounded, minimum_rounded), color='white', fontsize=30, weight='bold', loc="right", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
 ax.set_xlabel(" ", color='white', fontsize=14)
 ax.set_ylabel(" ", color='white', fontsize=14)

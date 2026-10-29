@@ -132,6 +132,7 @@ import cartopy.feature as cfeature
 from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
+from shapely.geometry import box
 from cartopy.io import shapereader
 
 # %% Notebook cell 2
@@ -486,13 +487,17 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Outgoing Longwave Radiation Anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=18, color='white', weight="bold")
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -543,13 +548,17 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Outgoing Longwave Radiation Anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=18, color='white', weight="bold")
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -596,20 +605,8 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-plt.title('ECMWF+UKMET "Superblend" Outgoing Longwave Radiation Anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=18, color='white', weight="bold")
 
@@ -658,20 +655,8 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-plt.title('ECMWF+UKMET "Superblend" Outgoing Longwave Radiation Anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=18, color='white', weight="bold")
 

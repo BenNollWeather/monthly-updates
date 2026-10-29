@@ -307,7 +307,7 @@ cbar.ax.tick_params(labelsize=20, length=0)
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Average Zonal Wind Speed Anomaly (kts) in NINO34 Region", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF average zonal wind speed anomaly (kts) in NINO34 region", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -363,7 +363,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Zonal Wind Speed Anomaly (kts, black) in NINO34 Region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median zonal wind speed anomaly (kts, black) in NINO34 region | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 
 # adjust the layout of the figure
 fig.tight_layout()
@@ -470,7 +470,7 @@ cbar.ax.tick_params(labelsize=20, length=0)
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members' Wind Gust Anomaly (mph) in the Hudson Valley", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members' wind gust anomaly (mph) in the Hudson Valley", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -526,7 +526,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Wind Gust Anomaly (mph, black) in the Hudson Valley | 25th & 75th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median wind gust anomaly (mph, black) in the Hudson Valley | 25th & 75th percentile (gray)', loc='left', color='k', fontsize=20)
 
 # adjust the layout of the figure
 fig.tight_layout()
@@ -627,7 +627,7 @@ cbar.ax.tick_params(labelsize=20, length=0)
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members' Temperature Anomaly (°C) in the Hudson Valley", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members' temperature anomaly (°C) in the Hudson Valley", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -683,7 +683,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Temperature Anomaly (°C, black) in the Hudson Valley  | 25th & 75th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median temperature anomaly (°C, black) in the Hudson Valley  | 25th & 75th percentile (gray)', loc='left', color='k', fontsize=20)
 
 # adjust the layout of the figure
 fig.tight_layout()
@@ -785,7 +785,7 @@ cbar.ax.tick_params(labelsize=20, length=0)
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members' Precipitation Anomaly (in/day) in the Hudson Valley", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF ensemble members' precipitation anomaly (in/day) in the Hudson Valley", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -841,7 +841,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Precipitation Anomaly (in/day, black) in the Hudson Valley | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median precipitation anomaly (in/day, black) in the Hudson Valley | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20)
 
 # adjust the layout of the figure
 fig.tight_layout()
@@ -962,7 +962,7 @@ for city, (lat, lon) in cities.items():
     ax[0].set_ylabel("Ensemble member", fontsize=16)
     
     # Set title for the heatmap
-    ax[0].set_title(f"ECMWF Ensemble Members' Snowfall Anomaly (inches) in {city}", loc="left", color='k', fontsize=24, weight="bold")
+    ax[0].set_title(f"ECMWF ensemble members' snowfall anomaly (inches) in {city}", loc="left", color='k', fontsize=24, weight="bold")
     
     # Set y-axis tick parameters for the heatmap
     for tick_label in ax[0].axes.get_yticklabels():
@@ -1034,7 +1034,7 @@ for city, (lat, lon) in cities.items():
     ax[2].spines['bottom'].set_position(('axes', -0.1))
     
     # Set the title for the line plot
-    ax[2].set_title(f'Median Snowfall Anomaly (inches, black) in {city} | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20, weight="bold")
+    ax[2].set_title(f'Median snowfall anomaly (inches, black) in {city} | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20, weight="bold")
     
     # Adjust the position of the heatmap and line plot
     fig.tight_layout(rect=[0, 0.01, 1, 0.99])

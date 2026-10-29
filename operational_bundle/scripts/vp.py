@@ -172,6 +172,7 @@ from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
+from shapely.geometry import box
 from cartopy.io import shapereader
 
 # %% Notebook cell 2
@@ -2391,18 +2392,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -2442,13 +2431,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month1), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -2523,18 +2516,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -2574,13 +2555,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month2), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -2655,18 +2640,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -2706,13 +2679,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month3), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -2787,18 +2764,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -2838,13 +2803,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month4), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -2919,18 +2888,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -2970,13 +2927,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month5), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -3053,18 +3014,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -3104,13 +3053,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month6), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -3185,18 +3138,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -3236,13 +3177,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
@@ -3309,18 +3254,6 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # Add shapefiles
 shape1 = shape1
@@ -3360,13 +3293,17 @@ ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
 ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-shape7 = shape7
-shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
-ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
+mdr_feature = ShapelyFeature(
+    [box(280.0, 10.0, 340.0, 20.0)],
+    ccrs.PlateCarree(),
+    facecolor='none',
+    edgecolor='k',
+)
+ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
 ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
-plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, color="white", labelcolor="white")

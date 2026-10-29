@@ -378,7 +378,7 @@ for i in range(len(snow)):
     for scale, axis in zip(['20m'], [ax]):
         axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-    plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
 
     # Add a legend for labels
@@ -448,7 +448,7 @@ for i in range(len(snow)):
     ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
     ax.add_feature(states_provinces, edgecolor='k')
 
-    plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
 
     # Add a legend for labels
@@ -527,7 +527,7 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
@@ -587,7 +587,7 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
@@ -651,7 +651,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
@@ -715,7 +715,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
@@ -779,7 +779,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
@@ -839,7 +839,7 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('C3S Snowfall Anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels

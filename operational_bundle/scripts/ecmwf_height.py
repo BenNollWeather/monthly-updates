@@ -360,18 +360,6 @@ for i in range(len(z500)):
     scale='50m',
     facecolor='none')
     
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-    gl.xlabels_top = False
-    gl.top_labels = False
-    gl.ylabels_right = False
-    gl.right_labels = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 12, 'color': 'white'}
-    gl.ylabel_style = {'size': 12, 'color': 'white'}
 
     ax.coastlines(resolution='10m', color='k', linewidth=2)
     ax.add_feature(cfeature.LAND)
@@ -379,7 +367,7 @@ for i in range(len(z500)):
     ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
     ax.add_feature(states_provinces, edgecolor='k')
     
-    plt.title('ECMWF 500 hPa Height Anomaly', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('ECMWF 500 hPa height anomaly', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
 #     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.7, aspect=50)
@@ -446,18 +434,6 @@ for i in range(len(z500)):
     scale='50m',
     facecolor='none')
     
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-    gl.xlabels_top = False
-    gl.top_labels = False
-    gl.ylabels_right = False
-    gl.right_labels = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 12, 'color': 'white'}
-    gl.ylabel_style = {'size': 12, 'color': 'white'}
 
     ax.coastlines(resolution='10m', color='k', linewidth=2)
     ax.add_feature(cfeature.LAND)
@@ -465,7 +441,7 @@ for i in range(len(z500)):
     ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
     ax.add_feature(states_provinces, edgecolor='k')
     
-    plt.title('ECMWF 500 hPa Height Anomaly', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('ECMWF 500 hPa height anomaly', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
 #     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.85, aspect=50)

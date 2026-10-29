@@ -426,7 +426,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Wind Gust Anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" wind gust anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
@@ -501,7 +501,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Wind Gust Anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" wind gust anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
@@ -572,20 +572,8 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-plt.title('ECMWF+UKMET "Superblend" Wind Gust Anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" wind gust anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
@@ -656,20 +644,8 @@ ax.add_feature(cfeature.BORDERS)
 ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.top_labels = False
-gl.ylabels_right = False
-gl.right_labels = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
 
-plt.title('ECMWF+UKMET "Superblend" Wind Gust Anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" wind gust anomaly (mph)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 

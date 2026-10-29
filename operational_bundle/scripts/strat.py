@@ -384,7 +384,7 @@ for i in range(len(strat)):
     ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
     ax.add_feature(states_provinces, edgecolor='k')
 
-    plt.title('C3S 10 hPa Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('C3S 10 hPa temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     cbar = plt.colorbar(data, ax=ax, ticks=[-5,0,5], pad=0.01, shrink=0.5, aspect=20)
     cbar.ax.tick_params(labelsize=20, labelcolor="white")

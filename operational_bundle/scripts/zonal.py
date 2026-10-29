@@ -409,18 +409,6 @@ for i in range(len(u850)):
     scale='50m',
     facecolor='none')
     
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-    gl.xlabels_top = False
-    gl.top_labels = False
-    gl.ylabels_right = False
-    gl.right_labels = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 12, 'color': 'white'}
-    gl.ylabel_style = {'size': 12, 'color': 'white'}
 
     ax.coastlines(resolution='10m', color='k', linewidth=2)
     ax.add_feature(cfeature.LAND)
@@ -432,7 +420,7 @@ for i in range(len(u850)):
     shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape1_feature, linewidth=5, zorder = 22)
         
-    plt.title('C3S 850 hPa Zonal Wind Anomaly (kts)', loc='left', fontsize=24, color='white', weight="bold")
+    plt.title('C3S 850 hPa zonal wind anomaly (kts)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
     cbar = plt.colorbar(data, ax=ax, ticks=[-3,0,3], pad=0.01, shrink=0.5, aspect=20)
@@ -525,7 +513,7 @@ ax = sns.heatmap(nino34, linewidth=.5, cmap="RdBu_r", vmin=-8, vmax=8, xticklabe
 # ax.set_xlabel("Forecast step",fontsize=20)
 ax.set_ylabel("Ensemble member",fontsize=20)
 
-ax.set_title("ECMWF Average Zonal Wind Speed Anomaly (kts) in NINO34 Region", loc="left", color='k', fontsize=24)
+ax.set_title("ECMWF average zonal wind speed anomaly (kts) in NINO34 region", loc="left", color='k', fontsize=24)
 
 for tick_label in ax.axes.get_yticklabels():
     tick_label.set_color("k")

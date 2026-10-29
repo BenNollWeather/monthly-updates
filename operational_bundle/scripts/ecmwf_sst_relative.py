@@ -448,40 +448,21 @@ for i in range(len(relative_sst)):
 
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     ax.set_extent([0, 359.9, -20, 20])
+    ax.set_facecolor('k')
     
     levels = np.linspace(-2, 2, 17)
 
     data = plt.contourf(lons, lats, relative_sst[i], levels=levels, cmap=cmocean.cm.balance, transform=ccrs.PlateCarree(), extend='both')
 
-    states_provinces = cfeature.NaturalEarthFeature(
-    category='cultural',
-    name='admin_1_states_provinces_lines',
-    scale='50m',
-    facecolor='none')
 
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-    gl.xlabels_top = False
-    gl.top_labels = False
-    gl.ylabels_right = False
-    gl.right_labels = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {'size': 12, 'color': 'white'}
-    gl.ylabel_style = {'size': 12, 'color': 'white'}
 
     # Add canonical ENSO/IOD/Atlantic climate-region boxes.
     add_climate_regions(ax)
 
-    ax.add_feature(cfeature.COASTLINE, edgecolor='white', zorder = 21)
-    ax.add_feature(cfeature.BORDERS, edgecolor='white', zorder = 21)
-    ax.add_feature(states_provinces, edgecolor='white', zorder = 21)
-    ax.add_feature(cfeature.LAND.with_scale('50m'), color='k', edgecolor='k', zorder = 20)
+    ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
     ax.add_feature(cfeature.LAKES,alpha=0.3, zorder = 21)
 
-    plt.title('ECMWF Relative Sea Surface Temperature Anomaly (°C)', loc='left', fontsize=20, color='white', weight="bold")
+    plt.title('ECMWF relative sea surface temperature anomaly (°C)', loc='left', fontsize=20, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.15, aspect=20)
     cbar.ax.tick_params(labelsize=16, labelcolor="white") 
