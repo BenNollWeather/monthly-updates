@@ -47,7 +47,6 @@ import xarray as xr
 
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 
 DEFAULT_IMAGE_DIR = Path(os.environ.get("WORK_ROOT", "/tmp/monthly-updates/pwat")) / "imagery"
@@ -466,17 +465,6 @@ def plot_tcw_map(perc: xr.DataArray, anom: xr.DataArray, month1: str, image_dir:
     ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
     ax.add_feature(states_provinces, edgecolor="k")
 
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color="k", alpha=0.5, linestyle="--")
-    gl.xlabels_top = False
-    gl.ylabels_right = False
-    gl.xlines = True
-    gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-    gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-    gl.xformatter = LONGITUDE_FORMATTER
-    gl.yformatter = LATITUDE_FORMATTER
-    gl.xlabel_style = {"size": 12, "color": "white"}
-    gl.ylabel_style = {"size": 12, "color": "white"}
-
     plt.title("ERA5 total column water anomaly (% of normal)", loc="left", fontsize=24, color="white", weight="bold")
     plt.title(f"{month1}", loc="right", fontsize=24, color="white", weight="bold")
     cbar = plt.colorbar(data, ax=ax, ticks=[80, 90, 100, 110, 120], pad=0.01, shrink=0.5, aspect=20)
@@ -575,6 +563,25 @@ def year_tick_labels(years: list[int]) -> list[str]:
         else:
             labels.append("")
     return labels
+
+
+def pin_left_credit(figure, axes, y: float = 0.035) -> None:
+    """Put @BenNollWeather on the left edge of the y-axis labels."""
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    tick_labels = [label for label in axes.get_yticklabels() if label.get_text().strip()]
+    left_px = min(label.get_window_extent(renderer).x0 for label in tick_labels)
+    credit_x, _ = figure.transFigure.inverted().transform((left_px, 0))
+    figure.text(
+        credit_x,
+        y,
+        "@BenNollWeather",
+        color="white",
+        weight="bold",
+        fontsize=18,
+        ha="left",
+        va="center",
+    )
 
 
 def plot_ranked_annual_chart(sorted_df: pd.DataFrame, month2: str, image_dir: Path) -> Path:
@@ -681,6 +688,7 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, month2: str, image_dir: Pa
     p.set_xticklabels([str(year) for year in xticks])
 
     p.yaxis.set_tick_params(labelcolor="white", labelsize=30)
+    p.yaxis.set_major_formatter(mticker.FuncFormatter(lambda value, _pos: f"{value:.2f} in."))
     p.xaxis.set_tick_params(labelcolor="white", labelsize=30)
     p.tick_params(left=True, bottom=True, right=False, top=False, width=2, colors="white")
     for spine in ["top", "bottom", "left", "right"]:
@@ -697,9 +705,9 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, month2: str, image_dir: Pa
         int(sorted_df["valid_time"].iloc[2]),
         int(sorted_df["valid_time"].iloc[3]),
     )
-    figure.subplots_adjust(left=0.08, right=0.84, top=0.88, bottom=0.14)
+    figure.subplots_adjust(left=0.16, right=0.84, top=0.88, bottom=0.14)
     figure.text(
-        0.08,
+        0.16,
         0.945,
         f"Average global atmospheric moisture during {month2}",
         color="white",
@@ -718,29 +726,11 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, month2: str, image_dir: Pa
         ha="right",
         va="center",
     )
-    figure.text(0.08, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
     figure.text(0.98, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="right", va="center")
 
     plt.setp(p.get_xticklabels(), fontweight="bold")
     plt.setp(p.get_yticklabels(), fontweight="bold")
-    # Sit the unit on the same row as the top tick, hard against that label.
-    figure.canvas.draw()
-    renderer = figure.canvas.get_renderer()
-    tick_labels = [label for label in p.get_yticklabels() if label.get_text().strip()]
-    top_label = max(tick_labels, key=lambda label: label.get_window_extent(renderer).y1)
-    box = top_label.get_window_extent(renderer)
-    gap = figure.dpi * 4 / 72.0
-    unit_x, unit_y = figure.transFigure.inverted().transform((box.x0 - gap, (box.y0 + box.y1) / 2.0))
-    figure.text(
-        unit_x,
-        unit_y,
-        "in.",
-        color="white",
-        weight="bold",
-        fontsize=30,
-        ha="right",
-        va="center",
-    )
+    pin_left_credit(figure, p)
     # Seaborn remaps the shorthand "k" to a dark gray. Use real black.
     figure.patch.set_facecolor("#000000")
     axes.set_facecolor("#000000")
@@ -912,8 +902,8 @@ def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
     plt.setp(axes.get_xticklabels(), fontweight="bold")
     plt.setp(axes.get_yticklabels(), fontweight="bold")
     figure.subplots_adjust(left=0.11, right=0.98, top=0.90, bottom=0.22)
-    figure.text(0.11, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
     figure.text(0.98, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="right", va="center")
+    pin_left_credit(figure, axes)
 
     image_dir.mkdir(parents=True, exist_ok=True)
     out_path = image_dir / "tcw_monthly_chart.png"
