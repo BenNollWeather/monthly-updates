@@ -34,11 +34,21 @@ fi
 mkdir -p "$WORK_ROOT" "$IMAGERY_DIR" "$WORK_DIR" "$LOG_DIR" "$WORK_ROOT/downloads" "$WORK_ROOT/data" "$WORK_ROOT/imagery" "$WORK_ROOT/climate_stuff"
 
 aws_cmd() {
+  # An empty CA bundle is how the plot scripts skip local TLS inspection.
+  # Current AWS CLI builds reject that empty value, so drop it for AWS calls.
+  local -a env_args=()
+  local name
   if [[ -n "${AWS_PROFILE}" ]]; then
-    AWS_PROFILE="$AWS_PROFILE" "$AWS_BIN" "$@"
+    env_args+=(AWS_PROFILE="$AWS_PROFILE")
   else
-    env -u AWS_PROFILE "$AWS_BIN" "$@"
+    env_args+=(-u AWS_PROFILE)
   fi
+  for name in REQUESTS_CA_BUNDLE CURL_CA_BUNDLE AWS_CA_BUNDLE; do
+    if [[ -n "${!name+x}" && -z "${!name}" ]]; then
+      env_args+=(-u "$name")
+    fi
+  done
+  env "${env_args[@]}" "$AWS_BIN" "$@"
 }
 
 ensure_regions() {
