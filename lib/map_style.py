@@ -135,10 +135,16 @@ def _patch_seaborn_import() -> None:
 
     def _import(name, globals=None, locals=None, fromlist=(), level=0):
         module = real_import(name, globals, locals, fromlist, level)
+        # __import__ returns the top-level package when the name has dots.
+        # Patch the real submodule from sys.modules instead.
         if name == "seaborn":
-            _patch_seaborn(module)
+            loaded = sys.modules.get("seaborn")
+            if loaded is not None:
+                _patch_seaborn(loaded)
         elif name in {"matplotlib.pyplot", "matplotlib.axes", "matplotlib.figure"}:
-            _patch_plot_module(name, module)
+            loaded = sys.modules.get(name)
+            if loaded is not None:
+                _patch_plot_module(name, loaded)
         return module
 
     # builtins replacement is intentional: notebook-style scripts import seaborn
@@ -165,7 +171,9 @@ def _patch_plot_module(name: str, module) -> None:
         _wrap_text_callable(module, "suptitle", ap_rewrite)
         _wrap_text_callable(module, "text", ap_rewrite, text_index=2)
     elif name == "matplotlib.axes":
-        axes = module.Axes
+        axes = getattr(module, "Axes", None)
+        if axes is None:
+            return
         _wrap_text_method(axes, "set_title", ap_rewrite)
         _wrap_text_method(axes, "set_xlabel", ap_rewrite)
         _wrap_text_method(axes, "set_ylabel", ap_rewrite)
