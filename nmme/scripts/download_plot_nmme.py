@@ -51,9 +51,10 @@ import xarray as xr
 
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-
+from cartopy.feature import ShapelyFeature
 from cartopy.util import add_cyclic_point
 from metpy.plots import USCOUNTIES
+from shapely.geometry import box
 
 
 @dataclass(frozen=True)
@@ -188,11 +189,12 @@ def add_signature(ax, fig):
 
 
 def add_wet_dry_legend(ax):
-    # Swatches are the outer BrBG bands, the same colors as the map.
+    # Sample BrBG inside the dark ends so the swatches stay teal and brown
+    # but read on the black frame.
     cmap = plt.get_cmap("BrBG")
     legend_labels = {
-        to_hex(cmap(0.97)): "Wetter than average",
-        to_hex(cmap(0.03)): "Drier",
+        to_hex(cmap(0.85)): "Wetter than average",
+        to_hex(cmap(0.15)): "Drier",
     }
     patches = [Patch(color=color, label=label) for color, label in legend_labels.items()]
     legend = ax.legend(
@@ -228,6 +230,19 @@ def add_usa_base_features(ax, state_scale="50m", county_alpha=0.1, lake_kwargs=N
     ax.add_feature(USCOUNTIES.with_scale("20m"), linestyle="-", edgecolor="k", alpha=county_alpha)
 
 
+def add_atlantic_mdr(ax):
+    # Hurricane Main Development Region: 80W-20W, 10N-20N.
+    # The Atlantic shapefile is the whole map frame, so it is not used here.
+    west, south, east, north = 280.0, 10.0, 340.0, 20.0
+    feature = ShapelyFeature(
+        [box(west, south, east, north)],
+        ccrs.PlateCarree(),
+        facecolor="none",
+        edgecolor="k",
+    )
+    ax.add_feature(feature, linewidth=3, zorder=22)
+
+
 def add_global_precip_features(ax, state_scale="50m"):
     states_provinces = cfeature.NaturalEarthFeature(
         category="cultural",
@@ -247,7 +262,7 @@ def plot_sst_monthly(dset_concat_sst, lons2, lats2, dates, names, paths: Paths, 
     # Half-degree bands. Values past the ends stay on the end color instead of
     # dropping out as white.
     levels = np.linspace(-4, 4, 17)
-    ticks = list(range(-4, 5))
+    ticks = [-4, -2, 0, 2, 4]
     cmap = cmocean.cm.balance.copy()
     cmap.set_under(cmap(0.0))
     cmap.set_over(cmap(1.0))
@@ -260,8 +275,8 @@ def plot_sst_monthly(dset_concat_sst, lons2, lats2, dates, names, paths: Paths, 
 
         ax.add_feature(
             cfeature.LAND.with_scale("50m"),
-            facecolor="#d5d5d5",
-            edgecolor="#d5d5d5",
+            facecolor="#808080",
+            edgecolor="#808080",
             zorder=20,
         )
 
@@ -345,9 +360,8 @@ def plot_precip_global_atlantic(seasons, lon, lat, dates, paths: Paths, method: 
         ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
         ax.set_extent([240, 358, -5, 40])
         data = pcolor_or_contourf(ax, lons_cyc, lats_cyc, cyclic_data, levels, "BrBG", ccrs.PlateCarree(), method=method)
-        # The Atlantic file is only the map frame. Drawing it lays horizontal
-        # lines across the figure, so the coastlines and states stand alone.
         add_global_precip_features(ax)
+        add_atlantic_mdr(ax)
         plt.title("NMME Precipitation Anomaly (inches)", loc="left", fontsize=24, color="white", weight="bold")
         plt.title("{}-{}".format(*title_dates), loc="right", fontsize=24, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.4, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
