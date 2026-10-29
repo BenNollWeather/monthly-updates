@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
 def _apply_house_style() -> None:
     import sys
@@ -23,7 +24,6 @@ Outputs, styling, and annotations are preserved from the notebook while
 centralizing paths, CDS downloads, plotting, and S3 upload URL printing.
 """
 
-from __future__ import annotations
 
 import argparse
 import datetime as dt

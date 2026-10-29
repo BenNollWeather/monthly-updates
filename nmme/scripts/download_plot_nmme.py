@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
 import os as _os
 _WORK = _os.environ.get("WORK_ROOT", _os.path.join(_os.environ.get("TMPDIR", "/tmp"), "monthly-updates", "operational"))
@@ -26,7 +27,6 @@ It preserves the notebook's map styling and output naming, while centralizing
 paths, downloads, shapefile discovery, plotting helpers, and S3 sync.
 """
 
-from __future__ import annotations
 
 import argparse
 import os

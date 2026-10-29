@@ -74,6 +74,7 @@ jobs:
         id: upload
         if: steps.process.outcome == 'success' && (inputs.upload_to_s3)
         run: |
+          if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           aws s3 sync "$WORK_ROOT/imagery" s3://bennollweather/hv_climate_change/ --exclude ".DS_Store" --only-show-errors
       - name: Publish heartbeat
         if: always() && (inputs.upload_to_s3)

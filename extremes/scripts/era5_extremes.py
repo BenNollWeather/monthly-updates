@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
 def _apply_house_style() -> None:
     import sys
@@ -22,7 +23,6 @@ All downloads, extracted files, plots, and upload-staging copies are kept under
 one disposable folder by default: DISPOSABLE/era5_extremes_work
 """
 
-from __future__ import annotations
 
 import argparse
 import os

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
 import os as _os
 _WORK = _os.environ.get("WORK_ROOT", _os.path.join(_os.environ.get("TMPDIR", "/tmp"), "monthly-updates", "operational"))
@@ -27,7 +28,6 @@ Outputs PNG imagery to a disposable work folder and leaves
 uploading to AWS to the bash runner.
 """
 
-from __future__ import annotations
 
 import argparse
 import contextlib

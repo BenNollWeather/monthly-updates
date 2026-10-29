@@ -37,7 +37,7 @@ aws_cmd() {
   if [[ -n "${AWS_PROFILE}" ]]; then
     AWS_PROFILE="$AWS_PROFILE" "$AWS_BIN" "$@"
   else
-    "$AWS_BIN" "$@"
+    env -u AWS_PROFILE "$AWS_BIN" "$@"
   fi
 }
 

@@ -17,6 +17,9 @@ python "${root}/scripts/report_status.py" \
   --message "${message}" \
   --output /tmp/operational-status.json
 
+if [[ -z "${AWS_PROFILE:-}" ]]; then
+  unset AWS_PROFILE
+fi
 aws s3 cp /tmp/operational-status.json \
   "${STATUS_S3_PREFIX%/}/${PRODUCT_ID}.json" \
   --only-show-errors

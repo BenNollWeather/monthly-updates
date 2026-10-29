@@ -76,8 +76,9 @@ jobs:
         id: upload
         if: steps.process.outcome == 'success' && (inputs.upload_to_s3)
         run: |
+          if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           aws s3 sync "$WORK_ROOT/copernicus_imagery" s3://bennollweather/copernicus_imagery/ --exclude ".DS_Store" --only-show-errors
-          AWS_PROFILE= USE_SYSTEM_PYTHON=1 bash operational_bundle/bin/update_s3_index.sh
+          USE_SYSTEM_PYTHON=1 bash operational_bundle/bin/update_s3_index.sh
       - name: Publish heartbeat
         if: always() && (inputs.upload_to_s3)
         run: |

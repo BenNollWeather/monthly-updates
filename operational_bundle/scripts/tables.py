@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from __future__ import annotations
 
 import os as _os
 _WORK = _os.environ.get("WORK_ROOT", _os.path.join(_os.environ.get("TMPDIR", "/tmp"), "monthly-updates", "operational"))
@@ -23,7 +24,6 @@ _apply_house_style()
 
 Generated for the operational monthly runner. Styling and output filenames are preserved as much as possible.
 """
-from __future__ import annotations
 
 # SSL no-verify patch for company TLS interception / broken local CA chains.
 import os as _ssl_os
