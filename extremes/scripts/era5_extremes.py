@@ -166,7 +166,6 @@ import cartopy.feature as cfeature
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
 from cartopy.util import add_cyclic_point
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from metpy.plots import USCOUNTIES
 import matplotlib.patheffects as pe
 import seaborn as sns
@@ -544,13 +543,13 @@ lons2 = t2m_q10['longitude'][:]
 
 # %% Notebook cell 30
 # Define the colors
-colors = ['dimgray', '#B2182B']
+colors = ['dimgray', 'crimson']
 
 # Create a colormap
 cmap_custom_t2m_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#2166AC']
+colors = ['dimgray', 'aqua']
 
 # Create a colormap
 cmap_custom_t2m_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -612,25 +611,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Air Temperature > 90th Percentile (red, {}%) | < 10th Percentile (blue, {}%)'.format(t2m_q90_value, t2m_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Air temperature > 90th percentile (red, {}%) | < 10th percentile (blue, {}%)'.format(t2m_q90_value, t2m_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -673,13 +661,13 @@ lons2 = tp_q10['longitude'][:]
 
 # %% Notebook cell 42
 # Define the colors
-colors = ['dimgray', '#2166AC']
+colors = ['dimgray', 'lime']
 
 # Create a colormap
 cmap_custom_tp_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#B35806']
+colors = ['dimgray', 'darkgoldenrod']
 
 # Create a colormap
 cmap_custom_tp_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -741,25 +729,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Total Precipitation > 90th Percentile (green, {}%) | < 10th Percentile (brown, {}%)'.format(tp_q90_value, tp_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Total precipitation > 90th percentile (green, {}%) | < 10th percentile (brown, {}%)'.format(tp_q90_value, tp_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -802,13 +779,13 @@ lons2 = wind_q10['longitude'][:]
 
 # %% Notebook cell 54
 # Define the colors
-colors = ['dimgray', '#CC79A7']
+colors = ['dimgray', 'mediumorchid']
 
 # Create a colormap
 cmap_custom_wind_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#E69F00']
+colors = ['dimgray', 'khaki']
 
 # Create a colormap
 cmap_custom_wind_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -870,25 +847,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Wind Speed > 90th Percentile (purple, {}%) | < 10th Percentile (tan, {}%)'.format(wind_q90_value, wind_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Wind speed > 90th percentile (purple, {}%) | < 10th percentile (tan, {}%)'.format(wind_q90_value, wind_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -931,13 +897,13 @@ lons2 = dew_q10['longitude'][:]
 
 # %% Notebook cell 66
 # Define the colors
-colors = ['dimgray', '#2166AC']
+colors = ['dimgray', 'limegreen']
 
 # Create a colormap
 cmap_custom_humidity_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#56B4E9']
+colors = ['dimgray', 'cornflowerblue']
 
 # Create a colormap
 cmap_custom_humidity_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -999,25 +965,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Humidity > 90th Percentile (green, {}%) | < 10th Percentile (blue, {}%)'.format(dew_q90_value, dew_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Humidity > 90th percentile (green, {}%) | < 10th percentile (blue, {}%)'.format(dew_q90_value, dew_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -1060,13 +1015,13 @@ lons2 = cloud_q10['longitude'][:]
 
 # %% Notebook cell 78
 # Define the colors
-colors = ['dimgray', '#0072B2']
+colors = ['dimgray', 'dimgray']
 
 # Create a colormap
 cmap_custom_cloud_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#56B4E9']
+colors = ['dimgray', 'yellow']
 
 # Create a colormap
 cmap_custom_cloud_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -1128,25 +1083,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Cloud Cover > 90th Percentile (gray, {}%) | < 10th Percentile (yellow, {}%)'.format(cloud_q90_value, cloud_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Cloud cover > 90th percentile (gray, {}%) | < 10th percentile (yellow, {}%)'.format(cloud_q90_value, cloud_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -1189,13 +1133,13 @@ lons2 = snow_q10['longitude'][:]
 
 # %% Notebook cell 90
 # Define the colors
-colors = ['dimgray', '#56B4E9']
+colors = ['dimgray', 'cyan']
 
 # Create a colormap
 cmap_custom_snow_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#D55E00']
+colors = ['dimgray', 'orangered']
 
 # Create a colormap
 cmap_custom_snow_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -1257,25 +1201,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Snowfall > 90th Percentile (blue, {}%) | < 10th Percentile (orange, {}%)'.format(snow_q90_value, snow_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Snowfall > 90th percentile (blue, {}%) | < 10th percentile (orange, {}%)'.format(snow_q90_value, snow_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -1318,13 +1251,13 @@ lons2 = sst_q10['longitude'][:]
 
 # %% Notebook cell 102
 # Define the colors
-colors = ['dimgray', '#B2182B']
+colors = ['dimgray', 'crimson']
 
 # Create a colormap
 cmap_custom_t2m_q90 = LinearSegmentedColormap.from_list('custom_cmap', colors)
 
 # Define the colors
-colors = ['dimgray', '#2166AC']
+colors = ['dimgray', 'aqua']
 
 # Create a colormap
 cmap_custom_t2m_q10 = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -1385,25 +1318,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Sea Surface Temperature > 90th Percentile (red, {}%) | < 10th Percentile (blue, {}%)'.format(sst_q90_value, sst_q10_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Sea surface temperature > 90th percentile (red, {}%) | < 10th percentile (blue, {}%)'.format(sst_q90_value, sst_q10_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 cbar = plt.colorbar(contourf1, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=60)
 cbar.remove()
@@ -1425,7 +1347,7 @@ merged_data = t2m_q90 * dew_q90
 
 # %% Notebook cell 108
 # Define the colors
-colors = ['dimgray', '#D55E00']
+colors = ['dimgray', 'hotpink']
 
 # Create a colormap
 cmap_heat_stress = LinearSegmentedColormap.from_list('custom_cmap', colors)
@@ -1463,25 +1385,14 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
-gl.xlabels_top = False
-gl.ylabels_right = False
-gl.xlines = True
-gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-gl.xformatter = LONGITUDE_FORMATTER
-gl.yformatter = LATITUDE_FORMATTER
-gl.xlabel_style = {'size': 12, 'color': 'white'}
-gl.ylabel_style = {'size': 12, 'color': 'white'}
-
 ax.coastlines(resolution='10m', color='k', linewidth=1)
 ax.add_feature(cfeature.LAND, color="gainsboro")
 ax.add_feature(cfeature.BORDERS, edgecolor='k', linewidth=1)
 ax.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.3)
 ax.add_feature(states_provinces, edgecolor='k')
 
-plt.title('Air Temperature & Humidity > 90th Percentile (pink, {}%)'.format(merged_data_value), loc='left', fontsize=26, color='white', weight="bold")
-plt.title('{}'.format(current_month), loc='right', color='white', fontsize=22, weight="bold")
+plt.title('Air temperature & humidity > 90th percentile (pink, {}%)'.format(merged_data_value), loc='left', fontsize=36, color='white', weight="bold")
+plt.title('{}'.format(current_month), loc='right', color='white', fontsize=32, weight="bold")
 
 ax.text(0.01, 0.02, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'), zorder=21)
 ax.text(0.01, -0.03, data_period_label, color='white', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, fontsize=12, weight="bold")
