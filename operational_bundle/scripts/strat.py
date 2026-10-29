@@ -369,7 +369,7 @@ for i in range(len(strat)):
 
     levels = np.linspace(-5, 5, 50)
     
-    data = plt.contourf(lons, lats, strat[i], levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+    data = plt.contourf(lons, lats, strat[i], levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
     data2 = plt.contour(lons, lats, strat[i], np.arange(0, 0+0.01, 0.01), colors='k', linewidths=1, transform=ccrs.PlateCarree())
 
     states_provinces = cfeature.NaturalEarthFeature(

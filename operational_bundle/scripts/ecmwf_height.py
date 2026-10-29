@@ -315,7 +315,9 @@ valid_time = valid_time.values
 
 # %% Notebook cell 31
 
-z500 = z500['za']/100
+# CDS stores geopotential anomaly in m^2/s^2. Decameters use standard gravity.
+GEOPOTENTIAL_TO_DAM = 9.80665 * 10
+z500 = z500['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 33
 
@@ -346,8 +348,8 @@ for i in range(len(z500)):
     
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-    levels = np.linspace(-5, 5, 11)
-    cmap = "cmo.balance"
+    levels = np.linspace(-10, 10, 21)
+    cmap = "RdBu_r"
     
     data = plt.contourf(lons, lats, z500[i], levels=levels, cmap=cmap, extend='both', transform=ccrs.PlateCarree())
     data2 = plt.contour(lons, lats, z500[i], levels=levels, colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
@@ -380,7 +382,7 @@ for i in range(len(z500)):
     plt.title('ECMWF 500 hPa Height Anomaly', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
-#     cbar = plt.colorbar(data, ax=ax, ticks=[-5,0,5], pad=0.01, shrink=0.7, aspect=50)
+#     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.7, aspect=50)
 #     cbar.ax.tick_params(labelsize=20, labelcolor="white")
 #     cbar.ax.set_facecolor([1,1,1,0])
     
@@ -433,7 +435,7 @@ for i in range(len(z500)):
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     ax.set_extent([205, 315, 20, 60])
 
-    levels = np.linspace(-5, 5, 11)
+    levels = np.linspace(-10, 10, 21)
 
     data = plt.contourf(lons, lats, z500[i], levels=levels, cmap=cmap, extend='both', transform=ccrs.PlateCarree())
     data2 = plt.contour(lons, lats, z500[i], levels=levels, colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
@@ -466,7 +468,7 @@ for i in range(len(z500)):
     plt.title('ECMWF 500 hPa Height Anomaly', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
-#     cbar = plt.colorbar(data, ax=ax, ticks=[-5,0,5], pad=0.01, shrink=0.85, aspect=50)
+#     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.85, aspect=50)
 #     cbar.ax.tick_params(labelsize=20, labelcolor="white")
 #     cbar.ax.set_facecolor([1,1,1,0])
     

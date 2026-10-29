@@ -408,7 +408,7 @@ ax.set_extent([205, 315, 20, 60])
 
 levels = np.linspace(-2, 2, 9)
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap="cmo.balance", extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, levels=levels, cmap="RdYlBu_r", extend='both', transform=ccrs.PlateCarree())
 cs = plt.contour(lons, lats, season1, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
@@ -483,7 +483,7 @@ ax.set_extent([205, 315, 20, 60])
 
 levels = np.linspace(-2, 2, 9)
 
-data = plt.contourf(lons, lats, season2, levels=levels, cmap="cmo.balance", extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, levels=levels, cmap="RdYlBu_r", extend='both', transform=ccrs.PlateCarree())
 cs = plt.contour(lons, lats, season2, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
@@ -557,7 +557,7 @@ ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
 levels = np.linspace(-2, 2, 9)
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap="cmo.balance", extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, levels=levels, cmap="RdYlBu_r", extend='both', transform=ccrs.PlateCarree())
 cs = plt.contour(lons, lats, season1, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
@@ -641,7 +641,7 @@ ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
 levels = np.linspace(-2, 2, 9)
 
-data = plt.contourf(lons, lats, season2, levels=levels, cmap="cmo.balance", extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, levels=levels, cmap="RdYlBu_r", extend='both', transform=ccrs.PlateCarree())
 cs = plt.contour(lons, lats, season2, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(

@@ -351,7 +351,9 @@ valid_time = valid_time.values
 
 # %% Notebook cell 31
 
-z500 = z500['za']/100
+# CDS stores geopotential anomaly in m^2/s^2. Decameters use standard gravity.
+GEOPOTENTIAL_TO_DAM = 9.80665 * 10
+z500 = z500['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 33
 
@@ -377,7 +379,7 @@ lons, lats = np.meshgrid(cyclic_lons, lat)
 
 # %% Notebook cell 39
 
-cmap = "cmo.balance"
+cmap = "RdBu_r"
 
 # %% Notebook cell 41
 
@@ -388,7 +390,7 @@ for i in range(len(z500)):
 
 #     ax = plt.axes(projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=5000000))
 
-    levels = np.linspace(-5, 5, 11)
+    levels = np.linspace(-10, 10, 21)
 
     data = plt.contourf(lons, lats, z500[i], levels=levels, cmap=cmap, extend='both', transform=ccrs.PlateCarree())
     data2 = plt.contour(lons, lats, z500[i], levels=levels, colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
@@ -421,7 +423,7 @@ for i in range(len(z500)):
     plt.title('C3S 500 hPa Height Anomaly', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
-#     cbar = plt.colorbar(data, ax=ax, ticks=[-5,0,5], pad=0.01, shrink=0.85, aspect=50)
+#     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.85, aspect=50)
 #     cbar.ax.tick_params(labelsize=20, labelcolor="white")
 #     cbar.ax.set_facecolor([1,1,1,0])
     
@@ -474,7 +476,7 @@ for i in range(len(z500)):
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     ax.set_extent([205, 315, 20, 60])
 
-    levels = np.linspace(-5, 5, 11)
+    levels = np.linspace(-10, 10, 21)
 
     data = plt.contourf(lons, lats, z500[i], levels=levels, cmap=cmap, extend='both', transform=ccrs.PlateCarree())
     data2 = plt.contour(lons, lats, z500[i], levels=levels, colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
@@ -507,7 +509,7 @@ for i in range(len(z500)):
     plt.title('C3S 500 hPa Height Anomaly', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
-#     cbar = plt.colorbar(data, ax=ax, ticks=[-5,0,5], pad=0.01, shrink=0.85, aspect=50)
+#     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.85, aspect=50)
 #     cbar.ax.tick_params(labelsize=20, labelcolor="white")
 #     cbar.ax.set_facecolor([1,1,1,0])
     
@@ -562,7 +564,7 @@ for i in range(len(z500)):
     
 #     ax = plt.axes(projection=ccrs.Orthographic(270, 90))
 
-#     levels = np.linspace(-5, 5, 11)
+#     levels = np.linspace(-10, 10, 21)
 
 #     data = ax.pcolormesh(lons, lats, z500[i], vmin=-5, vmax=5, cmap=cmap, transform=ccrs.PlateCarree())
 #     data2 = plt.contour(lons, lats,  z500[i], 5, vmin=-5000000, vmax=5000000, colors='k', linewidths=1, transform=ccrs.PlateCarree())
@@ -585,7 +587,7 @@ for i in range(len(z500)):
 #     plt.title('C3S 500 hPa Height Anomaly (dam)', loc='left', fontsize=20, color='white')
 #     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white')
     
-#     cbar = plt.colorbar(data, ax=ax, ticks=[-5,0,5], pad=0.01, shrink=0.85, aspect=50)
+#     cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.85, aspect=50)
 #     cbar.ax.tick_params(labelsize=20, labelcolor="white")
 #     cbar.ax.set_facecolor([1,1,1,0])
 
@@ -598,51 +600,51 @@ for i in range(len(z500)):
 
 # %% Notebook cell 45
 
-eccc1 = select_gcm(concats, 'Canadian Meteorological Service - Montreal', 'ECCC', 'Canadian Meteorological Service').isel(step = slice(1,3)).mean('step')['za']/100
-eccc2 = select_gcm(concats, 'Canadian Meteorological Service - Montreal', 'ECCC', 'Canadian Meteorological Service').isel(step = slice(3,5)).mean('step')['za']/100
-eccc3 = select_gcm(concats, 'Canadian Meteorological Service - Montreal', 'ECCC', 'Canadian Meteorological Service').isel(step = slice(2,4)).mean('step')['za']/100
+eccc1 = select_gcm(concats, 'Canadian Meteorological Service - Montreal', 'ECCC', 'Canadian Meteorological Service').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+eccc2 = select_gcm(concats, 'Canadian Meteorological Service - Montreal', 'ECCC', 'Canadian Meteorological Service').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+eccc3 = select_gcm(concats, 'Canadian Meteorological Service - Montreal', 'ECCC', 'Canadian Meteorological Service').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 46
 
-cmcc1 = select_gcm(concats, 'Rome', 'CMCC', 'Centro Euro-Mediterraneo sui Cambiamenti Climatici').isel(step = slice(1,3)).mean('step')['za']/100
-cmcc2 = select_gcm(concats, 'Rome', 'CMCC', 'Centro Euro-Mediterraneo sui Cambiamenti Climatici').isel(step = slice(3,5)).mean('step')['za']/100
-cmcc3 = select_gcm(concats, 'Rome', 'CMCC', 'Centro Euro-Mediterraneo sui Cambiamenti Climatici').isel(step = slice(2,4)).mean('step')['za']/100
+cmcc1 = select_gcm(concats, 'Rome', 'CMCC', 'Centro Euro-Mediterraneo sui Cambiamenti Climatici').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+cmcc2 = select_gcm(concats, 'Rome', 'CMCC', 'Centro Euro-Mediterraneo sui Cambiamenti Climatici').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+cmcc3 = select_gcm(concats, 'Rome', 'CMCC', 'Centro Euro-Mediterraneo sui Cambiamenti Climatici').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 47
 
-dwd1 = select_gcm(concats, 'Offenbach', 'DWD', 'Deutscher Wetterdienst').isel(step = slice(1,3)).mean('step')['za']/100
-dwd2 = select_gcm(concats, 'Offenbach', 'DWD', 'Deutscher Wetterdienst').isel(step = slice(3,5)).mean('step')['za']/100
-dwd3 = select_gcm(concats, 'Offenbach', 'DWD', 'Deutscher Wetterdienst').isel(step = slice(2,4)).mean('step')['za']/100
+dwd1 = select_gcm(concats, 'Offenbach', 'DWD', 'Deutscher Wetterdienst').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+dwd2 = select_gcm(concats, 'Offenbach', 'DWD', 'Deutscher Wetterdienst').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+dwd3 = select_gcm(concats, 'Offenbach', 'DWD', 'Deutscher Wetterdienst').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 48
 
-ukmet1 = select_gcm(concats, 'U.K. Met Office - Exeter', 'UK Met Office - Exeter', 'UKMO').isel(step = slice(1,3)).mean('step')['za']/100
-ukmet2 = select_gcm(concats, 'U.K. Met Office - Exeter', 'UK Met Office - Exeter', 'UKMO').isel(step = slice(3,5)).mean('step')['za']/100
-ukmet3 = select_gcm(concats, 'U.K. Met Office - Exeter', 'UK Met Office - Exeter', 'UKMO').isel(step = slice(2,4)).mean('step')['za']/100
+ukmet1 = select_gcm(concats, 'U.K. Met Office - Exeter', 'UK Met Office - Exeter', 'UKMO').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+ukmet2 = select_gcm(concats, 'U.K. Met Office - Exeter', 'UK Met Office - Exeter', 'UKMO').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+ukmet3 = select_gcm(concats, 'U.K. Met Office - Exeter', 'UK Met Office - Exeter', 'UKMO').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 49
 
-ncep1 = select_gcm(concats, 'US National Weather Service - NCEP', 'NCEP').isel(step = slice(1,3)).mean('step')['za']/100
-ncep2 = select_gcm(concats, 'US National Weather Service - NCEP', 'NCEP').isel(step = slice(3,5)).mean('step')['za']/100
-ncep3 = select_gcm(concats, 'US National Weather Service - NCEP', 'NCEP').isel(step = slice(2,4)).mean('step')['za']/100
+ncep1 = select_gcm(concats, 'US National Weather Service - NCEP', 'NCEP').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+ncep2 = select_gcm(concats, 'US National Weather Service - NCEP', 'NCEP').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+ncep3 = select_gcm(concats, 'US National Weather Service - NCEP', 'NCEP').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 50
 
-mf1 = select_gcm(concats, 'French Weather Service - Toulouse', 'Meteo France', 'Météo-France', 'Meteo-France').isel(step = slice(1,3)).mean('step')['za']/100
-mf2 = select_gcm(concats, 'French Weather Service - Toulouse', 'Meteo France', 'Météo-France', 'Meteo-France').isel(step = slice(3,5)).mean('step')['za']/100
-mf3 = select_gcm(concats, 'French Weather Service - Toulouse', 'Meteo France', 'Météo-France', 'Meteo-France').isel(step = slice(2,4)).mean('step')['za']/100
+mf1 = select_gcm(concats, 'French Weather Service - Toulouse', 'Meteo France', 'Météo-France', 'Meteo-France').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+mf2 = select_gcm(concats, 'French Weather Service - Toulouse', 'Meteo France', 'Météo-France', 'Meteo-France').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+mf3 = select_gcm(concats, 'French Weather Service - Toulouse', 'Meteo France', 'Météo-France', 'Meteo-France').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 51
 
-ecmwf1 = select_gcm(concats, 'European Centre for Medium-Range Weather Forecasts', 'ECMWF').isel(step = slice(1,3)).mean('step')['za']/100
-ecmwf2 = select_gcm(concats, 'European Centre for Medium-Range Weather Forecasts', 'ECMWF').isel(step = slice(3,5)).mean('step')['za']/100
-ecmwf3 = select_gcm(concats, 'European Centre for Medium-Range Weather Forecasts', 'ECMWF').isel(step = slice(2,4)).mean('step')['za']/100
+ecmwf1 = select_gcm(concats, 'European Centre for Medium-Range Weather Forecasts', 'ECMWF').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+ecmwf2 = select_gcm(concats, 'European Centre for Medium-Range Weather Forecasts', 'ECMWF').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+ecmwf3 = select_gcm(concats, 'European Centre for Medium-Range Weather Forecasts', 'ECMWF').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 52
 
-jma1 = select_gcm(concats, 'Japanese Meteorological Agency - Tokyo', 'JMA', 'Tokyo').isel(step = slice(1,3)).mean('step')['za']/100
-jma2 = select_gcm(concats, 'Japanese Meteorological Agency - Tokyo', 'JMA', 'Tokyo').isel(step = slice(3,5)).mean('step')['za']/100
-jma3 = select_gcm(concats, 'Japanese Meteorological Agency - Tokyo', 'JMA', 'Tokyo').isel(step = slice(2,4)).mean('step')['za']/100
+jma1 = select_gcm(concats, 'Japanese Meteorological Agency - Tokyo', 'JMA', 'Tokyo').isel(step = slice(1,3)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+jma2 = select_gcm(concats, 'Japanese Meteorological Agency - Tokyo', 'JMA', 'Tokyo').isel(step = slice(3,5)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
+jma3 = select_gcm(concats, 'Japanese Meteorological Agency - Tokyo', 'JMA', 'Tokyo').isel(step = slice(2,4)).mean('step')['za'] / GEOPOTENTIAL_TO_DAM
 
 # %% Notebook cell 53
 
@@ -662,7 +664,7 @@ facecolor='none')
 
 fig = plt.figure(figsize=(25, 15))
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-10, 10, 21)
 
 # model 1
 ax1 = fig.add_subplot(2, 4, 1, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -671,7 +673,7 @@ ax1.add_feature(cfeature.BORDERS, edgecolor='k')
 ax1.add_feature(states_provinces, edgecolor='k')
 ax1.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
-cmap='cmo.balance'
+cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
@@ -756,7 +758,7 @@ data8 = plt.contourf(lons2, lats2, cmcc1, levels=levels, cmap=cmap, transform=cc
 plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
 
 axes2 = fig.add_axes([0.1, -0.02, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-5,0,5])
+cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
 cm.ax.tick_params(labelsize=24, labelcolor="white")
 #cm.set_label("Data: C3S Climate Change Service | Climatology: 1993-2016 ", style='italic', fontsize = 18, color = 'k')
 
@@ -787,7 +789,7 @@ plt.savefig(fig_path/'height_{}_{}.png'.format(valid_time[0], valid_time[2]), fa
 
 fig = plt.figure(figsize=(25, 15))
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-10, 10, 21)
 
 # model 1
 ax1 = fig.add_subplot(2, 4, 1, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -796,7 +798,7 @@ ax1.add_feature(cfeature.BORDERS, edgecolor='k')
 ax1.add_feature(states_provinces, edgecolor='k')
 ax1.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
-cmap='cmo.balance'
+cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
@@ -881,7 +883,7 @@ data8 = plt.contourf(lons2, lats2, cmcc2, levels=levels, cmap=cmap, transform=cc
 plt.title('CMCC', loc='center', fontsize=20, color='white')
 
 axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-5,0,5])
+cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
 cm.ax.tick_params(labelsize=24, labelcolor="white")
 
 for label in cm.ax.get_yticklabels():
@@ -911,7 +913,7 @@ plt.savefig(fig_path/'height_{}_{}.png'.format(valid_time[3], valid_time[5]), fa
 
 # fig = plt.figure(figsize=(25, 15))
 
-# levels = np.linspace(-5, 5, 11)
+# levels = np.linspace(-10, 10, 21)
 
 # # model 1
 # ax1 = fig.add_subplot(2, 4, 1, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -920,7 +922,7 @@ plt.savefig(fig_path/'height_{}_{}.png'.format(valid_time[3], valid_time[5]), fa
 # ax1.add_feature(states_provinces, edgecolor='k')
 # ax1.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
-# cmap='cmo.balance'
+# cmap='RdBu_r'
 
 # data = plt.contourf(lons2, lats2, ecmwf3, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
@@ -1005,7 +1007,7 @@ plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
 # plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
 
 # axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-# cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-5,0,5])
+# cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
 # cm.ax.tick_params(labelsize=24, labelcolor="white")
 
 # for label in cm.ax.get_yticklabels():
@@ -1023,7 +1025,7 @@ plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
 
 fig = plt.figure(figsize=(25, 15))
 
-levels = np.linspace(-5, 5, 18)
+levels = np.linspace(-10, 10, 21)
 
 # model 1
 ax1 = fig.add_subplot(2, 4, 1, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1032,7 +1034,7 @@ ax1.add_feature(cfeature.BORDERS, edgecolor='k')
 ax1.add_feature(states_provinces, edgecolor='k')
 ax1.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
-cmap='cmo.balance'
+cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
@@ -1117,7 +1119,7 @@ data8 = plt.contourf(lons2, lats2, cmcc1, levels=levels, cmap=cmap, transform=cc
 plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
 
 axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-5,0,5])
+cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
 cm.ax.tick_params(labelsize=24, labelcolor="white")
 #cm.set_label("Data: C3S Climate Change Service | Climatology: 1993-2016 ", style='italic', fontsize = 18, color = 'k')
 
@@ -1148,7 +1150,7 @@ plt.savefig(fig_path/'sh_height_{}_{}.png'.format(valid_time[0], valid_time[2]),
 
 fig = plt.figure(figsize=(25, 15))
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-10, 10, 21)
 
 # model 1
 ax1 = fig.add_subplot(2, 4, 1, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1157,7 +1159,7 @@ ax1.add_feature(cfeature.BORDERS, edgecolor='k')
 ax1.add_feature(states_provinces, edgecolor='k')
 ax1.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
-cmap='cmo.balance'
+cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
@@ -1242,7 +1244,7 @@ data8 = plt.contourf(lons2, lats2, cmcc2, levels=levels, cmap=cmap, transform=cc
 plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
 
 axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-5,0,5])
+cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
 cm.ax.tick_params(labelsize=24, labelcolor="white")
 #cm.set_label("Data: C3S Climate Change Service | Climatology: 1993-2016 ", style='italic', fontsize = 18, color = 'k')
 

@@ -425,9 +425,9 @@ lons, lats = np.meshgrid(lon, lat)
 
 # %% Notebook cell 59
 
-season1_usa = season1*1.8
-season2_usa = season2*1.8
-# custom = custom*1.8
+season1_usa = season1
+season2_usa = season2
+# custom = custom
 
 # %% Notebook cell 60
 
@@ -436,9 +436,9 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-3, 3, 13)
 
-data = plt.contourf(lons, lats, season1_usa, levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1_usa, levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
 
 cs = plt.contour(lons, lats, season1_usa, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
@@ -457,11 +457,11 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -495,9 +495,9 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-3, 3, 13)
 
-data = plt.contourf(lons, lats, season2_usa, levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2_usa, levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
 
 cs = plt.contour(lons, lats, season2_usa, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
@@ -516,11 +516,11 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -554,9 +554,9 @@ plt.close("all")
 # ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 # ax.set_extent([205, 315, 20, 60])
 
-# levels = np.linspace(-5, 5, 11)
+# levels = np.linspace(-3, 3, 13)
 
-# data = plt.contourf(lons, lats, custom, levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+# data = plt.contourf(lons, lats, custom, levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
 
 # cs = plt.contour(lons, lats, custom, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
@@ -575,11 +575,11 @@ plt.close("all")
 # for scale, axis in zip(['20m'], [ax]):
 #     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-# plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
+# plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
 # plt.title('{}-{}'.format(month3, month5), loc='right', fontsize=24, color='white', weight="bold")
 
-# cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
+# cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 # cbar.ax.tick_params(labelsize=20, labelcolor="white")
 # cbar.ax.set_facecolor([1,1,1,0])
 
@@ -604,7 +604,7 @@ ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
 levels = np.linspace(-3, 3, 13)
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
 cs = plt.contour(lons, lats, season1, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
@@ -673,7 +673,7 @@ ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
 levels = np.linspace(-3, 3, 13)
 
-data = plt.contourf(lons, lats, season2, levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
 cs = plt.contour(lons, lats, season2, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
@@ -742,7 +742,7 @@ plt.close("all")
 
 # levels = np.linspace(-3, 3, 13)
 
-# data = plt.contourf(lons, lats, winter, levels=levels, cmap='cmo.balance', extend='both', transform=ccrs.PlateCarree())
+# data = plt.contourf(lons, lats, winter, levels=levels, cmap='coolwarm', extend='both', transform=ccrs.PlateCarree())
 # cs = plt.contour(lons, lats, winter, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 # states_provinces = cfeature.NaturalEarthFeature(
@@ -791,10 +791,6 @@ plt.close("all")
 
 dset_concat = xr.concat([month_one, month_two, month_three, month_four, month_five, month_six], "valid_time")
 
-# %% Notebook cell 70
-
-dset_concat = dset_concat*1.8
-
 # %% Notebook cell 71
 
 dset_concat['step'] = pd.to_datetime((pd.to_datetime(dset_concat['valid_time'].to_index()) - pd.Timedelta(days =20)).strftime("%Y-%m-01")) 
@@ -834,7 +830,7 @@ hv = hv.drop(columns=['number','time','step','surface'])
 
 # %% Notebook cell 80
 
-hv = hv.rename(columns={'valid_time': 'Month', 't2a': 'Temperature Anomaly (°F)'}) 
+hv = hv.rename(columns={'valid_time': 'Month', 't2a': 'Temperature Anomaly (°C)'}) 
 
 # %% Notebook cell 81
 
@@ -842,7 +838,7 @@ hv['Month'] = hv['Month'].dt.to_period('M')
 
 # %% Notebook cell 82
 
-hv = hv.style.background_gradient(cmap='cmo.balance', vmin=-3, vmax=3).\
+hv = hv.style.background_gradient(cmap='coolwarm', vmin=-3, vmax=3).\
 hide(axis="index").\
 set_caption("Hudson Valley temperature anomalies over the next 6 months").format(precision=2).\
 set_properties(**{'text-align': 'center', 'font-size': '24px;', 'font-weight': 'bold', 'color': 'black'})

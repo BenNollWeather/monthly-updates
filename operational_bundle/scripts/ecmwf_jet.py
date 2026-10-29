@@ -386,7 +386,7 @@ lons, lats = np.meshgrid(cyclic_lons, lat)
 
 # %% Notebook cell 40
 
-cmap = "cmo.balance"
+cmap = "RdBu_r"
 
 # %% Notebook cell 42
 
@@ -395,7 +395,7 @@ for i in range(len(u200)):
     
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     
-    data = ax.pcolormesh(lons, lats, u200[i], vmin=-10, vmax=10, cmap='cmo.balance', transform=ccrs.PlateCarree())
+    data = ax.pcolormesh(lons, lats, u200[i], vmin=-10, vmax=10, cmap='RdBu_r', transform=ccrs.PlateCarree())
     
     states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',

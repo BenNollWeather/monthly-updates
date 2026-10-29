@@ -1,33 +1,19 @@
 """AP style dates for plot text.
 
-Months used with a day are abbreviated Jan., Feb., Aug., Sept., Oct., Nov.,
-and Dec. March, April, May, June, and July stay spelled out. A month with a
-year and no day is spelled out and has no comma: January 2026. A full date
-uses a comma: Sept. 6, 2026. No ordinals.
+Months are abbreviated Jan., Feb., Aug., Sept., Oct., Nov., and Dec.
+March, April, May, June, and July stay spelled out, so July 2026 stays
+July 2026 and September 2026 becomes Sept. 2026. A month with a year
+keeps the abbreviation and the year, with no comma: Nov. 2026. A same-year
+range keeps one year: Nov.-Jan. 2026. A range across years keeps both:
+Nov. 2026-Jan. 2027. A full date uses a comma: Sept. 6, 2026. No ordinals.
 
-Axis labels that are only a month use the same abbreviations, because a
-12-month axis cannot hold the spelled-out names.
+Axis labels that are only a month use the same abbreviations.
 """
 
 from __future__ import annotations
 
 import re
 
-_FULL = (
-    "",
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-)
 _ABBR = (
     "",
     "Jan.",
@@ -88,14 +74,17 @@ _MONTH_ONLY = re.compile(rf"^(?P<month>{_MONTH_RE})\.?$", re.IGNORECASE)
 
 
 def ap_rewrite(text: str, *, tabular: bool = False) -> str:
-    """Return text with recognized dates rewritten in AP style."""
+    """Return text with recognized dates rewritten in AP style.
+
+    Axis labels pass tabular=True. Titles and axes use the same abbreviations.
+    """
     if not isinstance(text, str) or text == "":
         return text
     stripped = text.strip()
     month_only = _MONTH_ONLY.fullmatch(stripped)
     if month_only:
         month = _month_number(month_only.group("month"))
-        label = _ABBR[month] if tabular else _FULL[month]
+        label = _ABBR[month]
         lead = text[: len(text) - len(text.lstrip())]
         tail = text[len(text.rstrip()) :]
         return f"{lead}{label}{tail}"
@@ -147,9 +136,9 @@ def _parts(match: re.Match) -> tuple[int | None, int, int | None]:
 def _format_one(match: re.Match) -> str:
     year, month, day = _parts(match)
     if day is None and year is not None:
-        return f"{_FULL[month]} {year}"
+        return f"{_ABBR[month]} {year}"
     if day is None:
-        return _FULL[month]
+        return _ABBR[month]
     if year is None:
         return f"{_ABBR[month]} {day}"
     return f"{_ABBR[month]} {day}, {year}"
@@ -160,10 +149,10 @@ def _format_range(left: re.Match, right: re.Match) -> str:
     y2, m2, d2 = _parts(right)
     if d1 is None and d2 is None and y1 is not None and y2 is not None:
         if y1 == y2 and m1 == m2:
-            return f"{_FULL[m1]} {y1}"
+            return f"{_ABBR[m1]} {y1}"
         if y1 == y2:
-            return f"{_FULL[m1]}-{_FULL[m2]} {y1}"
-        return f"{_FULL[m1]} {y1}-{_FULL[m2]} {y2}"
+            return f"{_ABBR[m1]}-{_ABBR[m2]} {y1}"
+        return f"{_ABBR[m1]} {y1}-{_ABBR[m2]} {y2}"
     if d1 is not None and d2 is not None and y1 is not None and y1 == y2:
         if m1 == m2:
             return f"{_ABBR[m1]} {d1}-{d2}, {y1}"

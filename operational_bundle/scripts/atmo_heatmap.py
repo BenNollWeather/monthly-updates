@@ -299,7 +299,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
 
-sns.heatmap(nino34, linewidth=.5, cmap="cmo.balance", vmin=-8, vmax=8, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(nino34, linewidth=.5, cmap="RdBu_r", vmin=-8, vmax=8, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 cbar.ax.tick_params(labelsize=20, length=0)
 
@@ -462,7 +462,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
 
-sns.heatmap(hv_wind, linewidth=.5, cmap="cmo.balance", vmin=-5, vmax=5, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(hv_wind, linewidth=.5, cmap="RdBu_r", vmin=-5, vmax=5, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 cbar.ax.tick_params(labelsize=20, length=0)
 
@@ -607,7 +607,6 @@ valid_time = valid_time.values
 
 hv_temp = ecmwf2['t2a'].sel(latitude=slice(41.9, 40.9), longitude=slice(285, 286.5))
 hv_temp = hv_temp.mean('latitude').mean('longitude')
-hv_temp = hv_temp*1.8
 
 # %% Notebook cell 40
 
@@ -620,7 +619,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
 
-sns.heatmap(hv_temp, linewidth=.5, cmap="cmo.balance", vmin=-3, vmax=3, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(hv_temp, linewidth=.5, cmap="coolwarm", vmin=-3, vmax=3, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 cbar.ax.tick_params(labelsize=20, length=0)
 
@@ -628,7 +627,7 @@ cbar.ax.tick_params(labelsize=20, length=0)
 ax[0].set_ylabel("Ensemble member",fontsize=16)
 
 # set title for the heatmap
-ax[0].set_title("ECMWF Ensemble Members' Temperature Anomaly (°F) in the Hudson Valley", loc="left", color='k', fontsize=24)
+ax[0].set_title("ECMWF Ensemble Members' Temperature Anomaly (°C) in the Hudson Valley", loc="left", color='k', fontsize=24)
 
 # set y-axis tick parameters for the heatmap
 for tick_label in ax[0].axes.get_yticklabels():
@@ -684,7 +683,7 @@ ax[1].grid(axis='y')
 ax[1].spines['bottom'].set_position(('axes', -0.1))
 
 # set the title for the line plot
-ax[1].set_title('Median Temperature Anomaly (°F, black) in the Hudson Valley  | 25th & 75th percentile (gray)', loc='left', color='k', fontsize=20)
+ax[1].set_title('Median Temperature Anomaly (°C, black) in the Hudson Valley  | 25th & 75th percentile (gray)', loc='left', color='k', fontsize=20)
 
 # adjust the layout of the figure
 fig.tight_layout()
@@ -778,7 +777,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
 
-sns.heatmap(hv_precip, linewidth=.5, cmap="cmo.tarn", vmin=-3, vmax=3, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(hv_precip, linewidth=.5, cmap="BrBG", vmin=-3, vmax=3, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 cbar.ax.tick_params(labelsize=20, length=0)
 
@@ -954,7 +953,7 @@ for city, (lat, lon) in cities.items():
     # Create heatmap
     xticklabels = [month1, month2, month3, month4, month5, month6]
     
-    sns.heatmap(snow, linewidth=.5, cmap="cmo.balance", vmin=-1, vmax=1, xticklabels=xticklabels, ax=ax[0], 
+    sns.heatmap(snow, linewidth=.5, cmap="RdBu", vmin=-1, vmax=1, xticklabels=xticklabels, ax=ax[0], 
                 cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
     cbar = ax[0].collections[0].colorbar
     cbar.ax.tick_params(labelsize=20, length=0)
@@ -963,7 +962,7 @@ for city, (lat, lon) in cities.items():
     ax[0].set_ylabel("Ensemble member", fontsize=16)
     
     # Set title for the heatmap
-    ax[0].set_title(f"ECMWF Ensemble Members' Snowfall Anomaly (in/day) in {city}", loc="left", color='k', fontsize=24, weight="bold")
+    ax[0].set_title(f"ECMWF Ensemble Members' Snowfall Anomaly (inches) in {city}", loc="left", color='k', fontsize=24, weight="bold")
     
     # Set y-axis tick parameters for the heatmap
     for tick_label in ax[0].axes.get_yticklabels():
@@ -1035,7 +1034,7 @@ for city, (lat, lon) in cities.items():
     ax[2].spines['bottom'].set_position(('axes', -0.1))
     
     # Set the title for the line plot
-    ax[2].set_title(f'Median Snowfall Anomaly (in/day, black) in {city} | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20, weight="bold")
+    ax[2].set_title(f'Median Snowfall Anomaly (inches, black) in {city} | 10th & 90th percentile (gray)', loc='left', color='k', fontsize=20, weight="bold")
     
     # Adjust the position of the heatmap and line plot
     fig.tight_layout(rect=[0, 0.01, 1, 0.99])

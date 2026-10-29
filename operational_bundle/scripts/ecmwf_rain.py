@@ -433,9 +433,9 @@ fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-levels = np.linspace(-2, 2, 100)
+levels = np.linspace(-4, 4, 9)
 
-data = plt.contourf(lons, lats, season1, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -452,7 +452,7 @@ ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 plt.title('ECMWF Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 for label in cbar.ax.get_yticklabels():
@@ -507,9 +507,9 @@ fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-levels = np.linspace(-2, 2, 100)
+levels = np.linspace(-4, 4, 9)
 
-data = plt.contourf(lons, lats, season2, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -526,7 +526,7 @@ ax.add_feature(states_provinces, edgecolor='k', linewidth=1)
 plt.title('ECMWF Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 for label in cbar.ax.get_yticklabels():
@@ -582,9 +582,9 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([240, 358, -5, 40])
 
-levels = np.linspace(-2, 2, 100)
+levels = np.linspace(-4, 4, 9)
 
-data = plt.contourf(lons, lats, season1, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -619,7 +619,7 @@ shape7 = shape7
 shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 for label in cbar.ax.get_yticklabels():
@@ -675,9 +675,9 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([240, 358, -5, 40])
 
-levels = np.linspace(-2, 2, 100)
+levels = np.linspace(-4, 4, 9)
 
-data = plt.contourf(lons, lats, season2, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -712,7 +712,7 @@ shape7 = shape7
 shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 for label in cbar.ax.get_yticklabels():
@@ -768,9 +768,9 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-2, 2, 100)
+levels = np.linspace(-4, 4, 9)
 
-data = plt.contourf(lons, lats, season1, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -790,7 +790,7 @@ for scale, axis in zip(['20m'], [ax]):
 plt.title('ECMWF Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 for label in cbar.ax.get_yticklabels():
@@ -846,9 +846,9 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-2, 2, 100)
+levels = np.linspace(-4, 4, 9)
 
-data = plt.contourf(lons, lats, season2, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -868,7 +868,7 @@ for scale, axis in zip(['20m'], [ax]):
 plt.title('ECMWF Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.5, aspect=20)
+cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 for label in cbar.ax.get_yticklabels():
@@ -924,9 +924,9 @@ plt.close("all")
 # ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 # ax.set_extent([205, 315, 20, 60])
 
-# levels = np.linspace(-2, 2, 100)
+# levels = np.linspace(-4, 4, 9)
 
-# data = plt.contourf(lons, lats, custom, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+# data = plt.contourf(lons, lats, custom, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 # states_provinces = cfeature.NaturalEarthFeature(
 # category='cultural',
@@ -946,7 +946,7 @@ plt.close("all")
 # plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 # plt.title('{}-{}'.format(month3, month5), loc='right', fontsize=24, color='white', weight="bold")
 
-# cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.65, aspect=60)
+# cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], drawedges=True, pad=0.01, shrink=0.65, aspect=60)
 # cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 # for label in cbar.ax.get_yticklabels():
@@ -989,9 +989,9 @@ plt.close("all")
 
 # ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-# levels = np.linspace(-2, 2, 100)
+# levels = np.linspace(-4, 4, 9)
 
-# data = plt.contourf(lons, lats, custom, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+# data = plt.contourf(lons, lats, custom, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 # states_provinces = cfeature.NaturalEarthFeature(
 # category='cultural',
@@ -1008,7 +1008,7 @@ plt.close("all")
 # plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly (inches)', loc='left', fontsize=24, color='white', weight="bold")
 # plt.title('{}-{}'.format(month3, month5), loc='right', fontsize=24, color='white', weight="bold")
 
-# cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.65, aspect=60)
+# cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], drawedges=True, pad=0.01, shrink=0.65, aspect=60)
 # cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 # for label in cbar.ax.get_yticklabels():
@@ -1052,9 +1052,9 @@ plt.close("all")
 # ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 # ax.set_extent([240, 358, -5, 40])
 
-# levels = np.linspace(-2, 2, 100)
+# levels = np.linspace(-4, 4, 9)
 
-# data = plt.contourf(lons, lats, custom, cmap='cmo.tarn', levels=levels, extend='both', transform=ccrs.PlateCarree())
+# data = plt.contourf(lons, lats, custom, cmap='BrBG', levels=levels, extend='both', transform=ccrs.PlateCarree())
 
 # #ax.coastlines()
 
@@ -1088,7 +1088,7 @@ plt.close("all")
 # plt.title('ECMWF+UKMET "Superblend" Rainfall Anomaly', loc='left', fontsize=24, color='white', weight="bold")
 # plt.title('{}-{} {}'.format(next_month, third_month, current_year), loc='right', fontsize=24, color='white', weight="bold")
 
-# cbar = plt.colorbar(data, ax=ax, ticks=[-2,0,2], pad=0.01, shrink=0.75, aspect=60)
+# cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], drawedges=True, pad=0.01, shrink=0.75, aspect=60)
 # cbar.ax.tick_params(labelsize=20, labelcolor="white") 
 
 # for label in cbar.ax.get_yticklabels():
@@ -1173,7 +1173,7 @@ hv['Month'] = hv['Month'].dt.to_period('M')
 
 hv = (
     hv.style
-    .background_gradient(cmap='cmo.tarn', vmin=-2, vmax=2)
+    .background_gradient(cmap='BrBG', vmin=-2, vmax=2)
     .hide(axis="index")
     .set_caption("Hudson Valley precipitation anomalies over the next 6 months")
     .format("{:.2f}", subset=hv.select_dtypes(include="number").columns)

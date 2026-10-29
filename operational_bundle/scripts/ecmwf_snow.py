@@ -321,7 +321,8 @@ snow.load()
 
 # %% Notebook cell 35
 
-snow = snow['sfara'].data
+# m/s of water equivalent -> inches of snow over a 90-day season, 10:1 ratio.
+snow = snow['sfara'].data * (39.3701 * 10 * 86400 * 90)
 
 # %% Notebook cell 36
 
@@ -346,7 +347,7 @@ for i in range(len(snow)):
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     ax.set_extent([205, 315, 20, 60])
 
-    levels = np.linspace(-0.000000002, 0.000000002, 50)
+    levels = np.linspace(-6, 6, 13)
 
     data = plt.contourf(lons, lats, snow[i], levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -419,7 +420,7 @@ for i in range(len(snow)):
 
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-    levels = np.linspace(-0.000000002, 0.000000002, 50)
+    levels = np.linspace(-6, 6, 13)
 
     data = plt.contourf(lons, lats, snow[i], levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -498,7 +499,7 @@ fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-levels = np.linspace(-0.000000002, 0.000000002, 50)
+levels = np.linspace(-6, 6, 13)
 
 data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -558,7 +559,7 @@ fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
-levels = np.linspace(-0.000000002, 0.000000002, 50)
+levels = np.linspace(-6, 6, 13)
 
 data = plt.contourf(lons, lats, season2, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -619,7 +620,7 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-0.000000002, 0.000000002, 50)
+levels = np.linspace(-6, 6, 13)
 
 data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -683,7 +684,7 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-0.000000002, 0.000000002, 50)
+levels = np.linspace(-6, 6, 13)
 
 data = plt.contourf(lons, lats, season2, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -747,7 +748,7 @@ plt.close("all")
 # ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 # ax.set_extent([205, 315, 20, 60])
 
-# levels = np.linspace(-0.000000002, 0.000000002, 50)
+# levels = np.linspace(-6, 6, 13)
 
 # data = plt.contourf(lons, lats, winter, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 
@@ -806,7 +807,7 @@ plt.close("all")
 
 # ax = plt.axes(projection = ccrs.Robinson(central_longitude=270, globe=None, false_easting=None, false_northing=None))
 
-# levels = np.linspace(-0.000000002, 0.000000002, 50)
+# levels = np.linspace(-6, 6, 13)
 
 # data = plt.contourf(lons, lats, winter, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
 

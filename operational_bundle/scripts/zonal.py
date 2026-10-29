@@ -392,7 +392,7 @@ lons, lats = np.meshgrid(cyclic_lons, lat)
 
 # %% Notebook cell 40
 
-cmap = "cmo.balance"
+cmap = "RdBu_r"
 
 # %% Notebook cell 42
 
@@ -401,7 +401,7 @@ for i in range(len(u850)):
     
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     
-    data = ax.pcolormesh(lons, lats, u850[i], vmin=-3, vmax=3, cmap='cmo.balance', transform=ccrs.PlateCarree())
+    data = ax.pcolormesh(lons, lats, u850[i], vmin=-3, vmax=3, cmap='RdBu_r', transform=ccrs.PlateCarree())
     
     states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',
@@ -520,7 +520,7 @@ fig, axes = plt.subplots(figsize=(25, 15))
 
 xticklabels = [month1, month2, month3, month4, month5, month6]
 
-ax = sns.heatmap(nino34, linewidth=.5, cmap="cmo.balance", vmin=-8, vmax=8, xticklabels=xticklabels)
+ax = sns.heatmap(nino34, linewidth=.5, cmap="RdBu_r", vmin=-8, vmax=8, xticklabels=xticklabels)
 
 # ax.set_xlabel("Forecast step",fontsize=20)
 ax.set_ylabel("Ensemble member",fontsize=20)

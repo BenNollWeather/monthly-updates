@@ -342,7 +342,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
-sns.heatmap(nino_extra_strong, linewidth=.5, cmap="cmo.amp", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(nino_extra_strong, linewidth=.5, cmap="Reds", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 
 # set y-axis label for the heatmap
@@ -444,7 +444,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
-sns.heatmap(nino, linewidth=.5, cmap="cmo.amp", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(nino, linewidth=.5, cmap="Reds", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 
 # set y-axis label for the heatmap
@@ -542,7 +542,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
-sns.heatmap(nino_strong, linewidth=.5, cmap="cmo.amp", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(nino_strong, linewidth=.5, cmap="Reds", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 
 # set y-axis label for the heatmap
@@ -640,7 +640,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
-sns.heatmap(nina, linewidth=.5, cmap="cmo.ice", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(nina, linewidth=.5, cmap="Blues", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 
 # set y-axis label for the heatmap
@@ -749,7 +749,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
-sns.heatmap(iod_neg, linewidth=.5, cmap="cmo.amp", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(iod_neg, linewidth=.5, cmap="Reds", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 
 # set y-axis label for the heatmap
@@ -847,7 +847,7 @@ fig, ax = plt.subplots(2,1, figsize=(25, 15), sharex='col', gridspec_kw={'height
 
 # create heatmap
 xticklabels = [month1, month2, month3, month4, month5, month6]
-sns.heatmap(iod_pos, linewidth=.5, cmap="cmo.ice", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
+sns.heatmap(iod_pos, linewidth=.5, cmap="Blues", vmin=0, vmax=1.5, cbar=False, xticklabels=xticklabels, ax=ax[0],  cbar_kws={'orientation': 'horizontal', 'location': 'bottom', 'shrink': 0.8, 'pad': 0.05, 'aspect': 105})
 cbar = ax[0].collections[0].colorbar
 
 # set y-axis label for the heatmap
