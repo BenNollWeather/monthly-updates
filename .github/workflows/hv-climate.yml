@@ -1,4 +1,4 @@
-name: Monthly Hudson Valley climate
+name: Annual Hudson Valley climate
 on:
   workflow_dispatch:
     inputs:
@@ -8,7 +8,7 @@ on:
         default: true
         type: boolean
       scheduled:
-        description: "Count this run as the monthly scheduled event"
+        description: "Count this run as the annual scheduled event"
         required: false
         default: false
         type: boolean
@@ -28,7 +28,7 @@ jobs:
       AWS_PROFILE: ""
       STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
       PRODUCT_ID: hv-climate
-      PRODUCT_SCHEDULE: "06:11 UTC on the 6th"
+      PRODUCT_SCHEDULE: "06:11 UTC on January 6"
       PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/hv_climate_change/temperature.png","s3://bennollweather/hv_climate_change/dew_point.png","s3://bennollweather/hv_climate_change/rainfall.png","s3://bennollweather/hv_climate_change/tcw.png","s3://bennollweather/hv_climate_change/snow.png","s3://bennollweather/hv_climate_change/wind.png","s3://bennollweather/hv_climate_change/storm.png","s3://bennollweather/hv_climate_change/clouds.png"]'
       MPLCONFIGDIR: /tmp/matplotlib
       CARTOPY_DATA_DIR: /tmp/cartopy
