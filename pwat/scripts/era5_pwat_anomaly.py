@@ -633,7 +633,13 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
         zorder=101,
     )
 
-    axes.set_ylim(chart_df["tcw"].min() - 0.012, chart_df["tcw"].max() + 0.018)
+    y_lo = float(chart_df["tcw"].min()) - 0.008
+    y_hi = float(chart_df["tcw"].max()) + 0.016
+    axes.set_ylim(y_lo, y_hi)
+    # Keep the lowest label off the year labels along the bottom spine.
+    y_start = np.ceil((y_lo + 0.012) * 50) / 50
+    y_stop = np.floor((y_hi - 0.006) * 50) / 50
+    axes.set_yticks(np.round(np.arange(y_start, y_stop + 0.001, 0.02), 2))
 
     median = chart_df["tcw"].median()
     p.axhline(median, linewidth=10, color="white", linestyle="--", alpha=0.5, zorder=90)
