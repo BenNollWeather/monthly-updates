@@ -575,7 +575,7 @@ def year_tick_labels(years: list[int]) -> list[str]:
     return labels
 
 
-def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking: int, num_years: int, month2: str, image_dir: Path) -> Path:
+def plot_ranked_annual_chart(sorted_df: pd.DataFrame, month2: str, image_dir: Path) -> Path:
     # Start from a clean plotting state so this chart renders correctly on the first run.
     plt.close("all")
     sns.reset_defaults()
@@ -594,8 +594,8 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
     )
     plt.rcParams["font.family"] = "Libre Franklin"
 
-    # sorted_df is ranked from moistest to driest for the ranking text.
-    # For the chart itself, plot chronologically so the x-axis starts at 1940.
+    # sorted_df is ranked from moistest to driest for the moistest-years note.
+    # The chart itself is chronological, so the x-axis starts at 1940.
     chart_df = (
         sorted_df[["valid_time", "tcw"]]
         .dropna()
@@ -685,16 +685,7 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
         p.spines[spine].set_visible(False)
 
     p.set_xlabel("")
-    p.set_ylabel(
-        "in.",
-        color="white",
-        fontsize=26,
-        weight="bold",
-        rotation=0,
-        ha="right",
-        va="center",
-        labelpad=18,
-    )
+    p.set_ylabel("")
     p.yaxis.grid(False)
     p.xaxis.grid(False)
 
@@ -708,7 +699,7 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
     figure.text(
         0.08,
         0.945,
-        f"Average Global Atmospheric Moisture during {month2}",
+        f"Average global atmospheric moisture during {month2}",
         color="white",
         weight="bold",
         fontsize=32,
@@ -725,21 +716,29 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
         ha="right",
         va="center",
     )
-    figure.text(0.08, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="left", va="center")
-    figure.text(0.20, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
-    figure.text(
-        0.98,
-        0.035,
-        f"{current_year} ranking: {ranking} out of {num_years}",
-        color="white",
-        weight="bold",
-        fontsize=26,
-        ha="right",
-        va="center",
-    )
+    figure.text(0.08, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
+    figure.text(0.98, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="right", va="center")
 
     plt.setp(p.get_xticklabels(), fontweight="bold")
     plt.setp(p.get_yticklabels(), fontweight="bold")
+    # Sit the unit on the same row as the top tick, hard against that label.
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    tick_labels = [label for label in p.get_yticklabels() if label.get_text().strip()]
+    top_label = max(tick_labels, key=lambda label: label.get_window_extent(renderer).y1)
+    box = top_label.get_window_extent(renderer)
+    gap = figure.dpi * 4 / 72.0
+    unit_x, unit_y = figure.transFigure.inverted().transform((box.x0 - gap, (box.y0 + box.y1) / 2.0))
+    figure.text(
+        unit_x,
+        unit_y,
+        "in.",
+        color="white",
+        weight="bold",
+        fontsize=30,
+        ha="right",
+        va="center",
+    )
     # Seaborn remaps the shorthand "k" to a dark gray. Use real black.
     figure.patch.set_facecolor("#000000")
     axes.set_facecolor("#000000")
@@ -861,17 +860,8 @@ def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
             print(f"KeyError while selecting year {year}: {exc}")
 
     axes.yaxis.set_tick_params(labelcolor="white", labelsize=30)
-    axes.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.2f"))
-    axes.set_ylabel(
-        "in.",
-        color="white",
-        fontsize=26,
-        weight="bold",
-        rotation=0,
-        ha="right",
-        va="center",
-        labelpad=18,
-    )
+    axes.yaxis.set_major_formatter(mticker.FuncFormatter(lambda value, _pos: f"{value:.2f} in."))
+    axes.set_ylabel("")
     axes.xaxis.set_tick_params(labelcolor="white", labelsize=30)
     axes.set_xticks(months)
     axes.set_xticklabels(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], fontsize=30, fontweight="bold")
@@ -919,9 +909,9 @@ def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
     axes.set_facecolor("#000000")
     plt.setp(axes.get_xticklabels(), fontweight="bold")
     plt.setp(axes.get_yticklabels(), fontweight="bold")
-    figure.subplots_adjust(left=0.08, right=0.98, top=0.90, bottom=0.22)
-    figure.text(0.08, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="left", va="center")
-    figure.text(0.20, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
+    figure.subplots_adjust(left=0.11, right=0.98, top=0.90, bottom=0.22)
+    figure.text(0.11, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
+    figure.text(0.98, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="right", va="center")
 
     image_dir.mkdir(parents=True, exist_ok=True)
     out_path = image_dir / "tcw_monthly_chart.png"
@@ -1328,8 +1318,8 @@ def main() -> None:
         write_record_high_csv(ds, target, datawrapper_dir)
 
     annual = annual_weighted_series(xr.open_dataset(single_month_path))
-    sorted_df, current_year, ranking, num_years, _, _ = prepare_ranked_annual_dataframe(annual, target.year)
-    plot_ranked_annual_chart(sorted_df, current_year, ranking, num_years, month2, image_dir)
+    sorted_df, _, _, _, _, _ = prepare_ranked_annual_dataframe(annual, target.year)
+    plot_ranked_annual_chart(sorted_df, month2, image_dir)
     plot_moistening_stripes(annual, image_dir)
 
     monthly_path = download_all_month_pwat(download_dir, target, args.skip_download, args.download_retries, args.retry_sleep)
