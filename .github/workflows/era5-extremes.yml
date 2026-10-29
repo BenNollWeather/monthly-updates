@@ -1,0 +1,91 @@
+name: Monthly ERA5 extremes
+on:
+  workflow_dispatch:
+    inputs:
+      upload_to_s3:
+        description: "Upload imagery and publish the heartbeat"
+        required: false
+        default: true
+        type: boolean
+      scheduled:
+        description: "Count this run as the monthly scheduled event"
+        required: false
+        default: false
+        type: boolean
+concurrency:
+  group: monthly-era5-extremes
+  cancel-in-progress: false
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      WORK_ROOT: /tmp/monthly-updates/era5-extremes
+      AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      AWS_PROFILE: ""
+      STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
+      PRODUCT_ID: era5-extremes
+      PRODUCT_SCHEDULE: "04:11 UTC on the 6th"
+      PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/atmospheric_moisture/era5_temp_percentile.png","s3://bennollweather/atmospheric_moisture/era5_precip_percentile.png","s3://bennollweather/atmospheric_moisture/era5_wind_percentile.png","s3://bennollweather/atmospheric_moisture/era5_humidity_percentile.png","s3://bennollweather/atmospheric_moisture/era5_sst_percentile.png","s3://bennollweather/atmospheric_moisture/upper_decile_chart.png"]'
+      MPLCONFIGDIR: /tmp/matplotlib
+      CARTOPY_DATA_DIR: /tmp/cartopy
+      PYTHONUNBUFFERED: "1"
+      SKIP_UPLOAD: "1"
+      USE_SYSTEM_PYTHON: "1"
+      KEEP_WORK: "1"
+      SCHEDULED_EVENT: ${{ inputs.scheduled }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements/maps.txt
+      - name: Install map libraries
+        run: pip install -r requirements/maps.txt
+
+      - name: Record start
+        run: |
+          echo "RUN_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+          echo "RUN_STARTED_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Configure CDS credentials
+        env:
+          CDSAPI_KEY: ${{ secrets.CDSAPI_KEY }}
+          CDSAPI_URL: ${{ secrets.CDSAPI_URL }}
+        run: bash .github/scripts/write_cdsapirc.sh
+
+      - name: Process
+        id: process
+        run: bash extremes/bin/run_era5_extremes.sh
+
+      - name: Configure temporary AWS credentials
+        if: always() && (inputs.upload_to_s3)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: era5-extremes-${{ github.run_id }}
+      - name: Upload imagery
+        id: upload
+        if: steps.process.outcome == 'success' && (inputs.upload_to_s3)
+        run: |
+          aws s3 sync "$WORK_ROOT/upload_ready" s3://bennollweather/atmospheric_moisture/ --exclude ".DS_Store" --only-show-errors
+      - name: Publish heartbeat
+        if: always() && (inputs.upload_to_s3)
+        run: |
+          if [[ "${{ steps.process.outcome }}" == "success" && "${{ steps.upload.outcome }}" == "success" ]]; then
+            bash .github/scripts/report_status.sh success "Workflow completed and production uploads succeeded."
+          else
+            bash .github/scripts/report_status.sh failure "Processing or production upload failed."
+          fi
+      - name: Delete downloads, imagery, and credentials
+        if: always()
+        run: bash .github/scripts/cleanup.sh
+      - name: Fail the job when processing failed
+        if: steps.process.outcome == 'failure'
+        run: exit 1
