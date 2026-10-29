@@ -449,11 +449,6 @@ current_month = current_month.strftime("%B %Y")
 # %% Notebook cell 16
 current_month
 
-# %% Notebook cell 17
-current_month_no_year = target_month
-
-current_month_no_year = current_month_no_year.strftime("%B")
-
 # %% Notebook cell 18
 date = parse('today GMT')
 
@@ -1437,8 +1432,8 @@ ax.plot(
 
 # Axes formatting
 ax.set_xticks(np.arange(years[0], years[-1] + 1, 10))
-ax.tick_params(axis='x', labelrotation=45, labelsize=21, colors='white', width=2, pad=8)
-ax.tick_params(axis='y', labelsize=21, colors='white', width=2, length=0)
+ax.tick_params(axis='x', labelrotation=45, labelsize=30, colors='white', width=2, pad=10)
+ax.tick_params(axis='y', labelsize=30, colors='white', width=2, length=0)
 for label in ax.get_xticklabels():
     label.set_ha('right')
     label.set_fontweight('bold')
@@ -1450,39 +1445,14 @@ ax.set_ylim(min(tp_q90_values) - 1, max(tp_q90_values) + 1)
 ax.margins(x=0.02)
 ax.grid(axis='y', color='white', alpha=0.14, linewidth=1)
 
-# Title includes the full month name and latest coverage value.
+# Title uses the month and year. The house style abbreviates the month.
 ax.set_title(
-    f'Global upper-decile precipitation coverage — {current_month_no_year}, {tp_q90_values[-1]:.1f}%',
-    fontsize=28,
+    f'Global upper-decile precipitation coverage — {current_month}, {tp_q90_values[-1]:.1f}%',
+    fontsize=40,
     color='white',
     weight='bold',
     loc='left',
     pad=28,
-)
-
-# Credit is anchored in the upper-right where the separate value callout used to be.
-ax.text(
-    0.99,
-    1.015,
-    '@BenNollWeather',
-    transform=ax.transAxes,
-    ha='right',
-    va='bottom',
-    fontsize=14,
-    color='white',
-    weight='bold',
-    bbox=dict(facecolor='dimgray', alpha=0.75, edgecolor='none', boxstyle='round,pad=0.3'),
-)
-ax.text(
-    0.015,
-    0.02,
-    data_period_label,
-    transform=ax.transAxes,
-    ha='left',
-    va='bottom',
-    fontsize=12,
-    color='white',
-    weight='bold',
 )
 
 # Styling
@@ -1490,7 +1460,9 @@ ax.set_facecolor('black')
 fig.set_facecolor('black')
 for spine in ax.spines.values():
     spine.set_visible(False)
-fig.subplots_adjust(left=0.07, right=0.97, top=0.87, bottom=0.12)
+fig.subplots_adjust(left=0.08, right=0.97, top=0.88, bottom=0.18)
+fig.text(0.08, 0.02, '@BenNollWeather', ha='left', va='bottom', fontsize=18, color='white', weight='bold')
+fig.text(0.97, 0.02, data_period_label, ha='right', va='bottom', fontsize=18, color='white', weight='bold')
 
 # Save the plot
 plt.savefig('DISPOSABLE/upper_decile_chart_{}.png'.format(current_month), facecolor=fig.get_facecolor(), bbox_inches='tight', dpi=100)
