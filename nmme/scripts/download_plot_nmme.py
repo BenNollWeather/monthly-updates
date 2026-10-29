@@ -420,7 +420,7 @@ def make_nino34_table(dset_concat_sst, dl_month: str) -> pd.DataFrame:
     drop_cols = [col for col in ["valid_time", "target", "step"] if col in df.columns]
     df = df.drop(columns=drop_cols)
     df["SST Anomaly (°C)"] = df["SST Anomaly (°C)"].round(2)
-    df["Month"] = pd.date_range(start=dl_month, periods=len(df), freq="M").to_period("M")
+    df["Month"] = pd.date_range(start=dl_month, periods=len(df), freq="ME").to_period("M")
     return df[["Month", "SST Anomaly (°C)"]]
 
 

@@ -66,14 +66,20 @@ def _write_shx(path: Path, shp_path: Path) -> None:
 
 
 def _write_dbf(path: Path, name: str) -> None:
-    field = b"NAME" + b"\x00" * 7 + b"C" + struct.pack("<I", 1) + struct.pack("<B", 32) + b"\x00" * 15
+    """Write one dBASE III record. pyshp expects the 0x0D terminator at byte 64."""
+    value = name.encode("ascii")[:32].ljust(32)
+    field = bytearray(32)
+    field[0:4] = b"NAME"
+    field[11:12] = b"C"
+    field[16] = 32
     header = bytearray(32)
-    header[0] = 3
-    header[8:10] = struct.pack("<H", 1)
-    header[10:12] = struct.pack("<H", 32 + 32 + 1)
-    header[12:14] = struct.pack("<H", 33)
-    body = b" " + name.encode("ascii")[:32].ljust(32) + b"\x1a"
-    path.write_bytes(bytes(header) + field + b"\r" + body)
+    header[0] = 0x03
+    header[1:4] = bytes((26, 10, 29))
+    header[4:8] = struct.pack("<I", 1)
+    header[8:10] = struct.pack("<H", 65)
+    header[10:12] = struct.pack("<H", 33)
+    record = b" " + value
+    path.write_bytes(bytes(header) + bytes(field) + b"\r" + record)
 
 
 def write_regions(out_dir: Path) -> None:

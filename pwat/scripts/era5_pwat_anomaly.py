@@ -524,7 +524,7 @@ def annual_weighted_series(ds: xr.Dataset) -> xr.Dataset:
     latitudes = ds["latitude"]
     cos_lat = np.cos(np.deg2rad(latitudes))
     weights = cos_lat / cos_lat.sum()
-    annual = ds.resample(valid_time="1Y").mean("valid_time")
+    annual = ds.resample(valid_time="YE").mean("valid_time")
     return annual.weighted(weights).mean("latitude").mean("longitude")
 
 
