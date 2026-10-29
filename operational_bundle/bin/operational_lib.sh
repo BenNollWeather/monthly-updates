@@ -131,7 +131,20 @@ run_py() {
     echo "Missing script: $script" >&2
     exit 1
   fi
-  "$PYTHON_BIN" "$script" 2>&1 | tee "$log"
+  # Wrap CDS retrieves so a month that has not been published exits 75.
+  RELEASE_SCRIPT="$script" RELEASE_ROOT="$REPO_ROOT" "$PYTHON_BIN" -c '
+import os
+import runpy
+import sys
+from pathlib import Path
+script = Path(os.environ["RELEASE_SCRIPT"]).resolve()
+root = Path(os.environ["RELEASE_ROOT"]).resolve()
+sys.path.insert(0, str(root))
+sys.path.insert(0, str(script.parent))
+from lib.cds_not_ready import install
+install()
+runpy.run_path(str(script), run_name="__main__")
+' 2>&1 | tee "$log"
 }
 
 clean_grib_idx() {

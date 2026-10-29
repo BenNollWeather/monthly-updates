@@ -10,6 +10,9 @@ PYTHON_BIN="${PYTHON_BIN:-python}"
 WORK_ROOT="${WORK_ROOT:-${TMPDIR:-/tmp}/monthly-updates/nmme}"
 SHAPEFILES_DIR="${SHAPEFILES_DIR:-$WORK_ROOT/shapefiles}"
 export WORK_ROOT SHAPEFILES_DIR
+# shellcheck source=../../lib/forecast_month.sh
+source "$REPO_ROOT/lib/forecast_month.sh"
+require_forecast_month
 
 if [[ ! -f "$SCRIPT_PATH" ]]; then
   echo "ERROR: Python script not found: $SCRIPT_PATH" >&2

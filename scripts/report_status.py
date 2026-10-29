@@ -13,7 +13,8 @@ from pathlib import Path
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--product", required=True)
-    parser.add_argument("--status", choices=["success", "failure"], required=True)
+    parser.add_argument("--status", choices=["success", "failure", "waiting"], required=True)
+    parser.add_argument("--retry-until", default=os.environ.get("RETRY_UNTIL", ""))
     parser.add_argument("--started-utc", required=True)
     parser.add_argument("--runtime-seconds", type=int, required=True)
     parser.add_argument("--schedule", required=True)
@@ -54,6 +55,8 @@ def main() -> None:
         "outputs": json.loads(args.outputs_json),
         "message": args.message,
     }
+    if args.retry_until.strip():
+        payload["retry_until"] = args.retry_until.strip()
     destination = Path(args.output)
     destination.parent.mkdir(parents=True, exist_ok=True)
     destination.write_text(json.dumps(payload, indent=2) + "\n")

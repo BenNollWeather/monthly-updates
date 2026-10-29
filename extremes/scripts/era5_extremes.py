@@ -44,11 +44,11 @@ def _parse_cli():
     parser.add_argument("--aws-profile", default=os.environ.get("AWS_PROFILE", ""), help="AWS profile to use for upload. Empty uses the ambient credentials.")
     parser.add_argument("--bucket", default="bennollweather", help="S3 bucket name.")
     parser.add_argument("--prefix", default="atmospheric_moisture", help="S3 prefix for uploaded imagery.")
-    parser.add_argument("--target-month", default=None, help="Force a specific month (YYYY-MM) instead of auto-detecting the latest available month.")
+    parser.add_argument("--target-month", default=None, help="Month to plot (YYYY-MM). Defaults to the month that just ended.")
     parser.add_argument("--skip-datawrapper", action="store_true", help="Skip the upper-decile precipitation CSV/GeoJSON exports.")
     parser.add_argument("--geojson-simplify", type=float, default=0.1, help="Douglas-Peucker tolerance (degrees) for the upper-decile GeoJSON; 0 disables.")
     parser.add_argument("--geojson-min-area", type=float, default=0.0, help="Drop GeoJSON polygons smaller than this many square degrees.")
-    parser.add_argument("--max-lookback", type=int, default=6, help="How many months back to search for the latest available ERA5 month.")
+    parser.add_argument("--max-lookback", type=int, default=6, help="Ignored. Only the month that just ended is accepted.")
     return parser.parse_args()
 
 ARGS = _parse_cli()
@@ -143,6 +143,10 @@ def download_cds_with_retries(client, dataset: str, request: dict, target: Path,
                 print(f"Removing failed partial file: {target}")
                 target.unlink()
             if attempt == retries:
+                from lib.release_wait import exit_not_ready, is_not_ready
+
+                if is_not_ready(exc):
+                    exit_not_ready(f"ERA5 for the requested month is not available yet: {exc}")
                 raise
             print(f"Retrying in {sleep_seconds} seconds...")
             time.sleep(sleep_seconds)
@@ -182,27 +186,10 @@ import os
 # %% Notebook cell 3
 from dateparser import parse
 
-# ---------------------------------------------------------------------------
-# Latest-available-month detection
-# ---------------------------------------------------------------------------
-# ERA5 monthly means are published a few days after the month ends, so
-# "last month" is not always available yet. Instead of assuming it is (and
-# silently ending up with the same month from the previous year), probe CDS
-# with a tiny request, stepping back one month at a time until data is found.
-# The full download then requests that month for 1940..that year, and the
-# result is checked to make sure the final time step really is that month.
+# The extremes job plots the month that just ended. It does not substitute an
+# older month. A missing month exits 75 so the workflow can retry.
 
 ERA5_MONTHLY_DATASET = "reanalysis-era5-single-levels-monthly-means"
-_NO_DATA_PATTERNS = (
-    "no data",
-    "nodata",
-    "not available",
-    "not yet available",
-    "is not available yet",
-    "valid combination",
-    "none of the data",
-    "empty",
-)
 
 
 def _parse_year_month(value: str) -> pd.Timestamp:
@@ -214,84 +201,23 @@ def _parse_year_month(value: str) -> pd.Timestamp:
     return pd.Timestamp(year=ts.year, month=ts.month, day=1)
 
 
-def _times_in_download(path: Path) -> pd.DatetimeIndex:
-    """Return all valid_time/time values in a CDS download (NetCDF or ZIP of NetCDFs)."""
-    import tempfile
-    import zipfile as _zipfile
+def require_month_just_ended(client, probe_dir: Path) -> pd.Timestamp:
+    """Return the previous calendar month, or exit 75 when CDS does not have it yet."""
+    from lib.release_wait import TransientReleaseError, era5_month_available, exit_not_ready
 
-    path = Path(path)
-    nc_paths: list[Path] = []
-    tmpdir = None
-    if _zipfile.is_zipfile(path):
-        tmpdir = tempfile.TemporaryDirectory()
-        with _zipfile.ZipFile(path) as zf:
-            zf.extractall(tmpdir.name)
-        nc_paths = sorted(Path(tmpdir.name).rglob("*.nc"))
-    else:
-        nc_paths = [path]
-
-    times: list[pd.Timestamp] = []
-    try:
-        for nc in nc_paths:
-            with xr.open_dataset(nc) as probe_ds:
-                for name in ("valid_time", "time"):
-                    if name in probe_ds.coords or name in probe_ds.variables:
-                        vals = pd.to_datetime(np.asarray(probe_ds[name].values).ravel())
-                        times.extend(v for v in vals if not pd.isna(v))
-                        break
-    finally:
-        if tmpdir is not None:
-            tmpdir.cleanup()
-    return pd.DatetimeIndex(times)
-
-
-def _month_is_available(client, year: int, month: int, probe_dir: Path, attempts: int = 2, sleep_seconds: int = 15) -> bool:
-    """Request one variable over a tiny box for a single year/month and check data comes back."""
-    probe_dir.mkdir(parents=True, exist_ok=True)
-    target = probe_dir / f"probe_{year}_{month:02d}.nc"
-    request = {
-        "product_type": ["monthly_averaged_reanalysis"],
-        "variable": ["2m_temperature"],
-        "year": [str(year)],
-        "month": [f"{month:02d}"],
-        "time": ["00:00"],
-        "area": [1, 0, 0, 1],  # N, W, S, E — tiny box keeps the probe fast
-        "data_format": "netcdf",
-        "download_format": "unarchived",
-    }
-    for attempt in range(1, attempts + 1):
-        if target.exists():
-            target.unlink()
-        try:
-            client.retrieve(ERA5_MONTHLY_DATASET, request).download(str(target))
-            times = _times_in_download(target)
-            return any(t.year == year and t.month == month for t in times)
-        except Exception as exc:
-            msg = str(exc).lower()
-            if any(p in msg for p in _NO_DATA_PATTERNS):
-                return False
-            print(f"Availability probe for {year}-{month:02d} failed (attempt {attempt}/{attempts}): {exc}")
-            if attempt < attempts:
-                time.sleep(sleep_seconds)
-        finally:
-            if target.exists():
-                target.unlink()
-    print(f"Treating {year}-{month:02d} as unavailable after {attempts} failed probes.")
-    return False
-
-
-def find_latest_available_month(client, probe_dir: Path, max_lookback: int = 6) -> pd.Timestamp:
-    """Return the most recent month (first-of-month Timestamp) with ERA5 monthly-mean data on CDS."""
     today = pd.Timestamp.today().normalize()
     first_of_this_month = pd.Timestamp(year=today.year, month=today.month, day=1)
-    for back in range(1, max_lookback + 1):
-        candidate = first_of_this_month - pd.DateOffset(months=back)
-        print(f"Checking CDS for ERA5 monthly data: {candidate:%B %Y} ...")
-        if _month_is_available(client, candidate.year, candidate.month, probe_dir):
-            print(f"Latest available ERA5 month: {candidate:%B %Y}")
-            return candidate
-        print(f"  {candidate:%B %Y} not available yet.")
-    raise RuntimeError(f"No ERA5 monthly data found in the last {max_lookback} months.")
+    candidate = first_of_this_month - pd.DateOffset(months=1)
+    candidate = pd.Timestamp(year=candidate.year, month=candidate.month, day=1)
+    print(f"Checking CDS for the month that just ended: {candidate:%B %Y} ...")
+    try:
+        available = era5_month_available(client, int(candidate.year), int(candidate.month), probe_dir)
+    except TransientReleaseError as exc:
+        exit_not_ready(f"{candidate:%B %Y} could not be confirmed on CDS: {exc}")
+    if not available:
+        exit_not_ready(f"{candidate:%B %Y} is not on CDS yet. The scheduled run will check again.")
+    print(f"Month just ended is available: {candidate:%B %Y}")
+    return candidate
 
 
 def verify_latest_month(times, target: pd.Timestamp, label: str = "ERA5 data") -> None:
@@ -339,7 +265,7 @@ elif ARGS.skip_download:
         raise SystemExit("--skip-download was given but no previous download was found; pass --target-month YYYY-MM.")
     print(f"Using latest locally downloaded month: {target_month:%B %Y}")
 else:
-    target_month = find_latest_available_month(client, WORK_DIR / "probe", max_lookback=ARGS.max_lookback)
+    target_month = require_month_just_ended(client, WORK_DIR / "probe")
 
 month = target_month
 month_tag = target_month.strftime("%Y_%m")

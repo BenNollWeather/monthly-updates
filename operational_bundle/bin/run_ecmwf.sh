@@ -7,6 +7,9 @@ export REQUESTS_CA_BUNDLE=""
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=operational_lib.sh
 source "$SCRIPT_DIR/operational_lib.sh"
+# shellcheck source=../../lib/forecast_month.sh
+source "$REPO_ROOT/lib/forecast_month.sh"
+require_forecast_month
 
 ensure_env
 ensure_regions

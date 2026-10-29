@@ -17,6 +17,9 @@ fi
 if [[ "${SKIP_UPLOAD:-0}" == "1" ]]; then
   EXTRA_ARGS+=(--skip-upload)
 fi
+if [[ -n "${TARGET_MONTH:-}" ]]; then
+  EXTRA_ARGS+=(--target-month "$TARGET_MONTH")
+fi
 
 if [[ ! -f "$SCRIPT_PATH" ]]; then
   echo "ERROR: Python script not found: $SCRIPT_PATH" >&2

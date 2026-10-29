@@ -12,12 +12,28 @@ on:
         required: false
         default: false
         type: boolean
+      wait_for_data:
+        description: "Check again until this month's data is available"
+        required: false
+        default: true
+        type: boolean
+      target_month:
+        description: "Data month YYYY-MM. Leave blank to choose it from today's date."
+        required: false
+        default: ""
+        type: string
+      startup_delay_seconds:
+        description: "Pause this many seconds before the first check. Automatic retries set this."
+        required: false
+        default: "0"
+        type: string
 concurrency:
   group: monthly-era5-extremes
   cancel-in-progress: false
 permissions:
   contents: read
   id-token: write
+  actions: write
 jobs:
   run:
     runs-on: ubuntu-latest
@@ -37,6 +53,14 @@ jobs:
       USE_SYSTEM_PYTHON: "1"
       KEEP_WORK: "1"
       SCHEDULED_EVENT: ${{ inputs.scheduled }}
+      WORKFLOW_FILE: era5-extremes.yml
+      DATA_WAIT_INTERVAL_SECONDS: "1800"
+      DATA_MAX_WAIT_MINUTES: "240"
+      DATA_JOB_TIMEOUT_MINUTES: "360"
+      DATA_PROCESS_BUDGET_MINUTES: "60"
+      WAIT_FOR_DATA: ${{ inputs.wait_for_data }}
+      TARGET_MONTH: ${{ inputs.target_month }}
+      STARTUP_DELAY_SECONDS: ${{ inputs.startup_delay_seconds }}
     steps:
       - uses: actions/checkout@v4
 
@@ -59,9 +83,22 @@ jobs:
           CDSAPI_URL: ${{ secrets.CDSAPI_URL }}
         run: bash .github/scripts/write_cdsapirc.sh
 
+      - name: Wait for the monthly release
+        id: wait
+        timeout-minutes: 300
+        run: bash .github/scripts/wait_for_release.sh
+
       - name: Process
         id: process
-        run: bash extremes/bin/run_era5_extremes.sh
+        if: steps.wait.outputs.action == 'process'
+        env:
+          TARGET_MONTH: ${{ steps.wait.outputs.target_month }}
+        run: |
+          set +e
+          bash extremes/bin/run_era5_extremes.sh
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit $code
 
       - name: Configure temporary AWS credentials
         if: always() && (inputs.upload_to_s3)
@@ -76,17 +113,24 @@ jobs:
         run: |
           if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           aws s3 sync "$WORK_ROOT/upload_ready" s3://bennollweather/atmospheric_moisture/ --exclude ".DS_Store" --only-show-errors
-      - name: Publish heartbeat
-        if: always() && (inputs.upload_to_s3)
-        run: |
-          if [[ "${{ steps.process.outcome }}" == "success" && "${{ steps.upload.outcome }}" == "success" ]]; then
-            bash .github/scripts/report_status.sh success "Workflow completed and production uploads succeeded."
-          else
-            bash .github/scripts/report_status.sh failure "Processing or production upload failed."
-          fi
+      - name: Publish heartbeat and queue the next check
+        id: release
+        if: always()
+        env:
+          WAIT_ACTION: ${{ steps.wait.outputs.action }}
+          WAIT_MESSAGE: ${{ steps.wait.outputs.message }}
+          RESOLVED_TARGET_MONTH: ${{ steps.wait.outputs.target_month }}
+          RETRY_UNTIL: ${{ steps.wait.outputs.retry_until }}
+          PROCESS_EXIT_CODE: ${{ steps.process.outputs.exit_code }}
+          PROCESS_OUTCOME: ${{ steps.process.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
+          UPLOAD_TO_S3: ${{ inputs.upload_to_s3 }}
+          SCHEDULED_INPUT: ${{ inputs.scheduled }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/handle_release_result.sh
       - name: Delete downloads, imagery, and credentials
         if: always()
         run: bash .github/scripts/cleanup.sh
-      - name: Fail the job when processing failed
-        if: steps.process.outcome == 'failure'
+      - name: Fail the job when the release failed
+        if: always() && steps.release.outputs.outcome == 'fail'
         run: exit 1

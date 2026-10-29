@@ -24,6 +24,9 @@ args=(
 if [[ "${SKIP_UPLOAD:-0}" == "1" ]]; then
   args+=(--skip-upload)
 fi
+if [[ -n "${TARGET_MONTH:-}" ]]; then
+  args+=(--target-month "$TARGET_MONTH")
+fi
 
 "$PYTHON_BIN" "$SCRIPT_PATH" "${args[@]}" "$@"
 status=$?

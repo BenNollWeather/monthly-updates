@@ -37,6 +37,7 @@ from pathlib import Path
 import shutil
 from shutil import copyfileobj
 from urllib.parse import urlparse
+from urllib.error import HTTPError
 from urllib.request import urlopen
 
 import cmocean
@@ -127,9 +128,20 @@ def download_files(urls: dict[str, str], paths: Paths, dl_month: str) -> dict[st
             print(f"Already exists: {out_path}")
             continue
         print(f"Downloading {url}")
-        with urlopen(url, context=context) as response:
-            with open(out_path, "wb") as out_file:
-                copyfileobj(response, out_file)
+        try:
+            with urlopen(url, context=context) as response:
+                with open(out_path, "wb") as out_file:
+                    copyfileobj(response, out_file)
+        except HTTPError as exc:
+            if exc.code == 404:
+                from lib.release_wait import exit_not_ready
+
+                exit_not_ready(f"NMME file is not published yet ({exc.code}): {url}")
+            raise
+        if not out_path.exists() or out_path.stat().st_size == 0:
+            from lib.release_wait import exit_not_ready
+
+            exit_not_ready(f"NMME file is not published yet: {url}")
         print(f"Downloaded: {out_path}")
     return files
 
