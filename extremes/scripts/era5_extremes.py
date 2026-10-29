@@ -612,7 +612,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -741,7 +741,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -870,7 +870,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -999,7 +999,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -1128,7 +1128,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -1257,7 +1257,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -1385,7 +1385,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True
@@ -1463,7 +1463,7 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
-gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='k', alpha=0.5, linestyle='--')
+gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color='k', alpha=0.5, linestyle='--')
 gl.xlabels_top = False
 gl.ylabels_right = False
 gl.xlines = True

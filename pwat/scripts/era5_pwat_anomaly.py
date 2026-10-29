@@ -39,6 +39,7 @@ import matplotlib.pyplot as plt
 import matplotlib.ticker as mticker
 from matplotlib.colors import BoundaryNorm, Normalize
 from matplotlib.lines import Line2D
+from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import pandas as pd
 import seaborn as sns
@@ -465,7 +466,7 @@ def plot_tcw_map(perc: xr.DataArray, anom: xr.DataArray, month1: str, image_dir:
     ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
     ax.add_feature(states_provinces, edgecolor="k")
 
-    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color="k", alpha=0.5, linestyle="--")
+    gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=False, linewidth=1, color="k", alpha=0.5, linestyle="--")
     gl.xlabels_top = False
     gl.ylabels_right = False
     gl.xlines = True
@@ -578,7 +579,20 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
     # Start from a clean plotting state so this chart renders correctly on the first run.
     plt.close("all")
     sns.reset_defaults()
-    sns.set_theme(style="dark", rc={"axes.facecolor": "k", "figure.facecolor": "k"})
+    sns.set_theme(
+        style="dark",
+        rc={
+            "axes.facecolor": "k",
+            "figure.facecolor": "k",
+            "savefig.facecolor": "k",
+            "axes.edgecolor": "k",
+            "text.color": "white",
+            "axes.labelcolor": "white",
+            "xtick.color": "white",
+            "ytick.color": "white",
+        },
+    )
+    plt.rcParams["font.family"] = "Libre Franklin"
 
     # sorted_df is ranked from moistest to driest for the ranking text.
     # For the chart itself, plot chronologically so the x-axis starts at 1940.
@@ -592,7 +606,8 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
     chart_df["valid_time"] = chart_df["valid_time"].astype(int)
 
     figure, axes = plt.subplots(figsize=(25, 15))
-    axes.set_facecolor("k")
+    figure.patch.set_facecolor("#000000")
+    axes.set_facecolor("#000000")
 
     p = sns.lineplot(
         data=chart_df,
@@ -618,22 +633,34 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
         zorder=101,
     )
 
-    axes.set_ylim(chart_df["tcw"].min() - 0.01, chart_df["tcw"].max() + 0.01)
+    axes.set_ylim(chart_df["tcw"].min() - 0.012, chart_df["tcw"].max() + 0.018)
 
     median = chart_df["tcw"].median()
     p.axhline(median, linewidth=10, color="white", linestyle="--", alpha=0.5, zorder=90)
-    p.text(1982, median, "MEDIAN", color="white", weight="bold", fontsize=24, va="center", ha="left", backgroundcolor="k", alpha=0.5, zorder=102)
-
     p90 = chart_df["tcw"].quantile(0.9)
     p.axhline(p90, linewidth=10, color="white", linestyle="--", alpha=0.5, zorder=90)
-    p.text(1982, p90, "90TH PERCENTILE", color="white", weight="bold", fontsize=24, va="center", ha="left", backgroundcolor="k", alpha=0.5, zorder=102)
-
     p10 = chart_df["tcw"].quantile(0.1)
     p.axhline(p10, linewidth=10, color="white", linestyle="--", alpha=0.5, zorder=90)
-    p.text(1982, p10, "10TH PERCENTILE", color="white", weight="bold", fontsize=24, va="center", ha="left", backgroundcolor="k", alpha=0.5, zorder=102)
 
     min_year = int(chart_df["valid_time"].min())
     max_year = int(chart_df["valid_time"].max())
+    # Names sit just to the right of the axes, on the line they describe.
+    line_label = blended_transform_factory(axes.transAxes, axes.transData)
+    for level, name in ((p90, "90th percentile"), (median, "Median"), (p10, "10th percentile")):
+        axes.text(
+            1.015,
+            level,
+            name,
+            transform=line_label,
+            color="white",
+            weight="bold",
+            fontsize=18,
+            va="center",
+            ha="left",
+            clip_on=False,
+            zorder=102,
+        )
+
     first_tick = (min_year // 10) * 10
     if first_tick < min_year:
         first_tick += 10
@@ -652,81 +679,68 @@ def plot_ranked_annual_chart(sorted_df: pd.DataFrame, current_year: int, ranking
         p.spines[spine].set_visible(False)
 
     p.set_xlabel("")
-    p.set_ylabel("")
+    p.set_ylabel(
+        "in.",
+        color="white",
+        fontsize=26,
+        weight="bold",
+        rotation=0,
+        ha="right",
+        va="center",
+        labelpad=18,
+    )
     p.yaxis.grid(False)
     p.xaxis.grid(False)
 
-    p.set_title(
-        f"Average Global Atmospheric Moisture (in) during {month2}",
-        loc="left",
-        color="white",
-        weight="bold",
-        fontsize=36,
-        bbox=dict(facecolor="dimgray", alpha=0.5, edgecolor="k", boxstyle="round"),
+    moistest = "Moistest years: {}, {}, {}, {}".format(
+        int(sorted_df["valid_time"].iloc[0]),
+        int(sorted_df["valid_time"].iloc[1]),
+        int(sorted_df["valid_time"].iloc[2]),
+        int(sorted_df["valid_time"].iloc[3]),
     )
-    p.text(
-        0.005,
-        0.95,
-        "Data: ERA5",
+    figure.subplots_adjust(left=0.08, right=0.84, top=0.88, bottom=0.14)
+    figure.text(
+        0.08,
+        0.945,
+        f"Average Global Atmospheric Moisture during {month2}",
         color="white",
         weight="bold",
-        horizontalalignment="left",
-        verticalalignment="bottom",
-        transform=p.transAxes,
+        fontsize=32,
+        ha="left",
+        va="center",
+    )
+    figure.text(
+        0.98,
+        0.945,
+        moistest,
+        color="white",
+        weight="bold",
         fontsize=22,
-        bbox=dict(facecolor="dimgray", alpha=0.5, edgecolor="black", boxstyle="round"),
+        ha="right",
+        va="center",
     )
-    p.set_title(
-        "Moistest years: {}, {}, {}, {}".format(
-            sorted_df["valid_time"].iloc[0],
-            sorted_df["valid_time"].iloc[1],
-            sorted_df["valid_time"].iloc[2],
-            sorted_df["valid_time"].iloc[3],
-        ),
-        loc="right",
-        color="white",
-        fontsize=30,
-        weight="bold",
-        bbox=dict(facecolor="dimgray", alpha=0.5, edgecolor="black", boxstyle="round"),
-    )
-
-    axes.text(
-        0.91,
-        0.96,
-        "@BenNollWeather",
-        horizontalalignment="left",
-        verticalalignment="bottom",
-        transform=axes.transAxes,
-        color="white",
-        weight="bold",
-        fontsize=16,
-        bbox=dict(facecolor="dimgray", alpha=0.5, edgecolor="black", boxstyle="round"),
-        zorder=102,
-    )
-    axes.text(
-        0.69,
-        0.03,
+    figure.text(0.08, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="left", va="center")
+    figure.text(0.20, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
+    figure.text(
+        0.98,
+        0.035,
         f"{current_year} ranking: {ranking} out of {num_years}",
-        horizontalalignment="left",
-        verticalalignment="bottom",
-        transform=axes.transAxes,
         color="white",
         weight="bold",
-        fontsize=40,
-        zorder=102,
-        bbox=dict(facecolor="dimgray", alpha=0.5, edgecolor="black", boxstyle="round"),
+        fontsize=26,
+        ha="right",
+        va="center",
     )
 
     plt.setp(p.get_xticklabels(), fontweight="bold")
     plt.setp(p.get_yticklabels(), fontweight="bold")
-    figure.set_facecolor("k")
-
-    figure.tight_layout()
-    figure.canvas.draw()
+    # Seaborn remaps the shorthand "k" to a dark gray. Use real black.
+    figure.patch.set_facecolor("#000000")
+    axes.set_facecolor("#000000")
 
     image_dir.mkdir(parents=True, exist_ok=True)
     out_path = image_dir / "tcw_chart.png"
-    figure.savefig(out_path, dpi=200, facecolor=figure.get_facecolor(), bbox_inches="tight")
+    figure.savefig(out_path, dpi=200, facecolor="#000000", bbox_inches="tight")
     plt.close(figure)
     print(f"Saved: {out_path}")
     return out_path
@@ -780,8 +794,20 @@ def weighted_monthly_series_for_year(dset: xr.Dataset, year: int, months: np.nda
 
 
 def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
+    sns.set(
+        rc={
+            "axes.facecolor": "k",
+            "figure.facecolor": "k",
+            "savefig.facecolor": "k",
+            "text.color": "white",
+            "axes.labelcolor": "white",
+            "xtick.color": "white",
+            "ytick.color": "white",
+        }
+    )
     figure, axes = plt.subplots(figsize=(25, 15))
-    sns.set(rc={"axes.facecolor": "k", "figure.facecolor": "k"})
+    figure.patch.set_facecolor("#000000")
+    axes.set_facecolor("#000000")
 
     years = np.unique(dset["time"].dt.year.values)
     months = np.arange(1, 13)
@@ -829,10 +855,16 @@ def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
             print(f"KeyError while selecting year {year}: {exc}")
 
     axes.yaxis.set_tick_params(labelcolor="white", labelsize=30)
-    axes.yaxis.set_major_formatter(
-        mticker.FuncFormatter(
-            lambda value, _: f"{value:.2f} in" if np.isclose(value, 1.05) else f"{value:.2f}"
-        )
+    axes.yaxis.set_major_formatter(mticker.FormatStrFormatter("%.2f"))
+    axes.set_ylabel(
+        "in.",
+        color="white",
+        fontsize=26,
+        weight="bold",
+        rotation=0,
+        ha="right",
+        va="center",
+        labelpad=18,
     )
     axes.xaxis.set_tick_params(labelcolor="white", labelsize=30)
     axes.set_xticks(months)
@@ -849,39 +881,15 @@ def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
     axes.set_title(
         "Monthly global precipitable water",
         loc="left",
-        y=1.04,
         color="white",
         weight="bold",
         fontsize=36,
-    )
-
-    axes.text(
-        1.0,
-        1.04,
-        "@BenNollWeather",
-        horizontalalignment="right",
-        verticalalignment="bottom",
-        transform=axes.transAxes,
-        color="white",
-        weight="bold",
-        fontsize=24,
-    )
-
-    axes.text(
-        1.0,
-        1.015,
-        "Data: ERA5",
-        color="white",
-        weight="bold",
-        horizontalalignment="right",
-        verticalalignment="top",
-        transform=axes.transAxes,
-        fontsize=22,
+        pad=16,
     )
 
     legend_handles = [
-        Line2D([0], [0], color="white", linestyle="--", linewidth=6, label="1991-2020\naverage"),
-        Line2D([0], [0], color="lightgray", alpha=0.4, linewidth=2, label="1940-2022"),
+        Line2D([0], [0], color="white", linestyle="--", linewidth=6, label="1991-2020 average"),
+        Line2D([0], [0], color="lightgray", alpha=0.8, linewidth=2, label="1940-2022"),
         *[
             Line2D([0], [0], color=color, linewidth=10, label=str(year))
             for year, color in zip(highlight_years, highlight_colors)
@@ -889,23 +897,29 @@ def plot_monthly_comparison(dset: xr.Dataset, image_dir: Path) -> Path:
     ]
     axes.legend(
         handles=legend_handles[::-1],
-        fontsize="30",
-        loc="upper right",
-        bbox_to_anchor=(1.0, 0.91),
-        edgecolor="black",
+        fontsize=22,
+        loc="upper center",
+        bbox_to_anchor=(0.5, -0.16),
+        ncol=6,
         frameon=False,
-        facecolor="black",
         labelcolor="white",
+        borderaxespad=0.0,
+        columnspacing=1.2,
+        handlelength=2.2,
+        handletextpad=0.5,
     )
 
-    figure.patch.set_facecolor("k")
+    figure.patch.set_facecolor("#000000")
+    axes.set_facecolor("#000000")
     plt.setp(axes.get_xticklabels(), fontweight="bold")
     plt.setp(axes.get_yticklabels(), fontweight="bold")
-    figure.tight_layout(rect=(0, 0, 1, 0.96))
+    figure.subplots_adjust(left=0.08, right=0.98, top=0.90, bottom=0.22)
+    figure.text(0.08, 0.035, "Data: ERA5", color="white", weight="bold", fontsize=18, ha="left", va="center")
+    figure.text(0.20, 0.035, "@BenNollWeather", color="white", weight="bold", fontsize=18, ha="left", va="center")
 
     image_dir.mkdir(parents=True, exist_ok=True)
     out_path = image_dir / "tcw_monthly_chart.png"
-    figure.savefig(out_path, dpi=200)
+    figure.savefig(out_path, dpi=200, facecolor="#000000", bbox_inches="tight")
     plt.close(figure)
     print(f"Saved: {out_path}")
     return out_path
