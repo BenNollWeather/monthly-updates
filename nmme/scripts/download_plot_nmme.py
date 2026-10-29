@@ -43,8 +43,7 @@ import cmocean
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-from matplotlib.colors import BoundaryNorm
+from matplotlib.colors import BoundaryNorm, to_hex
 from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
@@ -52,9 +51,7 @@ import xarray as xr
 
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.feature import ShapelyFeature
-from cartopy.io.shapereader import Reader
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
+
 from cartopy.util import add_cyclic_point
 from metpy.plots import USCOUNTIES
 
@@ -94,18 +91,6 @@ def parse_args() -> argparse.Namespace:
         help="contourf matches the C3S maps. pcolormesh is the faster alternative.",
     )
     return parser.parse_args()
-
-
-def get_shp(folder: Path) -> Path:
-    folder = Path(folder)
-    if not folder.exists():
-        raise FileNotFoundError(f"Folder does not exist: {folder}")
-    shp_files = sorted(folder.glob("*.shp"))
-    if not shp_files:
-        raise FileNotFoundError(f"No .shp file found in {folder}")
-    if len(shp_files) > 1:
-        print(f"Warning: multiple .shp files found in {folder}; using {shp_files[0].name}")
-    return shp_files[0]
 
 
 def build_run_dates() -> tuple[str, str, str, list[str], list[str]]:
@@ -203,7 +188,12 @@ def add_signature(ax, fig):
 
 
 def add_wet_dry_legend(ax):
-    legend_labels = {"#2166AC": "Wetter", "#B35806": "Drier"}
+    # Swatches are the outer BrBG bands, the same colors as the map.
+    cmap = plt.get_cmap("BrBG")
+    legend_labels = {
+        to_hex(cmap(0.97)): "Wetter than average",
+        to_hex(cmap(0.03)): "Drier",
+    }
     patches = [Patch(color=color, label=label) for color, label in legend_labels.items()]
     legend = ax.legend(
         handles=patches,
@@ -254,34 +244,30 @@ def add_global_precip_features(ax, state_scale="50m"):
 
 def plot_sst_monthly(dset_concat_sst, lons2, lats2, dates, names, paths: Paths, method: str):
     out_dir = paths.imagery_dir("sst")
+    # Half-degree bands. Values past the ends stay on the end color instead of
+    # dropping out as white.
+    levels = np.linspace(-4, 4, 17)
+    ticks = list(range(-4, 5))
+    cmap = cmocean.cm.balance.copy()
+    cmap.set_under(cmap(0.0))
+    cmap.set_over(cmap(1.0))
     for i in range(len(dset_concat_sst)):
         fig = plt.figure(figsize=(25, 15))
         ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
-        levels = np.linspace(-2, 2, 60)
-        data = pcolor_or_contourf(ax, lons2, lats2, dset_concat_sst[i], levels, cmocean.cm.balance, ccrs.PlateCarree(), method=method)
+        ax.set_facecolor("k")
+        field = dset_concat_sst[i].clip(min=float(levels[0]), max=float(levels[-1]))
+        data = pcolor_or_contourf(ax, lons2, lats2, field, levels, cmap, ccrs.PlateCarree(), method=method)
 
-        ax.add_feature(cfeature.NaturalEarthFeature(
-            category="cultural", name="admin_0_countries", scale="10m",
-            facecolor="none", edgecolor="k", linewidth=1,
-        ), zorder=21)
-        gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color="white", alpha=0.5, linestyle="--")
-        gl.xlabels_top = False
-        gl.ylabels_right = False
-        gl.xlines = True
-        gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-        gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-        gl.xformatter = LONGITUDE_FORMATTER
-        gl.yformatter = LATITUDE_FORMATTER
-        gl.xlabel_style = {"size": 12, "color": "white"}
-        gl.ylabel_style = {"size": 12, "color": "white"}
-
-        ax.add_feature(cfeature.LAND.with_scale("50m"), color="dimgray", edgecolor="k", zorder=20)
-        ax.add_feature(cfeature.COASTLINE, edgecolor="k", linewidth=1, zorder=21)
-        ax.add_feature(cfeature.LAKES, edgecolor="k", alpha=0.4, zorder=21)
+        ax.add_feature(
+            cfeature.LAND.with_scale("50m"),
+            facecolor="#d5d5d5",
+            edgecolor="#d5d5d5",
+            zorder=20,
+        )
 
         plt.title("NMME Sea Surface Temperature Anomaly (°C)", loc="left", fontsize=24, color="white", weight="bold")
         plt.title(f"{dates[i]}", loc="right", fontsize=24, color="white", weight="bold")
-        cbar = plt.colorbar(data, ax=ax, ticks=[-2, 0, 2], pad=0.01, shrink=0.5, aspect=20, extend="both" if method == "pcolormesh" else None)
+        cbar = plt.colorbar(data, ax=ax, ticks=ticks, pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend="both")
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         finish_colorbar(cbar)
         add_signature(ax, fig)
@@ -330,11 +316,10 @@ def plot_precip_usa_seasonal(seasons, lons, lats, dates, paths: Paths, method: s
         plt.close(fig)
 
 
-def plot_precip_global_atlantic(seasons, lon, lat, dates, paths: Paths, shapefiles: Path, method: str):
+def plot_precip_global_atlantic(seasons, lon, lat, dates, paths: Paths, method: str):
     out_dir = paths.imagery_dir("precip")
     levels = np.linspace(-4, 4, 9)
     titles = [(dates[1], dates[3]), (dates[4], dates[6]), (dates[6], dates[8])]
-    atlantic_shp = get_shp(shapefiles / "atlantic")
 
     for idx, (season, title_dates) in enumerate(zip(seasons, titles), start=1):
         cyclic_data, cyclic_lons = add_cyclic_point(season.data, coord=lon)
@@ -360,9 +345,9 @@ def plot_precip_global_atlantic(seasons, lon, lat, dates, paths: Paths, shapefil
         ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
         ax.set_extent([240, 358, -5, 40])
         data = pcolor_or_contourf(ax, lons_cyc, lats_cyc, cyclic_data, levels, "BrBG", ccrs.PlateCarree(), method=method)
+        # The Atlantic file is only the map frame. Drawing it lays horizontal
+        # lines across the figure, so the coastlines and states stand alone.
         add_global_precip_features(ax)
-        shape_feature = ShapelyFeature(Reader(str(atlantic_shp)).geometries(), ccrs.PlateCarree(), facecolor="none", edgecolor="k")
-        ax.add_feature(shape_feature, linewidth=3, zorder=22)
         plt.title("NMME Precipitation Anomaly (inches)", loc="left", fontsize=24, color="white", weight="bold")
         plt.title("{}-{}".format(*title_dates), loc="right", fontsize=24, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.4, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
@@ -477,7 +462,7 @@ def main() -> None:
     precip_months = target_months(dset_precip)
     temps_months = target_months(dset_temps)
 
-    dset_concat_sst = xr.concat(sst_months, "step").where(lambda x: x < 5.0, drop=True)
+    dset_concat_sst = xr.concat(sst_months, "step")
     dset_concat_precip = xr.concat(precip_months, "step")
     dset_concat_temps = xr.concat(temps_months, "step")
 
@@ -504,7 +489,7 @@ def main() -> None:
     plot_sst_monthly(dset_concat_sst, lons_sst, lats_sst, dates, names, paths, args.plot_method)
     plot_precip_monthly(dset_concat_precip, lons, lats, dates, names, paths, args.plot_method)
     plot_precip_usa_seasonal(precip_seasons, lons, lats, dates, paths, args.plot_method)
-    plot_precip_global_atlantic(precip_seasons, lon, lat, dates, paths, paths.shapefiles, args.plot_method)
+    plot_precip_global_atlantic(precip_seasons, lon, lat, dates, paths, args.plot_method)
     plot_temps_monthly(dset_concat_temps, lons, lats, dates, names, paths, args.plot_method)
     plot_temps_usa_seasonal(temps_seasons, lons, lats, dates, paths, args.plot_method)
 
