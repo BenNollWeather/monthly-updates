@@ -16,5 +16,3 @@ Runs start shortly after the source data are usually available.
 | ECMWF seasonal | 12:41 on the 6th | Seasonal fields are typically in by 12:30 |
 | NMME | 15:17 on the 8th | The ensemble mean is usually posted later that day |
 | C3S multi-model | 12:47 on the 10th | The remaining centres are typically in by 12:30 |
-
-NMME stops if that month's file is not there yet. It does not reuse an older file.
