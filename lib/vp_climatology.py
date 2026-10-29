@@ -1,4 +1,8 @@
-"""Build the 200 hPa velocity-potential climatology.
+"""Build a 200 hPa velocity-potential climatology.
+
+The monthly ECMWF runner does not call this module. It downloads the
+published vp_clim_Mon.nc files instead. This builder remains for making a
+replacement baseline.
 
 The baseline defaults to 1991-2020. Set VP_CLIM_START and VP_CLIM_END to
 change it. Set VP_LEVEL to change the pressure level (default 200, which is

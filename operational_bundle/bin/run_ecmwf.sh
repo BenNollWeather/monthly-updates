@@ -16,10 +16,10 @@ ensure_regions
 mkdir -p "$WORK_DIR" "$IMAGERY_DIR"
 cd "$WORK_DIR"
 clean_grib_idx
-if "$PYTHON_BIN" "$REPO_ROOT/lib/vp_climatology.py" --out "$VP_CLIMO_DIR"; then
+if "$PYTHON_BIN" "$REPO_ROOT/lib/fetch_vp_climatology.py" --out "$VP_CLIMO_DIR"; then
   run_py vp
 else
-  echo "Velocity-potential climatology was not built; skipping those maps." >&2
+  echo "Velocity-potential climatology was not downloaded; skipping those maps." >&2
 fi
 
 run_py ecmwf_sst

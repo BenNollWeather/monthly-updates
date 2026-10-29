@@ -32,7 +32,7 @@ AWS_PREFIX=copernicus_imagery \
 bash bin/run_ecmwf.sh
 ```
 
-Niño and Indian Ocean region outlines are generated into `$WORK_ROOT/shapefiles` at runtime. The 200 hPa velocity-potential climatology is built from ERA5 for 1991–2020 (`VP_CLIM_START` and `VP_CLIM_END` change the years) into `$WORK_ROOT/climo/vp`, then deleted with the work directory. Set `VP_CLIMO_DIR` only to reuse an existing set of `vp_clim_Mon.nc` files.
+Niño and Indian Ocean region outlines are generated into `$WORK_ROOT/shapefiles` at runtime. The 200 hPa velocity-potential climatology is the published `vp_clim_Mon.nc` set. Each ECMWF run downloads the current month and the next five from `https://bennollweather.s3.amazonaws.com/climate_imagery/climo/vp/`, then deletes them with the work directory. Set `VP_CLIMO_DIR` to reuse files already on disk, or `VP_CLIMO_URL` to change where they are downloaded from.
 
 The generated file index and graphics portal are uploaded after every successful imagery sync:
 
