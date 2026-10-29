@@ -477,7 +477,7 @@ def plot_tcw_map(perc: xr.DataArray, anom: xr.DataArray, month1: str, image_dir:
     gl.xlabel_style = {"size": 12, "color": "white"}
     gl.ylabel_style = {"size": 12, "color": "white"}
 
-    plt.title("ERA5 Total Column Water Anomaly (% of normal)", loc="left", fontsize=24, color="white", weight="bold")
+    plt.title("ERA5 total column water anomaly (% of normal)", loc="left", fontsize=24, color="white", weight="bold")
     plt.title(f"{month1}", loc="right", fontsize=24, color="white", weight="bold")
     cbar = plt.colorbar(data, ax=ax, ticks=[80, 90, 100, 110, 120], pad=0.01, shrink=0.5, aspect=20)
     # BoundaryNorm puts a minor tick on every color edge. Keep only the labeled ones.
