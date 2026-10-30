@@ -1,9 +1,8 @@
 name: Latest posts
 
 on:
-  schedule:
-    # Once an hour. GitHub may start the check a few minutes after :11.
-    - cron: "11 * * * *"
+  # EventBridge rule monthly-updates-latest-posts fires this at 11 minutes
+  # past every hour. GitHub's own scheduler was arriving much later.
   workflow_dispatch:
 
 permissions:

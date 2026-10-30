@@ -1,9 +1,8 @@
 name: Newsletter
 
 on:
-  schedule:
-    # Once an hour. GitHub may start the check a few minutes after :17.
-    - cron: "17 * * * *"
+  # EventBridge rule monthly-updates-newsletter fires this at 17 minutes
+  # past every hour. GitHub's own scheduler was arriving much later.
   workflow_dispatch:
 
 permissions:
