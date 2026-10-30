@@ -48,14 +48,14 @@ AP_MONTHS = {
 }
 
 NAV = """
-      <a href="/copernicus_imagery/index.html">All graphics</a>
-      <a href="/latest_posts" aria-current="page">Latest posts</a>
-      <a href="/climate_imagery/weathernext3/index.html">DeepMind storm cards</a>
-      <a href="/copernicus_imagery/snow/index.html">Snow heatmaps</a>
-      <a href="/nmme/imagery/index.html">NMME</a>
-      <a href="/atmospheric_moisture/index.html">ERA5 moisture</a>
-      <a href="/climate_imagery/index.html">Climate imagery</a>
-      <a href="/climate_imagery/strat_coupling/index.html">Polar vortex</a>
+      <a href="/copernicus">All graphics</a>
+      <a href="/" aria-current="page">Latest posts</a>
+      <a href="/deepmind">DeepMind storm cards</a>
+      <a href="/snow">Snow heatmaps</a>
+      <a href="/nmme">NMME</a>
+      <a href="/moisture">ERA5 moisture</a>
+      <a href="/climate">Climate imagery</a>
+      <a href="/polar_vortex">Polar vortex</a>
       <a href="/newsletter">Newsletter</a>
 """.strip("\n")
 

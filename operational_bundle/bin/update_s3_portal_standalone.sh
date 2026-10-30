@@ -290,15 +290,15 @@ page = f"""<!doctype html>
     <h1>{html.escape(page_title)}</h1>
     <p>{html.escape(page_description)}</p>
     <nav>
-      <a href="/copernicus_imagery/index.html">All graphics</a>
-      <a href="/latest_posts">Latest posts</a>
-      <a href="/climate_imagery/weathernext3/index.html">DeepMind storm cards</a>
-      <a href="/copernicus_imagery/index.html">C3S</a>
-      <a href="/copernicus_imagery/snow/index.html">Snow heatmaps</a>
-      <a href="/nmme/imagery/index.html">NMME</a>
-      <a href="/atmospheric_moisture/index.html">ERA5 moisture</a>
-      <a href="/climate_imagery/index.html">Climate imagery</a>
-      <a href="/climate_imagery/strat_coupling/index.html">Polar vortex</a>
+      <a href="/copernicus">All graphics</a>
+      <a href="/">Latest posts</a>
+      <a href="/deepmind">DeepMind storm cards</a>
+      <a href="/copernicus">C3S</a>
+      <a href="/snow">Snow heatmaps</a>
+      <a href="/nmme">NMME</a>
+      <a href="/moisture">ERA5 moisture</a>
+      <a href="/climate">Climate imagery</a>
+      <a href="/polar_vortex">Polar vortex</a>
       <a href="/newsletter">Newsletter</a>
     </nav>
   </header>
