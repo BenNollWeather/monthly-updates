@@ -364,6 +364,28 @@ for i, item in enumerate(items):
 
 now = datetime.now(timezone.utc).strftime("%B %-d, %Y at %H:%M UTC")
 chip_html = ''.join(f'<button class="chip" data-filter="{html.escape(f.lower(), quote=True)}">{html.escape(folder_copy.get(f,(f.replace("_"," ").title(),"",""))[0])}</button>' for f in folders)
+short_tabs = {
+    "copernicus_imagery": "/copernicus",
+    "copernicus_imagery/snow": "/snow",
+    "nmme/imagery": "/nmme",
+    "atmospheric_moisture": "/moisture",
+    "climate_imagery": "/climate",
+}
+current_tab = short_tabs.get(prefix, "")
+nav = "\n".join(
+    f'      <a href="{href}"{" aria-current=\"page\"" if href == current_tab else ""}>{label}</a>'
+    for href, label in (
+        ("/copernicus", "Copernicus"),
+        ("/latest_posts", "Latest posts"),
+        ("/deepmind", "DeepMind"),
+        ("/snow", "Snow"),
+        ("/nmme", "NMME"),
+        ("/moisture", "Moisture"),
+        ("/climate", "Misc. imagery"),
+        ("/polar_vortex", "Polar vortex"),
+        ("/newsletter", "Newsletter"),
+    )
+)
 page = f'''<!doctype html>
 <html lang="en">
 <head>
@@ -431,15 +453,7 @@ page = f'''<!doctype html>
     <h1>Weather window shopping by BenNollWeather</h1>
     <p>An always-updating gallery of operational weather graphics</p>
     <nav>
-      <a href="/copernicus">All graphics</a>
-      <a href="/latest_posts">Latest posts</a>
-      <a href="/deepmind">DeepMind storm cards</a>
-      <a href="/snow">Snow heatmaps</a>
-      <a href="/nmme">NMME</a>
-      <a href="/moisture">ERA5 moisture</a>
-      <a href="/climate">Climate imagery</a>
-      <a href="/polar_vortex">Polar vortex</a>
-      <a href="/newsletter">Newsletter</a>
+{nav}
     </nav>
   </header>
   <main>

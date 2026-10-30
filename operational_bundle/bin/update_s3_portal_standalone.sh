@@ -195,6 +195,26 @@ for item in items:
 empty_state = "" if cards else '<p class="empty">No image files were found in this location.</p>'
 generated = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
 
+current_tab = {
+    "copernicus_imagery/snow": "/snow",
+    "nmme/imagery": "/nmme",
+    "atmospheric_moisture": "/moisture",
+    "climate_imagery": "/climate",
+}.get(source_prefix.rstrip("/"), "")
+nav = "\n".join(
+    f'      <a href="{href}"{" aria-current=\"page\"" if href == current_tab else ""}>{label}</a>'
+    for href, label in (
+        ("/copernicus", "Copernicus"),
+        ("/latest_posts", "Latest posts"),
+        ("/deepmind", "DeepMind"),
+        ("/snow", "Snow"),
+        ("/nmme", "NMME"),
+        ("/moisture", "Moisture"),
+        ("/climate", "Misc. imagery"),
+        ("/polar_vortex", "Polar vortex"),
+        ("/newsletter", "Newsletter"),
+    )
+)
 page = f"""<!doctype html>
 <html lang="en">
 <head>
@@ -290,16 +310,7 @@ page = f"""<!doctype html>
     <h1>{html.escape(page_title)}</h1>
     <p>{html.escape(page_description)}</p>
     <nav>
-      <a href="/copernicus">All graphics</a>
-      <a href="/latest_posts">Latest posts</a>
-      <a href="/deepmind">DeepMind storm cards</a>
-      <a href="/copernicus">C3S</a>
-      <a href="/snow">Snow heatmaps</a>
-      <a href="/nmme">NMME</a>
-      <a href="/moisture">ERA5 moisture</a>
-      <a href="/climate">Climate imagery</a>
-      <a href="/polar_vortex">Polar vortex</a>
-      <a href="/newsletter">Newsletter</a>
+{nav}
     </nav>
   </header>
   <main>
