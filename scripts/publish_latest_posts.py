@@ -523,7 +523,6 @@ def render_page(posts: list[dict], checked: datetime) -> str:
       </footer>
     </article>""".strip("\n")
         )
-    checked_stamp = ap_stamp(checked)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -568,7 +567,6 @@ def render_page(posts: list[dict], checked: datetime) -> str:
     .stats b {{ color: #171717; font-weight: 600; }}
     .view-link {{ color: #1256a0; font-size: 13px; font-weight: 700; text-decoration: none; }}
     .view-link:hover {{ text-decoration: underline; }}
-    .page-note {{ margin: 6px 2px 0; color: #6a7078; font-size: 13px; line-height: 1.45; }}
     @media (max-width: 650px) {{
       body > header {{ padding: 16px; }}
       h1 {{ font-size: 22px; }}
@@ -579,7 +577,7 @@ def render_page(posts: list[dict], checked: datetime) -> str:
     @media (prefers-color-scheme: dark) {{
       body {{ background: #111317; color: #f3f4f6; }}
       body > header {{ background: #14161a; border-color: #333842; }}
-      body > header p, .lede p, .who .meta, .stats, .page-note {{ color: #aeb4bd; }}
+      body > header p, .lede p, .who .meta, .stats {{ color: #aeb4bd; }}
       .lede a, .post-body a, .view-link {{ color: #7db7ff; }}
       nav a, .post {{ background: #1b1e24; border-color: #373c46; }}
       nav a[aria-current="page"] {{ background: #29394d; border-color: #6086ad; }}
@@ -600,10 +598,9 @@ def render_page(posts: list[dict], checked: datetime) -> str:
   <main>
     <div class="lede">
       <h2>Latest posts</h2>
-      <p>The 10 newest posts from <a href="https://x.com/{HANDLE}">@{HANDLE}</a>. Replies and reposts are left out. Checked hourly.</p>
+      <p>The 10 newest posts from <a href="https://x.com/{HANDLE}">@{HANDLE}</a>.</p>
     </div>
 {chr(10).join(articles)}
-    <p class="page-note">Replies, including thread continuations, and reposts are not shown. Last update {html.escape(checked_stamp)}.</p>
   </main>
   <script>
     document.querySelectorAll("video").forEach(function (video) {{
