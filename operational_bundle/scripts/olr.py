@@ -483,7 +483,7 @@ plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)'
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-30,-15,0,15,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -536,7 +536,7 @@ plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)'
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-30,-15,0,15,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -586,7 +586,7 @@ plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)'
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-30,-15,0,15,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
@@ -636,7 +636,7 @@ plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)'
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-30,-15,0,15,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 

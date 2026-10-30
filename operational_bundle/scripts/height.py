@@ -630,6 +630,51 @@ name='admin_1_states_provinces_lines',
 scale='50m',
 facecolor='none')
 
+def _name_above_globe(ax, name):
+    """Keep the agency name above the disk instead of on the limb."""
+    ax.text(
+        0.5,
+        1.08,
+        name,
+        transform=ax.transAxes,
+        ha="center",
+        va="bottom",
+        color="white",
+        weight="bold",
+        fontsize=20,
+        clip_on=False,
+        zorder=40,
+    )
+
+
+def _finish_height_panel(fig, mappable):
+    """Leave a gap between the two rows of globes and park the colorbar below them."""
+    cax = fig.add_axes([0.14, 0.028, 0.72, 0.018])
+    colorbar = fig.colorbar(
+        mappable,
+        cax=cax,
+        orientation="horizontal",
+        ticks=[-10, -5, 0, 5, 10],
+        drawedges=True,
+    )
+    colorbar.ax.tick_params(labelsize=24, labelcolor="white")
+    for label in colorbar.ax.get_xticklabels():
+        label.set_weight("bold")
+        label.set_color("white")
+    fig.patch.set_facecolor("#000000")
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.84, bottom=0.12, wspace=0.04, hspace=0.42)
+    fig.text(
+        0.98,
+        0.975,
+        "@BenNollWeather",
+        ha="right",
+        va="top",
+        color="white",
+        weight="bold",
+        fontsize=20,
+    )
+
+
 # %% Notebook cell 56
 
 fig = plt.figure(figsize=(25, 15))
@@ -647,8 +692,8 @@ cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('{}-{} 500 hPa height anomaly (dam)\n\n'.format(month2, month4), loc='left', fontsize=28, color='white', weight="bold")
-plt.title('ECMWF', loc='center', fontsize=20, color='white', weight="bold")
+ax1.set_title('{}-{} 500 hPa height anomaly (dam)'.format(month2, month4), loc='left', fontsize=28, color='white', weight="bold", pad=64)
+_name_above_globe(ax1, 'ECMWF')
 
 # model 2
 ax2 = fig.add_subplot(2, 4, 2, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -659,7 +704,7 @@ ax2.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data2 = plt.contourf(lons2, lats2, ukmet1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('UKMET', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax2, 'UKMET')
 
 # model 3
 ax3 = fig.add_subplot(2, 4, 3, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -670,7 +715,7 @@ ax3.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data3 = plt.contourf(lons2, lats2, ncep1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('NCEP', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax3, 'NCEP')
 
 # model 4
 ax4 = fig.add_subplot(2, 4, 4, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -681,7 +726,7 @@ ax4.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data4 = plt.contourf(lons2, lats2, jma1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax4, 'JMA')
 
 # model 5
 ax5 = fig.add_subplot(2, 4, 5, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -692,7 +737,7 @@ ax5.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data5 = plt.contourf(lons2, lats2, eccc1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('ECCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax5, 'ECCC')
 
 # model 6
 ax6 = fig.add_subplot(2, 4, 6, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -703,7 +748,7 @@ ax6.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data6 = plt.contourf(lons2, lats2, mf1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('Météo-France', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax6, 'Météo-France')
 
 # model 7
 ax7 = fig.add_subplot(2, 4, 7, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -714,7 +759,7 @@ ax7.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data7 = plt.contourf(lons2, lats2, dwd1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('DWD', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax7, 'DWD')
 
 # model 8
 ax8 = fig.add_subplot(2, 4, 8, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -725,29 +770,9 @@ ax8.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data8 = plt.contourf(lons2, lats2, cmcc1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax8, 'CMCC')
 
-axes2 = fig.add_axes([0.1, -0.02, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
-cm.ax.tick_params(labelsize=24, labelcolor="white")
-#cm.set_label("Data: C3S Climate Change Service | Climatology: 1993-2016 ", style='italic', fontsize = 18, color = 'k')
-
-for label in cm.ax.get_xticklabels():
-    label.set_weight('bold')
-    label.set_color('white')
-
-ax4.text(0.15, 1.18, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax4.transAxes, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
-
-fig.patch.set_facecolor('k')
-fig.tight_layout()
-
-try:
-
-    fig.subplots_adjust(bottom=0.12)
-
-except Exception:
-
-    pass
+_finish_height_panel(fig, data6)
 
 plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/c3s_height_season1.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 try:
@@ -773,8 +798,8 @@ cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('{}-{} 500 hPa height anomaly (dam)\n\n'.format(month4, month6), loc='left', fontsize=28, color='white', weight="bold")
-plt.title('ECMWF', loc='center', fontsize=20, color='white', weight="bold")
+ax1.set_title('{}-{} 500 hPa height anomaly (dam)'.format(month4, month6), loc='left', fontsize=28, color='white', weight="bold", pad=64)
+_name_above_globe(ax1, 'ECMWF')
 
 # model 2
 ax2 = fig.add_subplot(2, 4, 2, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -785,7 +810,7 @@ ax2.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data2 = plt.contourf(lons2, lats2, ukmet2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('UKMET', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax2, 'UKMET')
 
 # model 3
 ax3 = fig.add_subplot(2, 4, 3, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -796,7 +821,7 @@ ax3.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data3 = plt.contourf(lons2, lats2, ncep2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('NCEP', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax3, 'NCEP')
 
 # model 4
 ax4 = fig.add_subplot(2, 4, 4, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -807,7 +832,7 @@ ax4.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data4 = plt.contourf(lons2, lats2, jma2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax4, 'JMA')
 
 # model 5
 ax5 = fig.add_subplot(2, 4, 5, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -818,7 +843,7 @@ ax5.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data5 = plt.contourf(lons2, lats2, eccc2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('ECCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax5, 'ECCC')
 
 # model 6
 ax6 = fig.add_subplot(2, 4, 6, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -829,7 +854,7 @@ ax6.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data6 = plt.contourf(lons2, lats2, mf2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('Météo-France', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax6, 'Météo-France')
 
 # model 7
 ax7 = fig.add_subplot(2, 4, 7, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -840,7 +865,7 @@ ax7.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data7 = plt.contourf(lons2, lats2, dwd2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('DWD', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax7, 'DWD')
 
 # model 8
 ax8 = fig.add_subplot(2, 4, 8, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
@@ -851,28 +876,9 @@ ax8.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data8 = plt.contourf(lons2, lats2, cmcc2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax8, 'CMCC')
 
-axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
-cm.ax.tick_params(labelsize=24, labelcolor="white")
-
-for label in cm.ax.get_xticklabels():
-    label.set_weight('bold')
-    label.set_color('white')
-
-ax4.text(0.15, 1.18, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax4.transAxes, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
-
-fig.patch.set_facecolor('k')
-fig.tight_layout()
-
-try:
-
-    fig.subplots_adjust(bottom=0.12)
-
-except Exception:
-
-    pass
+_finish_height_panel(fig, data6)
 
 plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/c3s_height_season2.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 try:
@@ -1010,8 +1016,8 @@ cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('{}-{} 500 hPa height anomaly (dam)\n\n'.format(month2, month4), loc='left', fontsize=28, color='white', weight="bold")
-plt.title('ECMWF', loc='center', fontsize=20, color='white', weight="bold")
+ax1.set_title('{}-{} 500 hPa height anomaly (dam)'.format(month2, month4), loc='left', fontsize=28, color='white', weight="bold", pad=64)
+_name_above_globe(ax1, 'ECMWF')
 
 # model 2
 ax2 = fig.add_subplot(2, 4, 2, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1022,7 +1028,7 @@ ax2.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data2 = plt.contourf(lons2, lats2, ukmet1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('UKMET', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax2, 'UKMET')
 
 # model 3
 ax3 = fig.add_subplot(2, 4, 3, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1033,7 +1039,7 @@ ax3.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data3 = plt.contourf(lons2, lats2, ncep1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('NCEP', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax3, 'NCEP')
 
 # model 4
 ax4 = fig.add_subplot(2, 4, 4, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1044,7 +1050,7 @@ ax4.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data4 = plt.contourf(lons2, lats2, jma1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax4, 'JMA')
 
 # model 5
 ax5 = fig.add_subplot(2, 4, 5, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1055,7 +1061,7 @@ ax5.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data5 = plt.contourf(lons2, lats2, eccc1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('ECCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax5, 'ECCC')
 
 # model 6
 ax6 = fig.add_subplot(2, 4, 6, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1066,7 +1072,7 @@ ax6.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data6 = plt.contourf(lons2, lats2, mf1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('Météo-France', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax6, 'Météo-France')
 
 # model 7
 ax7 = fig.add_subplot(2, 4, 7, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1077,7 +1083,7 @@ ax7.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data7 = plt.contourf(lons2, lats2, dwd1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('DWD', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax7, 'DWD')
 
 # model 8
 ax8 = fig.add_subplot(2, 4, 8, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1088,29 +1094,9 @@ ax8.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data8 = plt.contourf(lons2, lats2, cmcc1, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax8, 'CMCC')
 
-axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
-cm.ax.tick_params(labelsize=24, labelcolor="white")
-#cm.set_label("Data: C3S Climate Change Service | Climatology: 1993-2016 ", style='italic', fontsize = 18, color = 'k')
-
-for label in cm.ax.get_xticklabels():
-    label.set_weight('bold')
-    label.set_color('white')
-
-ax4.text(0.15, 1.18, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax4.transAxes, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
-
-fig.patch.set_facecolor('k')
-fig.tight_layout()
-
-try:
-
-    fig.subplots_adjust(bottom=0.12)
-
-except Exception:
-
-    pass
+_finish_height_panel(fig, data6)
 
 plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/c3s_height_season1_nz.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 try:
@@ -1136,8 +1122,8 @@ cmap='RdBu_r'
 
 data = plt.contourf(lons2, lats2, ecmwf2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('{}-{} 500 hPa height anomaly (dam)\n\n'.format(month4, month6), loc='left', fontsize=28, color='white', weight="bold")
-plt.title('ECMWF', loc='center', fontsize=20, color='white', weight="bold")
+ax1.set_title('{}-{} 500 hPa height anomaly (dam)'.format(month4, month6), loc='left', fontsize=28, color='white', weight="bold", pad=64)
+_name_above_globe(ax1, 'ECMWF')
 
 # model 2
 ax2 = fig.add_subplot(2, 4, 2, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1148,7 +1134,7 @@ ax2.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data2 = plt.contourf(lons2, lats2, ukmet2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('UKMET', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax2, 'UKMET')
 
 # model 3
 ax3 = fig.add_subplot(2, 4, 3, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1159,7 +1145,7 @@ ax3.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data3 = plt.contourf(lons2, lats2, ncep2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('NCEP', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax3, 'NCEP')
 
 # model 4
 ax4 = fig.add_subplot(2, 4, 4, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1170,7 +1156,7 @@ ax4.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data4 = plt.contourf(lons2, lats2, jma2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax4, 'JMA')
 
 # model 5
 ax5 = fig.add_subplot(2, 4, 5, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1181,7 +1167,7 @@ ax5.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data5 = plt.contourf(lons2, lats2, eccc2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('ECCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax5, 'ECCC')
 
 # model 6
 ax6 = fig.add_subplot(2, 4, 6, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1192,7 +1178,7 @@ ax6.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data6 = plt.contourf(lons2, lats2, mf2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('Météo-France', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax6, 'Météo-France')
 
 # model 7
 ax7 = fig.add_subplot(2, 4, 7, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1203,7 +1189,7 @@ ax7.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data7 = plt.contourf(lons2, lats2, dwd2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('DWD', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax7, 'DWD')
 
 # model 8
 ax8 = fig.add_subplot(2, 4, 8, projection=ccrs.NearsidePerspective(central_longitude=174, central_latitude=-45, satellite_height=4000000))
@@ -1214,29 +1200,9 @@ ax8.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data8 = plt.contourf(lons2, lats2, cmcc2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
+_name_above_globe(ax8, 'CMCC')
 
-axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
-cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
-cm.ax.tick_params(labelsize=24, labelcolor="white")
-#cm.set_label("Data: C3S Climate Change Service | Climatology: 1993-2016 ", style='italic', fontsize = 18, color = 'k')
-
-for label in cm.ax.get_xticklabels():
-    label.set_weight('bold')
-    label.set_color('white')
-
-ax4.text(0.15, 1.18, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax4.transAxes, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
-
-fig.patch.set_facecolor('k')
-fig.tight_layout()
-
-try:
-
-    fig.subplots_adjust(bottom=0.12)
-
-except Exception:
-
-    pass
+_finish_height_panel(fig, data6)
 
 plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/c3s_height_season2_nz.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 try:

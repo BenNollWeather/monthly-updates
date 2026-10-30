@@ -395,7 +395,10 @@ for i in range(len(u850)):
     
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     
-    data = ax.pcolormesh(lons, lats, u850[i], vmin=-3, vmax=3, cmap='RdBu_r', transform=ccrs.PlateCarree())
+    zonal_cmap = plt.get_cmap("RdBu_r").copy()
+    zonal_cmap.set_under(zonal_cmap(0.0))
+    zonal_cmap.set_over(zonal_cmap(1.0))
+    data = ax.pcolormesh(lons, lats, u850[i], vmin=-10, vmax=10, cmap=zonal_cmap, transform=ccrs.PlateCarree())
     
     states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',
@@ -417,7 +420,7 @@ for i in range(len(u850)):
     plt.title('C3S 850 hPa zonal wind anomaly (kts)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
-    cbar = plt.colorbar(data, ax=ax, ticks=[-3,0,3], pad=0.01, shrink=0.5, aspect=20)
+    cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.5, aspect=20, extend="both")
     cbar.ax.tick_params(labelsize=18, labelcolor="white")
     cbar.ax.set_facecolor([1,1,1,0])
     

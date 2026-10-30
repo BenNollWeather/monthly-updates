@@ -873,78 +873,115 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import matplotlib.ticker as mticker
+from matplotlib.lines import Line2D
+from lib.ap_dates import ap_rewrite
 
-# Set up the plot
-fig = plt.figure(figsize=(25, 15))
-sns.set(style="darkgrid", rc={'axes.facecolor': 'k', 'figure.facecolor': 'k'})
+_MONTHS = (
+    "",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+)
 
-# Plot the lines
-ax = sns.lineplot(data=climate_df, dashes=False, linewidth=10)
-ax = sns.lineplot(data=climate_df_mean, linestyle='--', linewidth=15, color="white")
 
-# Set y-axis limits using Matplotlib
-ax.set_ylim(climate_df.values.min()-0.5, climate_df.values.max()+0.5)
+def _month_year(value, _pos):
+    stamp = mdates.num2date(value)
+    return ap_rewrite(f"{_MONTHS[stamp.month]} {stamp.year}")
 
-# Customize the plot
-ax.set_title("Niño 3.4 index outlook", color='white', fontsize=50, weight='bold', loc="left", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
-ax.set_title("Max: {}°C | Min: {}°C".format(maximum_rounded, minimum_rounded), color='white', fontsize=30, weight='bold', loc="right", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
-ax.set_xlabel(" ", color='white', fontsize=14)
-ax.set_ylabel(" ", color='white', fontsize=14)
-ax.tick_params(axis='both', colors='white', labelsize=30)  # Adjusted
 
-ax.axhline(0.7, linewidth = 4, color = "red", linestyle="--")
-ax.axhline(-0.7, linewidth = 4, color = "blue", linestyle="--")
+def _celsius(value, _pos):
+    return f"{value:.1f}°C"
 
-ax.tick_params(left=False, bottom=False, right=False, top=False, width=2, colors="white")  # Remove tick marks
-ax.spines['top'].set_visible(False)  # Hide top spine
-ax.spines['bottom'].set_visible(False)  # Hide bottom spine
-ax.spines['left'].set_visible(False)  # Hide left spine
-ax.spines['right'].set_visible(False)  # Hide right spine
 
-# Set the x-axis ticks at the start of each month and format as 'YYYY-MM'
+def _pin_left_credit(figure, axes, y=0.035):
+    """Put @BenNollWeather on the left edge of the y-axis labels."""
+    figure.canvas.draw()
+    plt.setp(axes.get_xticklabels(), fontweight="bold", color="white")
+    plt.setp(axes.get_yticklabels(), fontweight="bold", color="white")
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    tick_labels = [label for label in axes.get_yticklabels() if label.get_text().strip()]
+    left_px = min(label.get_window_extent(renderer).x0 for label in tick_labels)
+    credit_x, _ = figure.transFigure.inverted().transform((left_px, 0))
+    figure.text(
+        credit_x,
+        y,
+        "@BenNollWeather",
+        color="white",
+        weight="bold",
+        fontsize=18,
+        ha="left",
+        va="center",
+    )
+
+
+sns.set(style="darkgrid", rc={"axes.facecolor": "#000000", "figure.facecolor": "#000000", "savefig.facecolor": "#000000"})
+fig, ax = plt.subplots(figsize=(25, 15))
+fig.patch.set_facecolor("#000000")
+ax.set_facecolor("#000000")
+
+sns.lineplot(data=climate_df, dashes=False, linewidth=10, ax=ax, legend=False)
+agency_lines = list(ax.lines)
+ax.plot(climate_df_mean.index, climate_df_mean.values, linestyle="--", linewidth=12, color="white", zorder=5)
+ax.set_ylim(climate_df.values.min() - 0.5, climate_df.values.max() + 0.5)
+ax.axhline(0.7, linewidth=4, color="red", linestyle="--")
+ax.axhline(-0.7, linewidth=4, color="blue", linestyle="--")
+
+ax.set_title("Niño 3.4 index outlook", color="white", fontsize=40, weight="bold", loc="left", pad=18)
+ax.set_title("Max: {}°C | Min: {}°C".format(maximum_rounded, minimum_rounded), color="white", fontsize=26, weight="bold", loc="right", pad=18)
+ax.set_xlabel("")
+ax.set_ylabel("")
+for spine in ("top", "bottom", "left", "right"):
+    ax.spines[spine].set_visible(False)
+ax.tick_params(axis="both", colors="white", labelsize=28, length=0)
+ax.yaxis.grid(True, color="white", linewidth=0.6, alpha=0.28)
+ax.xaxis.grid(False)
+ax.set_axisbelow(True)
+ax.yaxis.set_major_formatter(mticker.FuncFormatter(_celsius))
 ax.xaxis.set_major_locator(mdates.MonthLocator(bymonthday=1))
-ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y-%m'))
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(_month_year))
 
-# Make the axes tick labels bold
-for tick in ax.xaxis.get_major_ticks():
-    tick.label1.set_fontweight('bold')
+if len(agency_lines) == len(climate_df.columns):
+    legend_pairs = list(zip(climate_df.columns, agency_lines))
+else:
+    legend_pairs = [(line.get_label(), line) for line in agency_lines]
+handles = [
+    Line2D([0], [0], color=line.get_color(), linewidth=6, label=str(name))
+    for name, line in legend_pairs
+]
+handles.append(Line2D([0], [0], color="white", linestyle="--", linewidth=4, label="Ensemble mean"))
+ax.legend(
+    handles=handles,
+    loc="upper center",
+    bbox_to_anchor=(0.5, -0.14),
+    ncol=5,
+    frameon=False,
+    fontsize=16,
+    labelcolor="white",
+    borderaxespad=0.0,
+    columnspacing=1.1,
+    handlelength=2.2,
+    handletextpad=0.45,
+)
 
-for tick in ax.yaxis.get_major_ticks():
-    tick.label1.set_fontweight('bold')
+fig.patch.set_facecolor("#000000")
+ax.set_facecolor("#000000")
+fig.subplots_adjust(left=0.10, right=0.98, top=0.90, bottom=0.24)
+fig.text(0.98, 0.035, "Data: C3S", color="white", weight="bold", fontsize=18, ha="right", va="center")
+_pin_left_credit(fig, ax)
 
-# Customize the legend
-legend = ax.legend(loc='upper right', title="")
-legend_title = legend.get_title()
-legend_title.set_fontsize(20)  # Adjusted text size
-legend_title.set_color('white')  # Adjusted text color
-legend.get_frame().set_edgecolor('none')  # Remove legend border
-
-# Adjust legend item font size and color
-for text in legend.get_texts():
-    text.set_fontsize(20)
-    text.set_color('white')
-
-ax.text(0.01, 0.02, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, zorder=22, color='white', weight="bold", fontsize=26, bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
-
-fig.patch.set_facecolor('k')
-
-# Save or show the plot
-plt.tight_layout()
-
-try:
-
-    fig.subplots_adjust(bottom=0.12)
-
-except Exception:
-
-    pass
-
-plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/nino34_chart.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
-try:
-    fig.subplots_adjust(bottom=0.12)
-except Exception:
-    pass
-plt.savefig(_os.path.join(_WORK, 'downloads/nino34_chart.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
+fig.savefig(_os.path.join(_WORK, "copernicus_imagery/nino34_chart.png"), facecolor="#000000", bbox_inches="tight", pad_inches=0.18, dpi=100)
+fig.savefig(_os.path.join(_WORK, "downloads/nino34_chart.png"), facecolor="#000000", bbox_inches="tight", pad_inches=0.18, dpi=100)
 
 plt.close("all")
 

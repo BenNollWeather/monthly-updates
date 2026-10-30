@@ -116,6 +116,7 @@ import pygrib
 import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
+from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
 
@@ -148,6 +149,28 @@ from glob import glob
 # %% Notebook cell 7
 
 import cmocean
+
+
+def _dew_humidity_legend(ax):
+    """Horizontal key under the map, from mid shades of the dew-point scale."""
+    scale = cmocean.cm.delta
+    legend_labels = {
+        colors.to_hex(scale(0.75)): "Higher humidity",
+        colors.to_hex(scale(0.25)): "Lower",
+    }
+    patches = [Patch(color=color, label=label) for color, label in legend_labels.items()]
+    legend = ax.legend(
+        handles=patches,
+        facecolor="k",
+        prop=dict(size=26),
+        frameon=True,
+        edgecolor="black",
+        fancybox=False,
+        loc="lower right",
+        labelcolor="white",
+        ncol=2,
+    )
+    legend.set_zorder(21)
 
 # %% Notebook cell 8
 
@@ -375,12 +398,10 @@ month_six = (ecmwf6['d2a'] + ukmet6['d2a'])/2
 # %% Notebook cell 49
 
 season1 = (month_two+month_three+month_four)/3
-season1_usa = season1*1.8
 
 # %% Notebook cell 50
 
 season2 = (month_four+month_five+month_six)/3
-season2_usa = season2*1.8
 
 # %% Notebook cell 51
 
@@ -399,10 +420,10 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-3, 3, 13)
 
-data = plt.contourf(lons, lats, season1_usa, levels=levels, cmap=cmocean.cm.delta, extend='both', transform=ccrs.PlateCarree())
-cs = plt.contour(lons, lats, season1_usa, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.delta, extend='both', transform=ccrs.PlateCarree())
+cs = plt.contour(lons, lats, season1, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -419,17 +440,18 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "superblend" dew point anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" dew point anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
 for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
+_dew_humidity_legend(ax)
 ax.text(0.01, 0.02, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, zorder=22, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
 fig.patch.set_facecolor('k')
 
@@ -452,10 +474,10 @@ fig = plt.figure(figsize=(25, 15))
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 ax.set_extent([205, 315, 20, 60])
 
-levels = np.linspace(-5, 5, 11)
+levels = np.linspace(-3, 3, 13)
 
-data = plt.contourf(lons, lats, season2_usa, levels=levels, cmap=cmocean.cm.delta, extend='both', transform=ccrs.PlateCarree())
-cs = plt.contour(lons, lats, season2_usa, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
+data = plt.contourf(lons, lats, season2, levels=levels, cmap=cmocean.cm.delta, extend='both', transform=ccrs.PlateCarree())
+cs = plt.contour(lons, lats, season2, np.arange(0, 0+0.01, 0.01), colors='k', linewidths=0.5, transform=ccrs.PlateCarree())
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -472,17 +494,18 @@ ax.add_feature(states_provinces, edgecolor='k')
 for scale, axis in zip(['20m'], [ax]):
     axis.add_feature(USCOUNTIES.with_scale(scale), linestyle='-', edgecolor='k', alpha=0.1)
 
-plt.title('ECMWF+UKMET "superblend" dew point anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
+plt.title('ECMWF+UKMET "superblend" dew point anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
-cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
+cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
 cbar.ax.set_facecolor([1,1,1,0])
 
 for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
+_dew_humidity_legend(ax)
 ax.text(0.01, 0.02, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, zorder=22, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
 fig.patch.set_facecolor('k')
 
@@ -533,6 +556,7 @@ cbar.ax.set_facecolor([1,1,1,0])
 for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
+_dew_humidity_legend(ax)
 ax.text(0.01, 0.02, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, zorder=22, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
 fig.patch.set_facecolor('k')
 
@@ -583,6 +607,7 @@ cbar.ax.set_facecolor([1,1,1,0])
 for label in cbar.ax.get_yticklabels():
     label.set_weight('bold')
 
+_dew_humidity_legend(ax)
 ax.text(0.01, 0.02, '@BenNollWeather', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, zorder=22, color='white', weight="bold", fontsize=20, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='round'))
 fig.patch.set_facecolor('k')
 

@@ -330,86 +330,118 @@ merged_df.to_csv(_os.path.join(_WORK, "downloads/roni.csv"))
 
 import seaborn as sns
 import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+import matplotlib.ticker as mticker
+from matplotlib.lines import Line2D
+from lib.ap_dates import ap_rewrite
 
-# Assuming your DataFrame is named merged_df
-
-# Set up the plot
-sns.set(style="darkgrid", rc={'axes.facecolor': 'k', 'figure.facecolor': 'k'})
-
-# Create the plot
-plt.figure(figsize=(25, 15))
-ax = sns.lineplot(data=merged_df, x="step", y="scaled_nino34", label="Relative Niño 3.4", color='orange', linewidth=20, zorder=10)
-sns.lineplot(data=merged_df, x="step", y="nino34", label="Traditional Niño 3.4", color='green', linewidth=20, zorder=10)
-ax.set_xlabel(" ", color='white', fontsize=14)
-ax.set_ylabel(" ", color='white', fontsize=14)
-ax.tick_params(axis='both', colors='white', labelsize=30)  # Adjusted
-plt.title("Traditional Niño 3.4 index & relative Niño 3.4 index C3S forecast", fontsize=40, loc="left", color='white', weight="bold", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
-plt.title("Init: {}".format(month1), fontsize=30, loc="right", color='white', weight="bold", bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='k', boxstyle='round'))
-
-ax.tick_params(left=False, bottom=False, right=False, top=False, width=2, colors="white")  # Remove tick marks
-ax.spines['top'].set_visible(False)  # Hide top spine
-ax.spines['bottom'].set_visible(False)  # Hide bottom spine
-ax.spines['left'].set_visible(False)  # Hide left spine
-ax.spines['right'].set_visible(False)  # Hide right spine
-
-# Set y-axis limits using Matplotlib
-ax.set_ylim(merged_df['scaled_nino34'].min()-0.5, merged_df['nino34'].max()+0.5)
-
-# Customize the legend
-legend = ax.legend(loc='lower left', title="")
-legend_title = legend.get_title()
-legend_title.set_fontsize(30)  # Adjusted text size
-legend_title.set_color('white')  # Adjusted text color
-legend.get_frame().set_edgecolor('none')  # Remove legend border
-
-# Add El Niño and La Niña threshold to the legend
-el_nino_line = ax.plot([], [], color='lightsalmon', linestyle='--', linewidth=10, label='El Niño Threshold')
-la_nina_line = ax.plot([], [], color='aqua', linestyle='--', linewidth=10, label='La Niña Threshold')
-
-# Adjust legend item font size and color
-for text in legend.get_texts():
-    text.set_fontsize(30)
-    text.set_color('white')
-
-plt.xticks(rotation=45)
-
-# Make the axes tick labels bold
-for tick in ax.xaxis.get_major_ticks():
-    tick.label1.set_fontweight('bold')
-
-for tick in ax.yaxis.get_major_ticks():
-    tick.label1.set_fontweight('bold')
-
-# Add horizontal lines at 0.5 and -0.5
-ax.axhline(y=0.5, color='lightsalmon', linestyle='--', linewidth=4)
-ax.axhline(y=-0.5, color='aqua', linestyle='--', linewidth=4)
-
-# Ensure the legend includes the threshold lines and set text properties
-legend = ax.legend(loc='lower left')
-for text in legend.get_texts():
-    text.set_color('white')
-    text.set_fontsize(30)
-
-ax.text(0.91, 0.96, '@BenNollWeather', horizontalalignment='left', verticalalignment='bottom',
-          transform=ax.transAxes, color='white', weight="bold", fontsize=16,
-          bbox=dict(facecolor='dimgray', alpha=0.5, edgecolor='black', boxstyle='round'))
+_MONTHS = (
+    "",
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+)
 
 
-plt.tight_layout()
+def _month_year(value, _pos):
+    stamp = mdates.num2date(value)
+    return ap_rewrite(f"{_MONTHS[stamp.month]} {stamp.year}")
 
-try:
 
-    fig.subplots_adjust(bottom=0.12)
+def _celsius(value, _pos):
+    return f"{value:.1f}°C"
 
-except Exception:
 
-    pass
+def _pin_left_credit(figure, axes, y=0.035):
+    """Put @BenNollWeather on the left edge of the y-axis labels."""
+    figure.canvas.draw()
+    plt.setp(axes.get_xticklabels(), fontweight="bold", color="white")
+    plt.setp(axes.get_yticklabels(), fontweight="bold", color="white")
+    figure.canvas.draw()
+    renderer = figure.canvas.get_renderer()
+    tick_labels = [label for label in axes.get_yticklabels() if label.get_text().strip()]
+    left_px = min(label.get_window_extent(renderer).x0 for label in tick_labels)
+    credit_x, _ = figure.transFigure.inverted().transform((left_px, 0))
+    figure.text(
+        credit_x,
+        y,
+        "@BenNollWeather",
+        color="white",
+        weight="bold",
+        fontsize=18,
+        ha="left",
+        va="center",
+    )
 
-plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/experimental_roni_forecast.png'), facecolor='k', bbox_inches="tight", pad_inches=0.18, dpi=200)
-try:
-    fig.subplots_adjust(bottom=0.12)
-except Exception:
-    pass
-plt.savefig(_os.path.join(_WORK, 'downloads/experimental_roni_forecast.png'), facecolor='k', bbox_inches="tight", pad_inches=0.18, dpi=200)
+
+sns.set(style="darkgrid", rc={"axes.facecolor": "#000000", "figure.facecolor": "#000000", "savefig.facecolor": "#000000"})
+
+fig, ax = plt.subplots(figsize=(25, 15))
+fig.patch.set_facecolor("#000000")
+ax.set_facecolor("#000000")
+sns.lineplot(data=merged_df, x="step", y="scaled_nino34", color="orange", linewidth=10, ax=ax, legend=False)
+sns.lineplot(data=merged_df, x="step", y="nino34", color="green", linewidth=10, ax=ax, legend=False)
+ax.axhline(y=0.5, color="lightsalmon", linestyle="--", linewidth=4)
+ax.axhline(y=-0.5, color="aqua", linestyle="--", linewidth=4)
+ax.set_ylim(merged_df["scaled_nino34"].min() - 0.5, merged_df["nino34"].max() + 0.5)
+
+ax.set_title(
+    "Traditional Niño 3.4 index & relative Niño 3.4 index C3S forecast",
+    loc="left",
+    color="white",
+    weight="bold",
+    fontsize=32,
+    pad=18,
+)
+ax.set_title("Init: {}".format(month1), loc="right", color="white", weight="bold", fontsize=26, pad=18)
+ax.set_xlabel("")
+ax.set_ylabel("")
+for spine in ("top", "bottom", "left", "right"):
+    ax.spines[spine].set_visible(False)
+ax.tick_params(axis="both", colors="white", labelsize=28, length=0)
+ax.yaxis.grid(True, color="white", linewidth=0.6, alpha=0.28)
+ax.xaxis.grid(False)
+ax.set_axisbelow(True)
+ax.yaxis.set_major_formatter(mticker.FuncFormatter(_celsius))
+ax.xaxis.set_major_locator(mdates.MonthLocator(bymonthday=1))
+ax.xaxis.set_major_formatter(mticker.FuncFormatter(_month_year))
+
+handles = [
+    Line2D([0], [0], color="orange", linewidth=8, label="Relative Niño 3.4"),
+    Line2D([0], [0], color="green", linewidth=8, label="Traditional Niño 3.4"),
+    Line2D([0], [0], color="lightsalmon", linestyle="--", linewidth=3, label="El Niño threshold"),
+    Line2D([0], [0], color="aqua", linestyle="--", linewidth=3, label="La Niña threshold"),
+]
+ax.legend(
+    handles=handles,
+    loc="upper center",
+    bbox_to_anchor=(0.5, -0.12),
+    ncol=4,
+    frameon=False,
+    fontsize=24,
+    labelcolor="white",
+    borderaxespad=0.0,
+    columnspacing=1.4,
+    handlelength=2.4,
+    handletextpad=0.5,
+)
+
+fig.patch.set_facecolor("#000000")
+ax.set_facecolor("#000000")
+fig.subplots_adjust(left=0.10, right=0.98, top=0.90, bottom=0.20)
+fig.text(0.98, 0.035, "Data: C3S", color="white", weight="bold", fontsize=18, ha="right", va="center")
+_pin_left_credit(fig, ax)
+
+fig.savefig(_os.path.join(_WORK, "copernicus_imagery/experimental_roni_forecast.png"), facecolor="#000000", bbox_inches="tight", pad_inches=0.18, dpi=200)
+fig.savefig(_os.path.join(_WORK, "downloads/experimental_roni_forecast.png"), facecolor="#000000", bbox_inches="tight", pad_inches=0.18, dpi=200)
 
 plt.close("all")
