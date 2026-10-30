@@ -314,6 +314,9 @@ with open(inventory_path, encoding="utf-8") as handle:
         except ValueError:
             size = 0
         folder = rel.split("/", 1)[0] if "/" in rel else "c3s"
+        # Heartbeat copies live under monitor/. They are not a public gallery.
+        if folder == "monitor":
+            continue
         stem = PurePosixPath(rel).stem.replace("_", " ").replace("-", " ")
         title = re.sub(r"\s+", " ", stem).strip().title()
         month_match = re.search(r"20\d{2}[-_/](?:0[1-9]|1[0-2])", rel)
