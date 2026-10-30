@@ -302,6 +302,9 @@ for dataset in df:
     dataset = dataset.interp(latitude = lats,
                    longitude = lons,
                    method ='nearest')
+    # Current ecCodes names this temperature-anomaly field t_a. Older tables use ta.
+    if "ta" not in dataset.data_vars and "t_a" in dataset.data_vars:
+        dataset = dataset.rename({"t_a": "ta"})
     dataset['ta'] = dataset['ta'].expand_dims({"GCM":1})
     dataset['GCM'] = (('GCM'),[dataset.attrs['institution']] )
     dsets.append(dataset)
