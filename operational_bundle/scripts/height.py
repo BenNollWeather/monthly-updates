@@ -648,8 +648,8 @@ def _name_above_globe(ax, name):
 
 
 def _finish_height_panel(fig, mappable):
-    """Leave a gap between the two rows of globes and park the colorbar below them."""
-    cax = fig.add_axes([0.14, 0.028, 0.72, 0.018])
+    """Park a shorter colorbar under the globes and the season title in the top margin."""
+    cax = fig.add_axes([0.28, 0.034, 0.44, 0.016])
     colorbar = fig.colorbar(
         mappable,
         cax=cax,
@@ -662,13 +662,37 @@ def _finish_height_panel(fig, mappable):
         label.set_weight("bold")
         label.set_color("white")
     fig.patch.set_facecolor("#000000")
-    fig.subplots_adjust(left=0.02, right=0.98, top=0.84, bottom=0.12, wspace=0.04, hspace=0.42)
+    fig.subplots_adjust(left=0.02, right=0.98, top=0.76, bottom=0.12, wspace=0.04, hspace=0.42)
+    season = ""
+    for ax in fig.axes:
+        getter = getattr(ax, "get_title", None)
+        if getter is None:
+            continue
+        try:
+            text = getter(loc="left") or ""
+        except TypeError:
+            text = ""
+        if "height anomaly" in text.lower():
+            season = text.strip()
+            ax.set_title("", loc="left")
+            break
+    if season:
+        fig.text(
+            0.02,
+            0.985,
+            season,
+            ha="left",
+            va="top",
+            color="white",
+            weight="bold",
+            fontsize=40,
+        )
     fig.text(
-        0.98,
-        0.975,
+        0.02,
+        0.042,
         "@BenNollWeather",
-        ha="right",
-        va="top",
+        ha="left",
+        va="center",
         color="white",
         weight="bold",
         fontsize=20,

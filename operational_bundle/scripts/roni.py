@@ -395,14 +395,13 @@ ax.axhline(y=-0.5, color="aqua", linestyle="--", linewidth=4)
 ax.set_ylim(merged_df["scaled_nino34"].min() - 0.5, merged_df["nino34"].max() + 0.5)
 
 ax.set_title(
-    "Traditional Niño 3.4 index & relative Niño 3.4 index C3S forecast",
+    "Traditional Niño 3.4 index and relative Niño 3.4 index forecast",
     loc="left",
     color="white",
     weight="bold",
     fontsize=32,
     pad=18,
 )
-ax.set_title("Init: {}".format(month1), loc="right", color="white", weight="bold", fontsize=26, pad=18)
 ax.set_xlabel("")
 ax.set_ylabel("")
 for spine in ("top", "bottom", "left", "right"):
@@ -438,7 +437,7 @@ ax.legend(
 fig.patch.set_facecolor("#000000")
 ax.set_facecolor("#000000")
 fig.subplots_adjust(left=0.10, right=0.98, top=0.90, bottom=0.20)
-fig.text(0.98, 0.035, "Data: C3S", color="white", weight="bold", fontsize=18, ha="right", va="center")
+fig.text(0.98, 0.035, "Data: C3S forecasts from {}".format(month1), color="white", weight="bold", fontsize=18, ha="right", va="center")
 _pin_left_credit(fig, ax)
 
 fig.savefig(_os.path.join(_WORK, "copernicus_imagery/experimental_roni_forecast.png"), facecolor="#000000", bbox_inches="tight", pad_inches=0.18, dpi=200)
