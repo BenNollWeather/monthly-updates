@@ -65,6 +65,7 @@ C3S_CENTRES = (
 PRODUCTS = {
     "era5-extremes": {"kind": "previous", "probe": "era5", "label": "ERA5 extremes"},
     "era5-pwat": {"kind": "previous", "probe": "era5", "label": "ERA5 precipitable water"},
+    "era5-moisture": {"kind": "previous", "probe": "era5", "label": "ERA5 planetary moisture"},
     "nmme": {"kind": "current", "probe": "nmme", "label": "NMME"},
     "c3s": {"kind": "current", "probe": "c3s", "label": "C3S"},
     "ecmwf-seasonal": {"kind": "current", "probe": "ecmwf", "label": "ECMWF seasonal"},

@@ -1,4 +1,0 @@
-[submodule "era5_moisture_monitor"]
-	path = era5_moisture_monitor
-	url = https://github.com/BenNollWeather/era5-moisture-monitor.git
-	branch = master

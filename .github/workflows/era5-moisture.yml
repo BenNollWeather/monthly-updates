@@ -1,0 +1,141 @@
+name: Monthly ERA5 planetary moisture
+on:
+  workflow_dispatch:
+    inputs:
+      upload_to_s3:
+        description: "Upload imagery and publish the heartbeat"
+        required: false
+        default: true
+        type: boolean
+      scheduled:
+        description: "Count this run as the monthly scheduled event"
+        required: false
+        default: false
+        type: boolean
+      wait_for_data:
+        description: "Check again until this month's data is available"
+        required: false
+        default: true
+        type: boolean
+      target_month:
+        description: "Data month YYYY-MM. Leave blank to choose it from today's date."
+        required: false
+        default: ""
+        type: string
+      startup_delay_seconds:
+        description: "Pause this many seconds before the first check. Automatic retries set this."
+        required: false
+        default: "0"
+        type: string
+concurrency:
+  group: monthly-era5-moisture
+  cancel-in-progress: false
+permissions:
+  contents: read
+  id-token: write
+  actions: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      WORK_ROOT: /tmp/monthly-updates/era5-moisture-monitor
+      AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      AWS_PROFILE: ""
+      STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
+      PRODUCT_ID: era5-moisture
+      PRODUCT_SCHEDULE: "manual"
+      PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/atmospheric_moisture/era5_moisture_monitor.png"]'
+      MPLCONFIGDIR: /tmp/matplotlib
+      CARTOPY_DATA_DIR: /tmp/cartopy
+      PYTHONUNBUFFERED: "1"
+      SKIP_UPLOAD: "1"
+      USE_SYSTEM_PYTHON: "1"
+      KEEP_WORK: "1"
+      SCHEDULED_EVENT: ${{ inputs.scheduled }}
+      WORKFLOW_FILE: era5-moisture.yml
+      DATA_WAIT_INTERVAL_SECONDS: "1800"
+      DATA_MAX_WAIT_MINUTES: "240"
+      DATA_JOB_TIMEOUT_MINUTES: "360"
+      DATA_PROCESS_BUDGET_MINUTES: "300"
+      WAIT_FOR_DATA: ${{ inputs.wait_for_data }}
+      TARGET_MONTH: ${{ inputs.target_month }}
+      STARTUP_DELAY_SECONDS: ${{ inputs.startup_delay_seconds }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements/maps.txt
+      - name: Install map libraries
+        run: pip install -r requirements/maps.txt
+
+      - name: Record start
+        run: |
+          echo "RUN_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+          echo "RUN_STARTED_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Configure CDS credentials
+        env:
+          CDSAPI_KEY: ${{ secrets.CDSAPI_KEY }}
+          CDSAPI_URL: ${{ secrets.CDSAPI_URL }}
+        run: bash .github/scripts/write_cdsapirc.sh
+
+      - name: Wait for the monthly release
+        id: wait
+        timeout-minutes: 300
+        run: bash .github/scripts/wait_for_release.sh
+
+      - name: Process
+        id: process
+        if: steps.wait.outputs.action == 'process'
+        env:
+          TARGET_MONTH: ${{ steps.wait.outputs.target_month }}
+        run: |
+          set +e
+          bash era5_moisture_monitor/bin/run_era5_moisture_monitor.sh
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit $code
+
+      - name: Configure temporary AWS credentials
+        if: always() && (inputs.upload_to_s3)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: era5-moisture-${{ github.run_id }}
+      - name: Upload imagery
+        id: upload
+        if: steps.process.outcome == 'success' && (inputs.upload_to_s3)
+        run: |
+          if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
+          aws s3 sync "$WORK_ROOT/imagery" s3://bennollweather/atmospheric_moisture/ --exclude ".DS_Store" --only-show-errors
+      - name: Refresh the moisture gallery
+        if: steps.upload.outcome == 'success'
+        env:
+          ONLY_GALLERY: atmospheric_moisture
+        run: bash operational_bundle/bin/update_s3_portal_standalone.sh
+      - name: Publish heartbeat and queue the next check
+        id: release
+        if: always()
+        env:
+          WAIT_ACTION: ${{ steps.wait.outputs.action }}
+          WAIT_MESSAGE: ${{ steps.wait.outputs.message }}
+          RESOLVED_TARGET_MONTH: ${{ steps.wait.outputs.target_month }}
+          RETRY_UNTIL: ${{ steps.wait.outputs.retry_until }}
+          PROCESS_EXIT_CODE: ${{ steps.process.outputs.exit_code }}
+          PROCESS_OUTCOME: ${{ steps.process.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
+          UPLOAD_TO_S3: ${{ inputs.upload_to_s3 }}
+          SCHEDULED_INPUT: ${{ inputs.scheduled }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/handle_release_result.sh
+      - name: Delete downloads, imagery, and credentials
+        if: always()
+        run: bash .github/scripts/cleanup.sh
+      - name: Fail the job when the release failed
+        if: always() && steps.release.outputs.outcome == 'fail'
+        run: exit 1
