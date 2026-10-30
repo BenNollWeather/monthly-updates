@@ -58,7 +58,10 @@ class RegionLabelTests(unittest.TestCase):
         )
         self.assertEqual(anchors["Niño 4"][0], 185.0)
         self.assertEqual(anchors["Niño 3.4"][0], 215.0)
-        self.assertGreater(anchors["Niño 3.4"][1], anchors["Niño 4"][1] + 8)
+        nino34_south = REGIONS["nino34"][1]
+        self.assertEqual(anchors["Niño 3.4"][1], nino34_south - 2.0)
+        self.assertLess(anchors["Niño 3.4"][1], nino34_south)
+        self.assertLess(anchors["Niño 3.4"][1], anchors["Niño 4"][1])
         self.assertEqual(anchors["Niño 1+2"][0], 275.0)
         west, _south, east, north = MDR_BOUNDS
         self.assertEqual(anchors["Atlantic MDR"][0], (west + east) / 2)
@@ -88,6 +91,9 @@ class RegionLabelTests(unittest.TestCase):
         fig.canvas.draw()
         renderer = fig.canvas.get_renderer()
         placed = [(text.get_text(), text.get_window_extent(renderer)) for text in ax.texts]
+        aligns = {text.get_text(): text.get_verticalalignment() for text in ax.texts}
+        self.assertEqual(aligns["Niño 3.4"], "top")
+        self.assertEqual(aligns["Niño 4"], "bottom")
         self.assertEqual(len(placed), 7)
         for index, (left_name, left_box) in enumerate(placed):
             for right_name, right_box in placed[index + 1 :]:

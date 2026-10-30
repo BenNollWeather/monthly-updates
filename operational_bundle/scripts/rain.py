@@ -20,6 +20,7 @@ def _apply_house_style() -> None:
 
 
 _apply_house_style()
+from lib.regions import draw_region_labels
 """Auto-converted from rain.ipynb.
 
 Generated for the operational monthly runner. Styling and output filenames are preserved as much as possible.
@@ -680,6 +681,7 @@ mdr_feature = ShapelyFeature(
     edgecolor='k',
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
+draw_region_labels(ax, names=("Atlantic MDR",))
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 
@@ -764,6 +766,7 @@ mdr_feature = ShapelyFeature(
     edgecolor='k',
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
+draw_region_labels(ax, names=("Atlantic MDR",))
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-4,-2,0,2,4], pad=0.01, shrink=0.4, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white") 

@@ -23,16 +23,17 @@ REGIONS: dict[str, tuple[float, float, float, float]] = {
     "atlantic": (240.0, -5.0, 358.0, 40.0),
 }
 
-# Hurricane Main Development Region. Drawn on Atlantic SST maps and on the
-# global SST and velocity-potential maps. Not the Atlantic map frame above.
+# Hurricane Main Development Region. Drawn on Atlantic SST and rainfall maps
+# and on the global SST and velocity-potential maps. Not the Atlantic map frame.
 MDR_BOUNDS = (280.0, 10.0, 340.0, 20.0)
 
-# (name, region key or None, extra degrees of latitude so the label sits above
-# the box). Niño 3.4 overlaps Niño 4 in longitude, so its label is lifted
-# clear of the Niño 4 label instead of sitting beside it.
+# (name, region key or None, latitude offset in degrees). A positive offset
+# sits above the north edge. A negative offset sits below the south edge.
+# Niño 3.4 overlaps Niño 4 in longitude, so its label goes below the box
+# instead of sitting beside the Niño 4 label.
 _LABELS = (
     ("Niño 4", "nino4", 2.0),
-    ("Niño 3.4", "nino34", 14.0),
+    ("Niño 3.4", "nino34", -2.0),
     ("Niño 3", "nino3", 2.0),
     ("Niño 1+2", "nino12", 2.0),
     ("IOD-W", "iodw", 2.0),
@@ -41,18 +42,32 @@ _LABELS = (
 )
 
 
-def region_label_anchors(names: tuple[str, ...] | None = None) -> list[tuple[str, float, float]]:
-    """Geographic points for labels centered on each box, sitting above it."""
-    anchors = []
-    for text, key, lift in _LABELS:
+def _placed_labels(
+    names: tuple[str, ...] | None = None,
+) -> list[tuple[str, float, float, str]]:
+    """Return text, longitude, latitude, and vertical alignment for each label."""
+    placed = []
+    for text, key, offset in _LABELS:
         if names is not None and text not in names:
             continue
         if key is None:
-            west, _south, east, north = MDR_BOUNDS
+            west, south, east, north = MDR_BOUNDS
         else:
-            west, _south, east, north = REGIONS[key]
-        anchors.append((text, (west + east) / 2.0, north + lift))
-    return anchors
+            west, south, east, north = REGIONS[key]
+        lon = (west + east) / 2.0
+        if offset < 0:
+            placed.append((text, lon, south + offset, "top"))
+        else:
+            placed.append((text, lon, north + offset, "bottom"))
+    return placed
+
+
+def region_label_anchors(names: tuple[str, ...] | None = None) -> list[tuple[str, float, float]]:
+    """Geographic points for labels centered on each box.
+
+    Most labels sit above the north edge. Niño 3.4 sits below its south edge.
+    """
+    return [(text, lon, lat) for text, lon, lat, _align in _placed_labels(names)]
 
 
 def add_mdr_outline(ax, linewidth: float = 3):
@@ -73,21 +88,22 @@ def add_mdr_outline(ax, linewidth: float = 3):
 
 
 def draw_region_labels(ax, names: tuple[str, ...] | None = None, fontsize: float = 18) -> None:
-    """Label climate regions in geographic coordinates, above each box.
+    """Label climate regions in geographic coordinates.
 
-    Pass names=("Atlantic MDR",) on the Atlantic SST maps. The default set is
-    the global SST and velocity-potential set. There is no separate "3.4" or
-    "12" token: Niño 4 names the Niño 4 box, and Niño 1+2 is one label.
+    Pass names=("Atlantic MDR",) on the Atlantic SST and rainfall maps. The
+    default set is the global SST and velocity-potential set. There is no
+    separate "3.4" or "12" token: Niño 4 names the Niño 4 box, and Niño 1+2
+    is one label. Niño 3.4 is drawn below its box.
     """
     import cartopy.crs as ccrs
 
-    for text, lon, lat in region_label_anchors(names):
+    for text, lon, lat, align in _placed_labels(names):
         ax.text(
             lon,
             lat,
             text,
             horizontalalignment="center",
-            verticalalignment="bottom",
+            verticalalignment=align,
             transform=ccrs.PlateCarree(),
             color="white",
             weight="bold",
