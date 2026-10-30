@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -122,7 +119,6 @@ import pygrib
 import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-import matplotlib.ticker as mticker
 from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
@@ -135,7 +131,6 @@ import dataframe_image as dfi
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
 from shapely.geometry import box
@@ -149,7 +144,6 @@ import cmocean
 # %% Notebook cell 3
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
 
 # %% Notebook cell 4
 
@@ -1123,17 +1117,6 @@ plt.close("all")
 # scale='50m',
 # facecolor='none')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.xlabels_bottom = True
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([0, 10, 20, 30, 40, 50])
-# gl.xlocator = mticker.FixedLocator([-180, -160, -140, -120, -100, -80, -60, -40, -20, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 16, 'color': 'white'}
-# gl.ylabel_style = {'size': 16, 'color': 'white'}
 
 # ax.add_feature(cfeature.LAND)
 # ax.coastlines(resolution='50m', color='k', linewidth=1)

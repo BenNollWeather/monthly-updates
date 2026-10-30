@@ -19,9 +19,89 @@ REGIONS: dict[str, tuple[float, float, float, float]] = {
     "nino4": (160.0, -5.0, 210.0, 5.0),
     "iodw": (50.0, -10.0, 70.0, 10.0),
     "iode": (90.0, -10.0, 110.0, 0.0),
-    # Same frame as the Atlantic seasonal maps.
+    # Same frame as the Atlantic seasonal maps. This is the map frame, not the MDR.
     "atlantic": (240.0, -5.0, 358.0, 40.0),
 }
+
+# Hurricane Main Development Region. Drawn on Atlantic SST maps and on the
+# global SST and velocity-potential maps. Not the Atlantic map frame above.
+MDR_BOUNDS = (280.0, 10.0, 340.0, 20.0)
+
+# (name, region key or None, extra degrees of latitude so the label sits above
+# the box). Niño 3.4 overlaps Niño 4 in longitude, so its label is lifted
+# clear of the Niño 4 label instead of sitting beside it.
+_LABELS = (
+    ("Niño 4", "nino4", 2.0),
+    ("Niño 3.4", "nino34", 14.0),
+    ("Niño 3", "nino3", 2.0),
+    ("Niño 1+2", "nino12", 2.0),
+    ("IOD-W", "iodw", 2.0),
+    ("IOD-E", "iode", 2.0),
+    ("Atlantic MDR", None, 2.0),
+)
+
+
+def region_label_anchors(names: tuple[str, ...] | None = None) -> list[tuple[str, float, float]]:
+    """Geographic points for labels centered on each box, sitting above it."""
+    anchors = []
+    for text, key, lift in _LABELS:
+        if names is not None and text not in names:
+            continue
+        if key is None:
+            west, _south, east, north = MDR_BOUNDS
+        else:
+            west, _south, east, north = REGIONS[key]
+        anchors.append((text, (west + east) / 2.0, north + lift))
+    return anchors
+
+
+def add_mdr_outline(ax, linewidth: float = 3):
+    """Draw the Main Development Region. The caller chooses the map extent."""
+    import cartopy.crs as ccrs
+    from cartopy.feature import ShapelyFeature
+    from shapely.geometry import box
+
+    west, south, east, north = MDR_BOUNDS
+    feature = ShapelyFeature(
+        [box(west, south, east, north)],
+        ccrs.PlateCarree(),
+        facecolor="none",
+        edgecolor="k",
+    )
+    ax.add_feature(feature, linewidth=linewidth, zorder=22)
+    return feature
+
+
+def draw_region_labels(ax, names: tuple[str, ...] | None = None, fontsize: float = 18) -> None:
+    """Label climate regions in geographic coordinates, above each box.
+
+    Pass names=("Atlantic MDR",) on the Atlantic SST maps. The default set is
+    the global SST and velocity-potential set. There is no separate "3.4" or
+    "12" token: Niño 4 names the Niño 4 box, and Niño 1+2 is one label.
+    """
+    import cartopy.crs as ccrs
+
+    for text, lon, lat in region_label_anchors(names):
+        ax.text(
+            lon,
+            lat,
+            text,
+            horizontalalignment="center",
+            verticalalignment="bottom",
+            transform=ccrs.PlateCarree(),
+            color="white",
+            weight="bold",
+            fontsize=fontsize,
+            zorder=30,
+            clip_on=True,
+            bbox=dict(
+                facecolor="#000000",
+                alpha=0.5,
+                edgecolor="black",
+                boxstyle="square",
+                pad=0.1,
+            ),
+        )
 
 
 def _box_ring(west: float, south: float, east: float, north: float) -> list[tuple[float, float]]:

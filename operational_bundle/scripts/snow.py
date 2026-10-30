@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -382,7 +379,7 @@ for i in range(len(snow)):
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
 
     # Add a legend for labels
-    legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+    legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
     patches = [Patch(color=color, label=label)
               for color, label in legend_labels.items()]
@@ -452,7 +449,7 @@ for i in range(len(snow)):
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
 
     # Add a legend for labels
-    legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+    legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
     patches = [Patch(color=color, label=label)
                for color, label in legend_labels.items()]
@@ -463,7 +460,7 @@ for i in range(len(snow)):
               prop=dict(size=16))
     
     # Add a legend for labels
-    legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+    legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
     patches = [Patch(color=color, label=label)
               for color, label in legend_labels.items()]
@@ -531,7 +528,7 @@ plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', lo
 plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
-legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -591,7 +588,7 @@ plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', lo
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
-legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -655,7 +652,7 @@ plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', lo
 plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
-legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -719,7 +716,7 @@ plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', lo
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
-legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -783,7 +780,7 @@ plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', lo
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
-legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]
@@ -843,7 +840,7 @@ plt.title('C3S snowfall anomaly\n[ECMWF+UKMET+Météo-France+DWD+CMCC+ECCC]', lo
 plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
 
 # Add a legend for labels
-legend_labels = {"#178c7c": "Above normal","#bf5160": "Below normal"}
+legend_labels = {"#178c7c": "Above average","#bf5160": "Below average"}
 
 patches = [Patch(color=color, label=label)
           for color, label in legend_labels.items()]

@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -120,7 +117,6 @@ import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.patches import Patch
-import matplotlib.ticker as mticker
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -129,8 +125,6 @@ import cfgrib
 # %% Notebook cell 1
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 
 # %% Notebook cell 2
@@ -375,7 +369,7 @@ for i in range(len(z500)):
 #     cbar.ax.set_facecolor([1,1,1,0])
     
     # Add a legend for labels
-    legend_labels = {"#BB2832": "Above normal", "#2F7CB5": "Below normal"}
+    legend_labels = {"#CE5146": "Above average", "#3C8ABE": "Below average"}
 
     patches = [Patch(color=color, label=label)
               for color, label in legend_labels.items()]
@@ -383,13 +377,13 @@ for i in range(len(z500)):
     # Add the legend
     legend = ax.legend(handles=patches,
                    facecolor="k",
-                   prop=dict(size=20),           # Set the font size
+                   prop=dict(size=26),           # Set the font size
                    frameon=True,                 # Set frameon to True to have a box around the legend
                    edgecolor='black',            # Set the edge color of the legend box to black
                    fancybox=False,               # Disable rounded corners (use squared style)
                    loc='lower right',            # Position the legend to the bottom right
                    labelcolor='white',           # Set the font color of the legend labels
-                   ncol=1                        # Set the number of columns in the legend to 1 (vertical)
+                   ncol=2                        # Above average and Below average on one row
                    ).set_zorder(21)
 
     # Set the font color of the legend title (if required)
@@ -449,7 +443,7 @@ for i in range(len(z500)):
 #     cbar.ax.set_facecolor([1,1,1,0])
     
     # Add a legend for labels
-    legend_labels = {"#BB2832": "Above normal", "#2F7CB5": "Below normal"}
+    legend_labels = {"#CE5146": "Above average", "#3C8ABE": "Below average"}
 
     patches = [Patch(color=color, label=label)
               for color, label in legend_labels.items()]
@@ -457,13 +451,13 @@ for i in range(len(z500)):
     # Add the legend
     legend = ax.legend(handles=patches,
                    facecolor="k",
-                   prop=dict(size=20),           # Set the font size
+                   prop=dict(size=26),           # Set the font size
                    frameon=True,                 # Set frameon to True to have a box around the legend
                    edgecolor='black',            # Set the edge color of the legend box to black
                    fancybox=False,               # Disable rounded corners (use squared style)
                    loc='lower right',            # Position the legend to the bottom right
                    labelcolor='white',           # Set the font color of the legend labels
-                   ncol=1                        # Set the number of columns in the legend to 1 (vertical)
+                   ncol=2                        # Above average and Below average on one row
                    ).set_zorder(21)
 
     # Set the font color of the legend title (if required)

@@ -19,6 +19,7 @@ def _apply_house_style() -> None:
 
 
 _apply_house_style()
+from lib.regions import draw_region_labels
 """Single-pass ECMWF velocity-potential workflow.
 
 This consolidates the prior vp3.py -> vp.py -> vp2.py chain into one script.
@@ -76,9 +77,6 @@ except Exception:
 Generated for the operational monthly runner. Styling and output filenames are preserved as much as possible.
 """
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -160,7 +158,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.patches import Patch
-import matplotlib.ticker as mticker
 import numpy as np
 
 # %% Notebook cell 1
@@ -168,7 +165,6 @@ import numpy as np
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
@@ -396,9 +392,6 @@ Generated for the operational monthly runner. Styling and output filenames are p
 """
 # from __future__ import annotations  # removed from concatenated script
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -413,7 +406,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.patches import Patch
-import matplotlib.ticker as mticker
 import numpy as np
 
 # %% Notebook cell 1
@@ -421,7 +413,6 @@ import numpy as np
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
@@ -881,24 +872,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -910,37 +890,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}'.format(month1), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -999,24 +976,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1028,37 +994,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}'.format(month2), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1117,24 +1080,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1146,37 +1098,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}'.format(month3), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1235,24 +1184,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1264,37 +1202,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}'.format(month4), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1353,24 +1288,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1382,37 +1306,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}'.format(month5), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1473,24 +1394,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1502,37 +1412,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}'.format(month6), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1591,24 +1498,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1620,37 +1516,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1709,24 +1602,13 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # # Add shapefiles
 # shape1 = shape1
 # shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-# ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape2 = shape2
 # shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
@@ -1738,37 +1620,34 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-# ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape4 = shape4
 # shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-# ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape5 = shape5
 # shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-# ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape6 = shape6
 # shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-# ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-
+# 
 # shape7 = shape7
 # shape7_feature = ShapelyFeature(shp_geometries(shape7), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 # ax.add_feature(shape7_feature, linewidth=3, zorder = 22)
 
-# ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+# draw_region_labels(ax)
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
 # plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 # cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 # cbar.ax.tick_params(labelsize=18, color="white", labelcolor="white")
-# cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+# cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+# cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 # cbar.ax.set_facecolor([1,1,1,0])
 
 # # Set the tick labels to bold
@@ -1833,16 +1712,6 @@ print(f"✅ Saved NetCDF file to {save_path}")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=24, color='white')
 # plt.title('{}-{}'.format(month3, month5), loc='right', fontsize=24, color='white')
@@ -1879,9 +1748,6 @@ Generated for the operational monthly runner. Styling and output filenames are p
 """
 # from __future__ import annotations  # removed from concatenated script
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -1896,7 +1762,6 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.patches import Patch
-import matplotlib.ticker as mticker
 import numpy as np
 
 # %% Notebook cell 1
@@ -1904,7 +1769,6 @@ import numpy as np
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
@@ -2398,38 +2262,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -2439,13 +2296,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month1), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -2522,38 +2380,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -2563,13 +2414,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month2), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -2646,38 +2498,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -2687,13 +2532,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month3), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -2770,38 +2616,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -2811,13 +2650,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month4), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -2894,38 +2734,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -2935,13 +2768,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month5), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -3020,38 +2854,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -3061,13 +2888,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}'.format(month6), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -3144,38 +2972,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -3185,13 +3006,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}-{}'.format(month1, month3), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -3260,38 +3082,31 @@ shape1 = shape1
 shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape2 = shape2
 shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape3 = shape3
 shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape4 = shape4
 shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape5 = shape5
 shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 shape6 = shape6
 shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
 ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
 mdr_feature = ShapelyFeature(
     [box(280.0, 10.0, 340.0, 20.0)],
@@ -3301,13 +3116,14 @@ mdr_feature = ShapelyFeature(
 )
 ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
+draw_region_labels(ax)
 
-plt.title('ECMWF 200 hPa velocity potential anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=20, color='white', weight="bold")
+plt.title('ECMWF 200 hPa velocity potential anomaly', loc='left', fontsize=20, color='white', weight="bold")
 plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 cbar = plt.colorbar(data, ax=ax, ticks=[-4000000,-2000000,0,2000000,4000000], pad=0.01, shrink=0.5, aspect=20)
 cbar.ax.tick_params(labelsize=18, color="white", labelcolor="white")
-cbar.ax.set_yticklabels(['-4', '-2', '0', '2', '4'],fontsize=18)
+cbar.ax.set_yticklabels(['−4', '−2', '0', '+2', '+4'], fontsize=18)
+cbar.ax.set_ylabel(r'$\times\,10^{6}$ m$^{2}$ s$^{-1}$', color='white', fontsize=16, fontweight='bold')
 cbar.ax.set_facecolor([1,1,1,0])
 
 # Set the tick labels to bold
@@ -3376,16 +3192,6 @@ plt.close("all")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # plt.title('ECMWF 200 hPa Velocity Potential Anomaly ($m^2$/$s^{-1}$ x $10^{6}$)', loc='left', fontsize=24, color='white')
 # plt.title('{}-{}'.format(month3, month5), loc='right', fontsize=24, color='white')

@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -129,15 +126,12 @@ import dataframe_image as dfi
 # %% Notebook cell 1
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
-import matplotlib.ticker as mticker
 
 # %% Notebook cell 2
 
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
@@ -549,6 +543,20 @@ nino34 = nino34.drop(columns=['step','number','surface','time'])
 nino34 = nino34.rename(columns={'valid_time': 'Month', 'ssta': 'Relative SST Anomaly (°C)'})
 
 # %% Notebook cell 59
+
+# The relative column uses the experimental RONI month-of-year factors.
+# The traditional Niño 3.4 column, merged in below, stays unscaled.
+from lib.roni_scaling import download_ersst, nino34_scaling_factors, scale_by_calendar_month
+
+_ersst_path = download_ersst(_os.path.join(_WORK, "data/noaa/ersst/sst.mnmean.nc"))
+with xr.open_dataset(_ersst_path) as _ersst:
+    _nino_factors = nino34_scaling_factors(_ersst)
+_months = pd.to_datetime(nino34["Month"]).dt.month.to_numpy()
+nino34["Relative SST Anomaly (°C)"] = scale_by_calendar_month(
+    nino34["Relative SST Anomaly (°C)"].to_numpy(),
+    _months,
+    _nino_factors,
+)
 
 nino34['Month'] = nino34['Month'].dt.to_period('M')
 

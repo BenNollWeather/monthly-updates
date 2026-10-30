@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -117,23 +114,10 @@ except Exception:
 def download_noaa_ersst_noverify():
     """Download NOAA ERSST locally with SSL verification disabled and return local NetCDF path."""
     from pathlib import Path
-    import ssl
-    from shutil import copyfileobj
-    from urllib.request import urlopen
+    from lib.roni_scaling import download_ersst
 
-    url = "https://downloads.psl.noaa.gov/Datasets/noaa.ersst.v5/sst.mnmean.nc"
     local_path = Path(_os.path.join(_WORK, "data/noaa/ersst/sst.mnmean.nc"))
-    local_path.parent.mkdir(parents=True, exist_ok=True)
-
-    if local_path.exists() and local_path.stat().st_size > 0:
-        return str(local_path)
-
-    context = ssl._create_unverified_context()
-    with urlopen(url, context=context) as response:
-        with open(local_path, "wb") as out_file:
-            copyfileobj(response, out_file)
-
-    return str(local_path)
+    return str(download_ersst(local_path))
 
 # %% Notebook cell 1
 
@@ -272,46 +256,10 @@ url = "http://psl.noaa.gov/thredds/dodsC/Datasets/noaa.ersst.v5/sst.mnmean.nc"
 local_ersst = download_noaa_ersst_noverify()
 dat = xr.open_dataset(local_ersst, chunks={"time": 12})
 
-tropav = (
-    dat['sst']
-    .sel(lat=slice(20, -20), lon=slice(0, 360))
-    .mean(dim=('lat','lon'))
-    .compute()
-)
+from lib.roni_scaling import nino34_scaling_factors
 
-# %% Notebook cell 28
-
-ninodomain = dat.sel(lat=slice(5, -5), lon=slice(190, 240))
-nino34 = ninodomain.mean(dim=('lat','lon'))
-nino34 = nino34.rename({'sst':'nino34'})
-
-# %% Notebook cell 30
-
-# Set climatology 
-climrang1 = '1991-01-01'
-climrang2 = '2020-12-01'
-
-# Nino3.4 anomaly
-clm = nino34.sel(time=slice(climrang1,climrang2)).groupby('time.month').mean(dim='time')
-nino34a = (nino34.groupby('time.month') - clm)
-# Trop mean anomaly
-clm = tropav.sel(time=slice(climrang1,climrang2)).groupby('time.month').mean(dim='time')
-tropa = (tropav.groupby('time.month') - clm)
-
-# %% Notebook cell 32
-
-diff_idx = nino34a['nino34'] - tropav
-
-# Adjust variance 
-f = nino34a.sel(time=slice('1950-01-01', '2025-12-01'))
-r = diff_idx.sel(time=slice('1950-01-01', '2025-12-01'))
-
-# f = nino34a.sel(time=slice('1971-01-01', '2020-12-01'))
-# r = diff_idx.sel(time=slice('1971-01-01', '2020-12-01'))
-
-scaling_factor = f.groupby('time.month').std('time') / r.groupby('time.month').std('time')
-scaled_reln34a = diff_idx.groupby('time.month') * scaling_factor
-scaled_reln34a = scaled_reln34a.rename({'nino34':'relnino34a'})
+# Same month-of-year factors as the ECMWF relative Niño 3.4 column.
+scaling_nino34 = nino34_scaling_factors(dat)
 
 # %% Notebook cell 33
 
@@ -338,7 +286,7 @@ diff_idx_forecast = nino34 - tropav
 months_present = diff_idx_forecast.coords['valid_time.month']
 
 # Select the scaling factor for the corresponding months
-scaling_factor_selected = scaling_factor['nino34'].sel(month=months_present)
+scaling_factor_selected = scaling_nino34.sel(month=months_present)
 
 # Apply scaling to the 'ssta' variable
 scaled_nino34 = diff_idx_forecast * scaling_factor_selected

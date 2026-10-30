@@ -20,6 +20,7 @@ def _apply_house_style() -> None:
 
 
 _apply_house_style()
+from lib.regions import add_mdr_outline, draw_region_labels
 """Auto-converted from ecmwf_sst.ipynb.
 
 Generated for the operational monthly runner. Styling and output filenames are preserved as much as possible.
@@ -69,9 +70,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -129,15 +127,12 @@ import dataframe_image as dfi
 # %% Notebook cell 1
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
-import matplotlib.ticker as mticker
 
 # %% Notebook cell 2
 
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 from cartopy.feature import ShapelyFeature
@@ -432,38 +427,31 @@ for i in range(len(sst)):
     shape1_feature = ShapelyFeature(shp_geometries(shape1), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape1_feature, linewidth=3, zorder = 22)
 
-#     ax.text(.5425, .485, '3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
     shape2 = shape2
     shape2_feature = ShapelyFeature(shp_geometries(shape2), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape2_feature, linewidth=3, zorder = 22)
 
-#     ax.text(.59, .485, 'Niño 3.4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
-#     ax.text(.68, .485, 'Niño 3', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
     shape3 = shape3
     shape3_feature = ShapelyFeature(shp_geometries(shape3), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape3_feature, linewidth=3, zorder = 22)
 
-#     ax.text(.46, .485, 'Niño 4', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, bbox=dict(facecolor='k', alpha=0.5, edgecolor='black', boxstyle='square', pad=0.1))
 
     shape4 = shape4
     shape4_feature = ShapelyFeature(shp_geometries(shape4), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape4_feature, linewidth=3, zorder = 22)
 
-#     ax.text(.7545, .455, '12', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, zorder=100, bbox=dict(facecolor='k', alpha=0, edgecolor='black', boxstyle='square', pad=0.1))
 
     shape5 = shape5
     shape5_feature = ShapelyFeature(shp_geometries(shape5), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape5_feature, linewidth=3, zorder = 22)
 
-#     ax.text(.253, .455, 'IOD-E', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, zorder=100, bbox=dict(facecolor='k', alpha=0, edgecolor='black', boxstyle='square', pad=0.1))
 
     shape6 = shape6
     shape6_feature = ShapelyFeature(shp_geometries(shape6), ccrs.PlateCarree(), facecolor='none', edgecolor='k')
     ax.add_feature(shape6_feature, linewidth=3, zorder = 22)
 
-#     ax.text(.141, .479, 'IOD-W', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=17, zorder=100, bbox=dict(facecolor='k', alpha=0, edgecolor='black', boxstyle='square', pad=0.1))
 
     mdr_feature = ShapelyFeature(
         [box(280.0, 10.0, 340.0, 20.0)],
@@ -473,9 +461,8 @@ for i in range(len(sst)):
     )
     ax.add_feature(mdr_feature, linewidth=3, zorder=22)
 
-#     ax.text(.8, .566, 'Atlantic MDR', horizontalalignment = 'left', verticalalignment = 'bottom', transform=ax.transAxes, color='white', weight="bold", fontsize=18, zorder=100, bbox=dict(facecolor='k', alpha=0, edgecolor='black', boxstyle='square', pad=0.1))
-
     ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
+    draw_region_labels(ax)
 
     plt.title('ECMWF sea surface temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")
@@ -533,6 +520,8 @@ for i in range(len(sst)):
 
 
     ax.add_feature(cfeature.LAND.with_scale('50m'), facecolor='#808080', edgecolor='#808080', zorder=20)
+    add_mdr_outline(ax)
+    draw_region_labels(ax, names=("Atlantic MDR",))
 
     plt.title('ECMWF sea surface temperature anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=24, color='white', weight="bold")

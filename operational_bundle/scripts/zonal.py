@@ -88,9 +88,6 @@ def get_shp(folder_or_file):
     return str(shp_files[0])
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -139,7 +136,6 @@ import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.patches import Patch
-import matplotlib.ticker as mticker
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -148,8 +144,6 @@ import cfgrib
 # %% Notebook cell 1
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 

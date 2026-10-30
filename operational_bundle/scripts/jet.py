@@ -88,9 +88,6 @@ def get_shp(folder_or_file):
     return str(shp_files[0])
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -139,7 +136,6 @@ import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
 from matplotlib.patches import Patch
-import matplotlib.ticker as mticker
 import numpy as np
 import xarray as xr
 import pandas as pd
@@ -148,8 +144,6 @@ import cfgrib
 # %% Notebook cell 1
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 from cartopy.util import add_cyclic_point
 from cartopy.io.shapereader import Reader
 
@@ -398,7 +392,10 @@ for i in range(len(u200)):
     
     ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
     
-    data = ax.pcolormesh(lons, lats, u200[i], vmin=-10, vmax=10, cmap='RdBu_r', transform=ccrs.PlateCarree())
+    jet_cmap = plt.get_cmap("RdBu_r").copy()
+    jet_cmap.set_under(jet_cmap(0.0))
+    jet_cmap.set_over(jet_cmap(1.0))
+    data = ax.pcolormesh(lons, lats, u200[i], vmin=-10, vmax=10, cmap=jet_cmap, transform=ccrs.PlateCarree())
     
     states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',
@@ -420,7 +417,7 @@ for i in range(len(u200)):
     plt.title('C3S 200 hPa zonal wind anomaly (kts)', loc='left', fontsize=24, color='white', weight="bold")
     plt.title('{}'.format(valid_time[i]), loc='right', fontsize=20, color='white', weight="bold")
     
-    cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.5, aspect=20)
+    cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.5, aspect=20, extend="both")
     cbar.ax.tick_params(labelsize=18, labelcolor="white")
     cbar.ax.set_facecolor([1,1,1,0])
     

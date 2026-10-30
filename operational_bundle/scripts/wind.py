@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -119,7 +116,6 @@ import pygrib
 import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-import matplotlib.ticker as mticker
 from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
@@ -129,7 +125,6 @@ import pandas as pd
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 # %% Notebook cell 2
 
@@ -138,7 +133,6 @@ from metpy.plots import USCOUNTIES
 # %% Notebook cell 3
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
 
 # %% Notebook cell 4
 

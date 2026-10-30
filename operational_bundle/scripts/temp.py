@@ -69,9 +69,6 @@ except Exception:
     pass
 
 import os
-import warnings
-warnings.filterwarnings("ignore", message="The .xlabels_top attribute is deprecated.*")
-warnings.filterwarnings("ignore", message="The .ylabels_right attribute is deprecated.*")
 os.environ.setdefault("MPLBACKEND", "Agg")
 try:
     import matplotlib
@@ -122,7 +119,6 @@ import pygrib
 import matplotlib as matplotlib
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
-import matplotlib.ticker as mticker
 import numpy as np
 import pandas as pd
 import xarray as xr
@@ -134,7 +130,6 @@ import dataframe_image as dfi
 from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
-from cartopy.mpl.gridliner import LONGITUDE_FORMATTER, LATITUDE_FORMATTER
 
 # %% Notebook cell 2
 
@@ -144,7 +139,6 @@ import cmocean
 # %% Notebook cell 3
 
 from matplotlib import rcParams
-from matplotlib.ticker import MultipleLocator
 
 # %% Notebook cell 4
 
@@ -733,16 +727,6 @@ plt.close("all")
 # ax.add_feature(cfeature.LAKES, zorder=10, alpha=0.3)
 # ax.add_feature(states_provinces, edgecolor='k')
 
-# gl = ax.gridlines(crs=ccrs.PlateCarree(), draw_labels=True, linewidth=1, color='white', alpha=0.5, linestyle='--')
-# gl.xlabels_top = False
-# gl.ylabels_right = False
-# gl.xlines = True
-# gl.ylocator = mticker.FixedLocator([-90, -60, -30, 0, 30, 60, 90])
-# gl.xlocator = mticker.FixedLocator([0, 60, 120, 180, -120, -60, 0])
-# gl.xformatter = LONGITUDE_FORMATTER
-# gl.yformatter = LATITUDE_FORMATTER
-# gl.xlabel_style = {'size': 12, 'color': 'white'}
-# gl.ylabel_style = {'size': 12, 'color': 'white'}
 
 # plt.title('ECMWF+UKMET "Superblend" Temperature Anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 

@@ -344,12 +344,12 @@ def _add_missing_colorbar(ax) -> None:
     if high <= low:
         return
     ax._house_colorbar = True
-    title = _title_text(ax)
+    title = _title_text(ax).lower()
     # Snowfall bands stay one inch apart. Labels are every two inches, and the
     # bar is half the map height so it does not run past the frame.
-    discrete = "Snowfall" in title and levels.size <= 15
+    discrete = "snowfall" in title and levels.size <= 15
     # Height bands are one decameter. Labels have to sit on those edges.
-    banded = discrete or ("Height Anomaly" in title and levels.size <= 25)
+    banded = discrete or ("height anomaly" in title and levels.size <= 25)
     if discrete:
         ticks = [float(value) for value in levels[::2]]
     else:
@@ -364,8 +364,9 @@ def _add_missing_colorbar(ax) -> None:
         extend="both",
         drawedges=banded,
     )
-    if discrete:
-        cbar.ax.tick_params(labelsize=18)
+    # SST colorbars use labelsize 24. Height and snow should match.
+    if discrete or "height anomaly" in title:
+        cbar.ax.tick_params(labelsize=24)
 
 
 def _parents(ax, fallback):
@@ -430,10 +431,11 @@ def _unit_from_text(text: str) -> str:
             return key
     if "Cloud Cover %" in text:
         return "%"
-    if "Snowfall" in text:
+    lowered = text.lower()
+    if "snowfall" in lowered:
         # The snowfall scripts convert m/s to seasonal inches before plotting.
         return "in."
-    if "Height Anomaly" in text:
+    if "height anomaly" in lowered:
         return "dam"
     return ""
 
