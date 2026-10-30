@@ -292,7 +292,6 @@ page = f"""<!doctype html>
     <nav>
       <a href="/copernicus_imagery/index.html">All graphics</a>
       <a href="/latest_posts">Latest posts</a>
-      <a href="/newsletter">Newsletter</a>
       <a href="/climate_imagery/weathernext3/index.html">DeepMind storm cards</a>
       <a href="/copernicus_imagery/index.html">C3S</a>
       <a href="/copernicus_imagery/snow/index.html">Snow heatmaps</a>
@@ -300,6 +299,7 @@ page = f"""<!doctype html>
       <a href="/atmospheric_moisture/index.html">ERA5 moisture</a>
       <a href="/climate_imagery/index.html">Climate imagery</a>
       <a href="/climate_imagery/strat_coupling/index.html">Polar vortex</a>
+      <a href="/newsletter">Newsletter</a>
     </nav>
   </header>
   <main>
