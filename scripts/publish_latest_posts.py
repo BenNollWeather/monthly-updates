@@ -50,6 +50,7 @@ AP_MONTHS = {
 NAV = """
       <a href="/copernicus_imagery/index.html">All graphics</a>
       <a href="/latest_posts" aria-current="page">Latest posts</a>
+      <a href="/newsletter">Newsletter</a>
       <a href="/climate_imagery/weathernext3/index.html">DeepMind storm cards</a>
       <a href="/copernicus_imagery/snow/index.html">Snow heatmaps</a>
       <a href="/nmme/imagery/index.html">NMME</a>
