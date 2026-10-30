@@ -70,6 +70,27 @@ def fetch_bytes(url: str, timeout: int = 40) -> bytes:
         return response.read()
 
 
+def fetch_profile() -> str:
+    """Read the public profile. GitHub runners are blocked, so fall back to Jina."""
+    try:
+        page = fetch_bytes(PROFILE_URL).decode("utf-8", "replace")
+        if "full_text" in page and "entry_id" in page:
+            return page
+    except (urllib.error.URLError, TimeoutError, OSError) as error:
+        print(f"Direct profile fetch failed ({error}). Trying a backup fetch.", file=sys.stderr)
+    request = urllib.request.Request(
+        "https://r.jina.ai/" + PROFILE_URL,
+        headers={
+            "User-Agent": USER_AGENT,
+            "X-Return-Format": "html",
+            "X-Engine": "direct",
+            "X-No-Cache": "true",
+        },
+    )
+    with urllib.request.urlopen(request, timeout=50) as response:
+        return response.read().decode("utf-8", "replace")
+
+
 def object_exists(key: str) -> bool:
     result = aws("s3api", "head-object", "--bucket", BUCKET, "--key", key, check=False)
     return result.returncode == 0
@@ -610,11 +631,11 @@ def render_page(posts: list[dict], checked: datetime) -> str:
 def publish(profile_html: str | None = None) -> int:
     previous, had_state = load_state()
     try:
-        page = profile_html if profile_html is not None else fetch_bytes(PROFILE_URL).decode("utf-8", "replace")
+        page = profile_html if profile_html is not None else fetch_profile()
         fresh = parse_profile_html(page)
     except (urllib.error.URLError, TimeoutError, OSError, RuntimeError, json.JSONDecodeError) as error:
         print(f"Profile check failed ({error}). The current page was left in place.")
-        return 0 if previous else 1
+        return 1
     link_cache: dict[str, str] = {}
     for item in fresh:
         drop_status_permalink(item, link_cache)
