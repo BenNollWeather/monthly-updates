@@ -291,7 +291,7 @@ page = f"""<!doctype html>
     <p>{html.escape(page_description)}</p>
     <nav>
       <a href="/copernicus">All graphics</a>
-      <a href="/">Latest posts</a>
+      <a href="/latest_posts">Latest posts</a>
       <a href="/deepmind">DeepMind storm cards</a>
       <a href="/copernicus">C3S</a>
       <a href="/snow">Snow heatmaps</a>
@@ -317,6 +317,14 @@ with open(output_path, "w", encoding="utf-8") as handle:
 PY
 
   upload_html "$html_file" "${publish_prefix}/index.html"
+  # Same page at the short S3 key. CloudFront rewrites the pretty path
+  # onto the long key, so direct S3 links need their own object.
+  case "$publish_prefix" in
+    copernicus_imagery/snow) upload_html "$html_file" "snow" ;;
+    nmme/imagery) upload_html "$html_file" "nmme" ;;
+    atmospheric_moisture) upload_html "$html_file" "moisture" ;;
+    climate_imagery) upload_html "$html_file" "climate" ;;
+  esac
 }
 
 build_root_portal() {

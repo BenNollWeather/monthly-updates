@@ -432,7 +432,7 @@ page = f'''<!doctype html>
     <p>An always-updating gallery of operational weather graphics</p>
     <nav>
       <a href="/copernicus">All graphics</a>
-      <a href="/">Latest posts</a>
+      <a href="/latest_posts">Latest posts</a>
       <a href="/deepmind">DeepMind storm cards</a>
       <a href="/snow">Snow heatmaps</a>
       <a href="/nmme">NMME</a>
@@ -509,6 +509,17 @@ PY_INDEX
   aws_cmd s3 cp "$tmp" "$s3_index" \
     --content-type "text/html; charset=utf-8" \
     --cache-control "no-cache, no-store, must-revalidate"
+  # The S3 REST endpoint has no redirects. Publish the same page at the
+  # short key so bennollweather.s3.amazonaws.com/copernicus keeps working.
+  # CloudFront still rewrites that path onto the long key.
+  if [[ "$prefix_clean" == "copernicus_imagery" ]]; then
+    aws_cmd s3 cp "$tmp" "s3://${AWS_BUCKET}/copernicus" \
+      --content-type "text/html; charset=utf-8" \
+      --cache-control "no-cache, no-store, must-revalidate"
+    aws_cmd s3 cp "$tmp" "s3://${AWS_BUCKET}/c3s" \
+      --content-type "text/html; charset=utf-8" \
+      --cache-control "no-cache, no-store, must-revalidate"
+  fi
   rm -f "$tmp" "$inventory"
 
   echo "Index uploaded: $index_url"
