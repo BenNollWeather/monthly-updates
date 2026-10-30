@@ -221,7 +221,7 @@ def render_page(letters: list[dict]) -> str:
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Newsletter · Weather window shopping by BenNollWeather</title>
-  <meta name="description" content="The five newest letters from {SITE_NAME}.">
+  <meta name="description" content="The five latest newsletters from {SITE_NAME}.">
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=libre-franklin:400,600,700">
   <style>
     :root {{ color-scheme: light dark; }}
@@ -281,7 +281,7 @@ def render_page(letters: list[dict]) -> str:
   <main>
     <div class="lede">
       <h2>Newsletter</h2>
-      <p>The 5 newest letters from <a href="{SITE_URL}">{SITE_NAME}</a>.</p>
+      <p>The five latest newsletters from <a href="{SITE_URL}">{SITE_NAME}</a>.</p>
     </div>
 {chr(10).join(articles)}
   </main>
