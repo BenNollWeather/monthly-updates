@@ -126,8 +126,6 @@ from cartopy import config
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 from cartopy.io.shapereader import Reader
-from cartopy.feature import ShapelyFeature
-from shapely.geometry import box
 from cartopy.io import shapereader
 
 # %% Notebook cell 2
@@ -459,7 +457,7 @@ lons, lats = np.meshgrid(lon, lat)
 fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
-ax.set_extent([240, 358, -5, 40])
+ax.set_extent([205, 315, 20, 60])
 
 levels = np.linspace(-30, 30, 13)
 
@@ -483,15 +481,7 @@ for scale, axis in zip(['20m'], [ax]):
 
 plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=18, color='white', weight="bold")
-
-mdr_feature = ShapelyFeature(
-    [box(280.0, 10.0, 340.0, 20.0)],
-    ccrs.PlateCarree(),
-    facecolor='none',
-    edgecolor='k',
-)
-ax.add_feature(mdr_feature, linewidth=3, zorder=22)
+plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -520,7 +510,7 @@ plt.close("all")
 fig = plt.figure(figsize=(25, 15))
 
 ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
-ax.set_extent([240, 358, -5, 40])
+ax.set_extent([205, 315, 20, 60])
 
 levels = np.linspace(-30, 30, 13)
 
@@ -544,15 +534,7 @@ for scale, axis in zip(['20m'], [ax]):
 
 plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=18, color='white', weight="bold")
-
-mdr_feature = ShapelyFeature(
-    [box(280.0, 10.0, 340.0, 20.0)],
-    ccrs.PlateCarree(),
-    facecolor='none',
-    edgecolor='k',
-)
-ax.add_feature(mdr_feature, linewidth=3, zorder=22)
+plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -602,7 +584,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 
 plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=18, color='white', weight="bold")
+plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -652,7 +634,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 
 plt.title('ECMWF+UKMET "superblend" outgoing longwave radiation anomaly (W/m²)', loc='left', fontsize=20, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=18, color='white', weight="bold")
+plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-30,-20,-10,0,10,20,30], pad=0.01, shrink=0.5, aspect=20, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")

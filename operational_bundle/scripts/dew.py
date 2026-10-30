@@ -421,7 +421,7 @@ for scale, axis in zip(['20m'], [ax]):
 
 plt.title('ECMWF+UKMET "superblend" dew point anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
+plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -474,7 +474,7 @@ for scale, axis in zip(['20m'], [ax]):
 
 plt.title('ECMWF+UKMET "superblend" dew point anomaly (°F)', loc='left', fontsize=24, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
+plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-5,-4,-3,-2,-1,0,1,2,3,4,5], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -524,7 +524,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 
 plt.title('ECMWF+UKMET "superblend" dew point anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=24, color='white', weight="bold")
+plt.title('{}-{}'.format(month2, month4), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -574,7 +574,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 
 plt.title('ECMWF+UKMET "superblend" dew point anomaly (°C)', loc='left', fontsize=24, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
+plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-3,-2,-1,0,1,2,3], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")

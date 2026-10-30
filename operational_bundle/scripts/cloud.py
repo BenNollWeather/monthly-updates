@@ -495,7 +495,7 @@ for scale, axis in zip(['20m'], [ax]):
 
 plt.title('ECMWF+UKMET "superblend" cloud cover % difference from normal', loc='left', fontsize=22, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
+plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")
@@ -639,7 +639,7 @@ ax.add_feature(states_provinces, edgecolor='k')
 
 plt.title('ECMWF+UKMET "superblend" cloud cover % difference from normal', loc='left', fontsize=22, color='white', weight="bold")
 
-plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=24, color='white', weight="bold")
+plt.title('{}-{}'.format(month4, month6), loc='right', fontsize=20, color='white', weight="bold")
 
 cbar = plt.colorbar(data, ax=ax, ticks=[-10,-5,0,5,10], pad=0.01, shrink=0.65, aspect=30, drawedges=True)
 cbar.ax.tick_params(labelsize=20, labelcolor="white")

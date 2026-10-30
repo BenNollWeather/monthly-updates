@@ -443,12 +443,12 @@ for i in range(len(z500)):
 
         pass
 
-    plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/c3s_height_globe_{}.png').format(names[i]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
+    plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/c3s_height_globe_{}.png').format(names[i]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=200)
     try:
         fig.subplots_adjust(bottom=0.12)
     except Exception:
         pass
-    plt.savefig(fig_path/'height_{}.png'.format(valid_time[i]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
+    plt.savefig(fig_path/'height_{}.png'.format(valid_time[i]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=200)
 
 # %% Notebook cell 42
 
@@ -851,7 +851,7 @@ ax8.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
 data8 = plt.contourf(lons2, lats2, cmcc2, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('CMCC', loc='center', fontsize=20, color='white')
+plt.title('CMCC', loc='center', fontsize=20, color='white', weight="bold")
 
 axes2 = fig.add_axes([0.1, -0.05, 0.8, 0.02])
 cm = fig.colorbar(data6, cax=axes2, orientation='horizontal', ticks=[-10,-5,0,5,10], drawedges=True)
@@ -924,15 +924,15 @@ plt.savefig(fig_path/'height_{}_{}.png'.format(valid_time[3], valid_time[5]), fa
 # plt.title('NCEP', loc='center', fontsize=20, color='white', weight="bold")
 
 # model 4
-ax4 = fig.add_subplot(2, 4, 4, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
-ax4.add_feature(cfeature.COASTLINE, edgecolor='k')
-ax4.add_feature(cfeature.BORDERS, edgecolor='k')
-ax4.add_feature(states_provinces, edgecolor='k')
-ax4.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
+# ax4 = fig.add_subplot(2, 4, 4, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
+# ax4.add_feature(cfeature.COASTLINE, edgecolor='k')
+# ax4.add_feature(cfeature.BORDERS, edgecolor='k')
+# ax4.add_feature(states_provinces, edgecolor='k')
+# ax4.add_feature(cfeature.LAKES, edgecolor='k', alpha=0.2)
 
-data4 = ax4.contourf(lons2, lats2, jma3, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
+# data4 = ax4.contourf(lons2, lats2, jma3, levels=levels, cmap=cmap, transform=ccrs.PlateCarree(), extend='both')
 
-plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
+# plt.title('JMA', loc='center', fontsize=20, color='white', weight="bold")
 
 # # model 5
 # ax5 = fig.add_subplot(2, 4, 5, projection=ccrs.NearsidePerspective(central_longitude=265, central_latitude=50, satellite_height=4000000))
