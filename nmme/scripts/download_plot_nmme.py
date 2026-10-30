@@ -44,7 +44,7 @@ import cmocean
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
-from matplotlib.colors import BoundaryNorm, to_hex
+from matplotlib.colors import BoundaryNorm
 from matplotlib.patches import Patch
 import numpy as np
 import pandas as pd
@@ -56,6 +56,8 @@ from cartopy.feature import ShapelyFeature
 from cartopy.util import add_cyclic_point
 from metpy.plots import USCOUNTIES
 from shapely.geometry import box
+
+from lib.regions import REGIONS, add_mdr_outline, draw_region_labels
 
 
 @dataclass(frozen=True)
@@ -201,12 +203,10 @@ def add_signature(ax, fig):
 
 
 def add_wet_dry_legend(ax):
-    # Sample BrBG inside the dark ends so the swatches stay teal and brown
-    # but read on the black frame.
-    cmap = plt.get_cmap("BrBG")
+    # Same swatches as the ECMWF rainfall maps.
     legend_labels = {
-        to_hex(cmap(0.85)): "Wetter than average",
-        to_hex(cmap(0.15)): "Drier",
+        "#1a7e76": "Wetter than average",
+        "#a5691b": "Drier",
     }
     patches = [Patch(color=color, label=label) for color, label in legend_labels.items()]
     legend = ax.legend(
@@ -242,17 +242,19 @@ def add_usa_base_features(ax, state_scale="50m", county_alpha=0.1, lake_kwargs=N
     ax.add_feature(USCOUNTIES.with_scale("20m"), linestyle="-", edgecolor="k", alpha=county_alpha)
 
 
-def add_atlantic_mdr(ax):
-    # Hurricane Main Development Region: 80W-20W, 10N-20N.
-    # The Atlantic shapefile is the whole map frame, so it is not used here.
-    west, south, east, north = 280.0, 10.0, 340.0, 20.0
-    feature = ShapelyFeature(
-        [box(west, south, east, north)],
-        ccrs.PlateCarree(),
-        facecolor="none",
-        edgecolor="k",
-    )
-    ax.add_feature(feature, linewidth=3, zorder=22)
+def add_sst_region_boxes(ax):
+    """Niño, IOD, and MDR outlines. The Atlantic entry is the map frame, so skip it."""
+    for key, (west, south, east, north) in REGIONS.items():
+        if key == "atlantic":
+            continue
+        feature = ShapelyFeature(
+            [box(west, south, east, north)],
+            ccrs.PlateCarree(),
+            facecolor="none",
+            edgecolor="k",
+        )
+        ax.add_feature(feature, linewidth=3, zorder=22)
+    add_mdr_outline(ax)
 
 
 def add_global_precip_features(ax, state_scale="50m"):
@@ -279,26 +281,51 @@ def plot_sst_monthly(dset_concat_sst, lons2, lats2, dates, names, paths: Paths, 
     cmap.set_under(cmap(0.0))
     cmap.set_over(cmap(1.0))
     for i in range(len(dset_concat_sst)):
+        field = dset_concat_sst[i].clip(min=float(levels[0]), max=float(levels[-1]))
+
+        # Globe. Boxes sit above the gray land, matching the ECMWF SST maps.
         fig = plt.figure(figsize=(25, 15))
         ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
         ax.set_facecolor("k")
-        field = dset_concat_sst[i].clip(min=float(levels[0]), max=float(levels[-1]))
         data = pcolor_or_contourf(ax, lons2, lats2, field, levels, cmap, ccrs.PlateCarree(), method=method)
-
+        add_sst_region_boxes(ax)
         ax.add_feature(
             cfeature.LAND.with_scale("50m"),
             facecolor="#808080",
             edgecolor="#808080",
             zorder=20,
         )
-
+        draw_region_labels(ax)
         plt.title("NMME sea surface temperature anomaly (°C)", loc="left", fontsize=24, color="white", weight="bold")
         plt.title(f"{dates[i]}", loc="right", fontsize=24, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=ticks, pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend="both")
-        cbar.ax.tick_params(labelsize=20, labelcolor="white")
+        cbar.ax.tick_params(labelsize=24, labelcolor="white")
         finish_colorbar(cbar)
         add_signature(ax, fig)
-        plt.savefig(out_dir / f"sst_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"sst_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
+        plt.close(fig)
+
+        # Atlantic frame. MDR only; the Niño and IOD boxes stay on the globe.
+        fig = plt.figure(figsize=(25, 15))
+        ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
+        ax.set_extent([240, 358, -5, 40])
+        ax.set_facecolor("k")
+        data = pcolor_or_contourf(ax, lons2, lats2, field, levels, cmap, ccrs.PlateCarree(), method=method)
+        ax.add_feature(
+            cfeature.LAND.with_scale("50m"),
+            facecolor="#808080",
+            edgecolor="#808080",
+            zorder=20,
+        )
+        add_mdr_outline(ax)
+        draw_region_labels(ax, names=("Atlantic MDR",))
+        plt.title("NMME sea surface temperature anomaly (°C)", loc="left", fontsize=24, color="white", weight="bold")
+        plt.title(f"{dates[i]}", loc="right", fontsize=24, color="white", weight="bold")
+        cbar = plt.colorbar(data, ax=ax, ticks=ticks, pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend="both")
+        cbar.ax.tick_params(labelsize=24, labelcolor="white")
+        finish_colorbar(cbar)
+        add_signature(ax, fig)
+        plt.savefig(out_dir / f"sst_atlantic_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
 
@@ -312,13 +339,13 @@ def plot_precip_monthly(dset_concat_precip, lons, lats, dates, names, paths: Pat
         data = pcolor_or_contourf(ax, lons, lats, dset_concat_precip[i], levels, "BrBG", ccrs.PlateCarree(), method=method)
         add_usa_base_features(ax)
         plt.title("NMME precipitation anomaly (inches)", loc="left", fontsize=24, color="white", weight="bold")
-        plt.title(f"{dates[i]}", loc="right", fontsize=24, color="white", weight="bold")
+        plt.title(f"{dates[i]}", loc="right", fontsize=20, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.4, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         add_wet_dry_legend(ax)
         add_signature(ax, fig)
         finish_colorbar(cbar)
-        plt.savefig(out_dir / f"precip_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"precip_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
 
@@ -333,13 +360,13 @@ def plot_precip_usa_seasonal(seasons, lons, lats, dates, paths: Paths, method: s
         data = pcolor_or_contourf(ax, lons, lats, season, levels, "BrBG", ccrs.PlateCarree(), method=method)
         add_usa_base_features(ax)
         plt.title("NMME precipitation anomaly (inches)", loc="left", fontsize=24, color="white", weight="bold")
-        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=24, color="white", weight="bold")
+        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=20, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.4, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         add_wet_dry_legend(ax)
         add_signature(ax, fig)
         finish_colorbar(cbar)
-        plt.savefig(out_dir / f"nmme_precip_usa_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"nmme_precip_usa_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
 
@@ -358,13 +385,13 @@ def plot_precip_global_atlantic(seasons, lon, lat, dates, paths: Paths, method: 
         data = pcolor_or_contourf(ax, lons_cyc, lats_cyc, cyclic_data, levels, "BrBG", ccrs.PlateCarree(), method=method)
         add_global_precip_features(ax)
         plt.title("NMME precipitation anomaly (inches)", loc="left", fontsize=24, color="white", weight="bold")
-        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=24, color="white", weight="bold")
+        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=20, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.4, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         add_wet_dry_legend(ax)
         add_signature(ax, fig)
         finish_colorbar(cbar)
-        plt.savefig(out_dir / f"nmme_precip_globe_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"nmme_precip_globe_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
         # Atlantic
@@ -373,15 +400,16 @@ def plot_precip_global_atlantic(seasons, lon, lat, dates, paths: Paths, method: 
         ax.set_extent([240, 358, -5, 40])
         data = pcolor_or_contourf(ax, lons_cyc, lats_cyc, cyclic_data, levels, "BrBG", ccrs.PlateCarree(), method=method)
         add_global_precip_features(ax)
-        add_atlantic_mdr(ax)
+        add_mdr_outline(ax)
+        draw_region_labels(ax, names=("Atlantic MDR",))
         plt.title("NMME precipitation anomaly (inches)", loc="left", fontsize=24, color="white", weight="bold")
-        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=24, color="white", weight="bold")
+        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=20, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-4, -2, 0, 2, 4], pad=0.01, shrink=0.4, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         add_wet_dry_legend(ax)
         add_signature(ax, fig)
         finish_colorbar(cbar)
-        plt.savefig(out_dir / f"nmme_precip_atlantic_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"nmme_precip_atlantic_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
 
@@ -397,12 +425,12 @@ def plot_temps_monthly(dset_concat_temps, lons, lats, dates, names, paths: Paths
         ax.contour(lons, lats, field, np.arange(0, 0 + 0.01, 0.01), colors="k", linewidths=0.5, transform=ccrs.PlateCarree())
         add_usa_base_features(ax, county_alpha=0.1, lake_kwargs={"zorder": 10, "alpha": 0.3}, coast_resolution="50m")
         plt.title("NMME 2m temperature anomaly (°C)", loc="left", fontsize=24, color="white", weight="bold")
-        plt.title(f"{dates[i]}", loc="right", fontsize=24, color="white", weight="bold")
+        plt.title(f"{dates[i]}", loc="right", fontsize=20, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-3, -2, -1, 0, 1, 2, 3], pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         add_signature(ax, fig)
         finish_colorbar(cbar)
-        plt.savefig(out_dir / f"temps_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"temps_{names[i]}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
 
@@ -418,12 +446,12 @@ def plot_temps_usa_seasonal(seasons, lons, lats, dates, paths: Paths, method: st
         ax.contour(lons, lats, season, np.arange(0, 0 + 0.01, 0.01), colors="k", linewidths=0.5, transform=ccrs.PlateCarree())
         add_usa_base_features(ax, county_alpha=0.1, lake_kwargs={"zorder": 10, "alpha": 0.3}, coast_resolution="50m")
         plt.title("NMME 2m temperature anomaly (°C)", loc="left", fontsize=24, color="white", weight="bold")
-        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=24, color="white", weight="bold")
+        plt.title("{}-{}".format(*title_dates), loc="right", fontsize=20, color="white", weight="bold")
         cbar = plt.colorbar(data, ax=ax, ticks=[-3, -2, -1, 0, 1, 2, 3], pad=0.01, shrink=0.5, aspect=20, drawedges=True, extend="both" if method == "pcolormesh" else None)
         cbar.ax.tick_params(labelsize=20, labelcolor="white")
         add_signature(ax, fig)
         finish_colorbar(cbar)
-        plt.savefig(out_dir / f"nmme_temps_usa_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", dpi=100)
+        plt.savefig(out_dir / f"nmme_temps_usa_season{idx}.png", facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
         plt.close(fig)
 
 
