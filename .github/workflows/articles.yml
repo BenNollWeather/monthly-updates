@@ -1,0 +1,38 @@
+name: Articles
+
+on:
+  # EventBridge rule monthly-updates-articles fires this at 23 minutes
+  # past every hour. GitHub's own scheduler was arriving much later.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: articles
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Check out the private publishers
+        uses: actions/checkout@v4
+        with:
+          repository: BenNollWeather/benweather-publishers
+          ssh-key: ${{ secrets.PUBLISHERS_DEPLOY_KEY }}
+          persist-credentials: false
+
+      - name: Configure temporary AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+          role-session-name: articles-${{ github.run_id }}
+
+      - name: Publish the latest articles
+        run: |
+          if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
+          python3 publish_articles.py

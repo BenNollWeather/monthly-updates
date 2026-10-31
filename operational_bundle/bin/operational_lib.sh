@@ -384,6 +384,7 @@ nav = "\n".join(
         ("/climate", "Misc. imagery"),
         ("/polar_vortex", "Polar vortex"),
         ("/newsletter", "Newsletter"),
+        ("/articles", "Articles"),
     )
 )
 page = f'''<!doctype html>
