@@ -392,7 +392,7 @@ def site_nav(current):
     })();
     </script>"""
     lines = [
-        link("/", "Latest posts"),
+        link("/latest_posts", "Latest posts"),
         link("/articles", "Articles"),
         link("/newsletter", "Newsletter"),
         '<details class="menu">',
