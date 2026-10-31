@@ -288,6 +288,8 @@ page = f"""<!doctype html>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/latest_posts/brand/favicon-snowflake-black.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="/latest_posts/brand/favicon-snowflake-offwhite.png" type="image/png" media="(prefers-color-scheme: dark)">
   <title>{html.escape(page_title)}</title>
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=libre-franklin:400,600,700">
   <style>
@@ -410,6 +412,8 @@ build_root_portal() {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/latest_posts/brand/favicon-snowflake-black.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="/latest_posts/brand/favicon-snowflake-offwhite.png" type="image/png" media="(prefers-color-scheme: dark)">
   <title>Weather window shopping by BenNollWeather</title>
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=libre-franklin:400,600,700">
   <style>
