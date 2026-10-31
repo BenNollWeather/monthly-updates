@@ -272,15 +272,15 @@ BRAND_CSS = """
     .brand { display: flex; align-items: center; gap: 20px; }
     .brand-copy { min-width: 0; }
     .brand-mark { flex: none; }
-    .brand-mark img { display: block; height: 76px; width: auto; }
+    .brand-mark img { display: block; height: 56px; width: auto; }
     @media (max-width: 650px) {
       .brand { gap: 12px; }
-      .brand-mark img { height: 56px; }
+      .brand-mark img { height: 44px; }
     }
 """.strip("\n")
 BRAND_MARK = """<picture class="brand-mark">
-        <source srcset="/latest_posts/brand/bnw-wordmark-offwhite.png" media="(prefers-color-scheme: dark)">
-        <img src="/latest_posts/brand/bnw-wordmark-black.png" alt="Ben Noll Weather" width="1066" height="722">
+        <source srcset="/latest_posts/brand/bnw-brick-offwhite.png" media="(prefers-color-scheme: dark)">
+        <img src="/latest_posts/brand/bnw-brick-black.png" alt="Ben Noll Weather" width="1156" height="508">
       </picture>"""
 nav = site_nav(current_tab)
 page = f"""<!doctype html>
