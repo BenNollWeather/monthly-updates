@@ -461,7 +461,7 @@ page = f'''<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" href="/latest_posts/brand/favicon-snowflake-black.png" type="image/png" media="(prefers-color-scheme: light)">
   <link rel="icon" href="/latest_posts/brand/favicon-snowflake-offwhite.png" type="image/png" media="(prefers-color-scheme: dark)">
-  <title>Weather window shopping by BenNollWeather</title>
+  <title>BenNollWeather</title>
   <link rel="stylesheet" href="https://fonts.bunny.net/css?family=libre-franklin:400,600,700">
   <style>
     :root {{ color-scheme: light dark; }}
@@ -521,7 +521,7 @@ page = f'''<!doctype html>
   <header>
     <div class="brand">
       <div class="brand-copy">
-        <h1>Weather window shopping by BenNollWeather</h1>
+        <h1>BenNollWeather</h1>
         <p>Bringing weather and climate data to life</p>
       </div>
       {BRAND_MARK}
