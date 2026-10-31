@@ -47,10 +47,8 @@ END_MONTH="${TARGET_MONTH:5:2}"
 mkdir -p "$RAW_DIR" "$(dirname "$OUTPUT")"
 
 if [[ "${SKIP_DOWNLOAD:-0}" != "1" ]]; then
-  # The latest year is always fetched again so a partial year is not reused.
-  rm -f \
-    "$RAW_DIR/era5_moisture_monthly_${END_YEAR}.nc" \
-    "$RAW_DIR/era5_precip_monthly_${END_YEAR}.nc"
+  # Each run fetches the whole span, so do not reuse an older partial download.
+  rm -f "$RAW_DIR"/era5_moisture_monthly_*.nc "$RAW_DIR"/era5_precip_monthly_*.nc
   "$PYTHON_BIN" "$SCRIPT_PATH" download \
     --out-dir "$RAW_DIR" \
     --start-year "$START_YEAR" \

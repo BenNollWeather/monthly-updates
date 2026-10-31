@@ -303,6 +303,31 @@ def _retrieve_with_retries(client, request: Dict, target: Path, attempts: int = 
     raise RuntimeError(f"CDS download failed for {target.name}") from last_error
 
 
+def _download_spans(start_year: int, end_year: int, end_month: int):
+    """Year ranges that can share one CDS request.
+
+    CDS applies the month list to every selected year. A finished history can
+    travel in one request. An unfinished final year needs its own request so
+    the earlier years still include October through December.
+    """
+    if start_year > end_year:
+        raise SystemExit(f"start year {start_year} is after end year {end_year}")
+    if end_month == 12 or start_year == end_year:
+        last_month = end_month if start_year == end_year else 12
+        return [(start_year, end_year, last_month)]
+    spans = []
+    if start_year < end_year:
+        spans.append((start_year, end_year - 1, 12))
+    spans.append((end_year, end_year, end_month))
+    return spans
+
+
+def _span_path(out_dir: Path, kind: str, first_year: int, last_year: int) -> Path:
+    if first_year == last_year:
+        return out_dir / f"era5_{kind}_monthly_{first_year}.nc"
+    return out_dir / f"era5_{kind}_monthly_{first_year}_{last_year}.nc"
+
+
 def download_era5(
     out_dir: Path,
     start_year: int,
@@ -319,11 +344,12 @@ def download_era5(
         raise SystemExit(f"end month must be 1-12; got {end_month}")
     out_dir.mkdir(parents=True, exist_ok=True)
     client = cdsapi.Client()
-    for year in range(start_year, end_year + 1):
-        last_month = end_month if year == end_year else 12
+    for first_year, last_year, last_month in _download_spans(start_year, end_year, end_month):
         months = [f"{month:02d}" for month in range(1, last_month + 1)]
-        target = out_dir / f"era5_moisture_monthly_{year}.nc"
-        precip_target = out_dir / f"era5_precip_monthly_{year}.nc"
+        years = [str(year) for year in range(first_year, last_year + 1)]
+        target = _span_path(out_dir, "moisture", first_year, last_year)
+        precip_target = _span_path(out_dir, "precip", first_year, last_year)
+        label = f"{first_year}" if first_year == last_year else f"{first_year}-{last_year}"
         moisture_has_tp = False
 
         if target.exists() and not overwrite:
@@ -334,14 +360,14 @@ def download_era5(
             moisture_request = {
                 "product_type": ["monthly_averaged_reanalysis"],
                 "variable": MOISTURE_VARIABLES,
-                "year": [str(year)],
+                "year": years,
                 "month": months,
                 "time": ["00:00"],
                 "data_format": "netcdf",
                 "download_format": "unarchived",
                 "grid": [grid, grid],
             }
-            print(f"requesting moisture {year} months {months[0]}-{months[-1]} -> {target}")
+            print(f"requesting moisture {label} months {months[0]}-{months[-1]} -> {target.name}")
             _retrieve_with_retries(client, moisture_request, target)
 
         # Precipitation uses a different ERA5 step type, so request it in a
@@ -356,14 +382,14 @@ def download_era5(
         precip_request = {
             "product_type": ["monthly_averaged_reanalysis"],
             "variable": ["total_precipitation"],
-            "year": [str(year)],
+            "year": years,
             "month": months,
             "time": ["00:00"],
             "data_format": "netcdf",
             "download_format": "unarchived",
             "grid": [grid, grid],
         }
-        print(f"requesting precipitation {year} months {months[0]}-{months[-1]} -> {precip_target}")
+        print(f"requesting precipitation {label} months {months[0]}-{months[-1]} -> {precip_target.name}")
         _retrieve_with_retries(client, precip_request, precip_target)
 
 

@@ -19,7 +19,9 @@ From this project folder:
 bash bin/run_era5_moisture_monitor.sh
 ```
 
-The figure covers the month that just ended. Set `TARGET_MONTH=YYYY-MM` to choose a different month. Working files stay in a temporary directory and are removed after a successful upload. Nothing is written into git.
+The figure covers the month that just ended. Set `TARGET_MONTH=YYYY-MM` to choose a different month. The download requests that whole span at once, draws the figure, and removes the downloaded files after a successful upload. Nothing is written into git.
+
+Precipitation is a second request. Combining it with the moisture fields can make CDS return a ZIP archive. An unfinished final year is also separate, because CDS applies one month list to every year in a request.
 
 GitHub Actions workflow `era5-moisture.yml` is started by hand. It is not on a schedule. It publishes `atmospheric_moisture/era5_moisture_monitor.png`.
 
