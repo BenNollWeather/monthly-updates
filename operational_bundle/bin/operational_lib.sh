@@ -394,7 +394,7 @@ def site_nav(current):
     lines = [
         link("/latest_posts", "Latest posts"),
         link("/articles", "Articles"),
-        link("/newsletter", "Newsletter"),
+        link("/newsletter", "Newsletters"),
         '<details class="menu">',
         "<summary>Graphics</summary>",
         '<div class="panel">',
