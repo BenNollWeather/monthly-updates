@@ -503,7 +503,7 @@ page = f'''<!doctype html>
 <body>
   <header>
     <h1>Weather window shopping by BenNollWeather</h1>
-    <p>An always-updating gallery of operational weather graphics</p>
+    <p>Bringing weather and climate data to life</p>
     {nav}
   </header>
   <main>
