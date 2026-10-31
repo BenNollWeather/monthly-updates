@@ -439,6 +439,20 @@ GALLERY_NAV_CSS = """
       nav .menu .menu .panel { background: transparent; border-color: transparent; }
     }
 """.strip("\n")
+BRAND_CSS = """
+    .brand { display: flex; align-items: center; gap: 20px; }
+    .brand-copy { min-width: 0; }
+    .brand-mark { flex: none; }
+    .brand-mark img { display: block; height: 76px; width: auto; }
+    @media (max-width: 650px) {
+      .brand { gap: 12px; }
+      .brand-mark img { height: 56px; }
+    }
+""".strip("\n")
+BRAND_MARK = """<picture class="brand-mark">
+        <source srcset="/latest_posts/brand/bnw-wordmark-offwhite.png" media="(prefers-color-scheme: dark)">
+        <img src="/latest_posts/brand/bnw-wordmark-black.png" alt="Ben Noll Weather" width="1066" height="722">
+      </picture>"""
 nav = site_nav(current_tab)
 page = f'''<!doctype html>
 <html lang="en">
@@ -453,6 +467,7 @@ page = f'''<!doctype html>
     body {{ margin: 0; font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #f4f5f7; color: #171717; }}
     header {{ position: sticky; top: 0; z-index: 5; padding: 18px 24px; background: rgba(255,255,255,.96); border-bottom: 1px solid #d9dce1; backdrop-filter: blur(8px); }}
     h1 {{ margin: 0 0 5px; font-size: 27px; }}
+    {BRAND_CSS}
     header p {{ margin: 0; color: #5d626a; }}
     {GALLERY_NAV_CSS}
     main {{ padding: 22px; max-width: 1500px; margin: 0 auto; }}
@@ -502,8 +517,13 @@ page = f'''<!doctype html>
 </head>
 <body>
   <header>
-    <h1>Weather window shopping by BenNollWeather</h1>
-    <p>Bringing weather and climate data to life</p>
+    <div class="brand">
+      <div class="brand-copy">
+        <h1>Weather window shopping by BenNollWeather</h1>
+        <p>Bringing weather and climate data to life</p>
+      </div>
+      {BRAND_MARK}
+    </div>
     {nav}
   </header>
   <main>
