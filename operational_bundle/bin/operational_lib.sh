@@ -372,21 +372,74 @@ short_tabs = {
     "climate_imagery": "/climate",
 }
 current_tab = short_tabs.get(prefix, "")
-nav = "\n".join(
-    f'      <a href="{href}"{" aria-current=\"page\"" if href == current_tab else ""}>{label}</a>'
-    for href, label in (
-        ("/copernicus", "Copernicus"),
-        ("/latest_posts", "Latest posts"),
-        ("/deepmind", "DeepMind"),
-        ("/snow", "Snow"),
-        ("/nmme", "NMME"),
-        ("/moisture", "Moisture"),
-        ("/climate", "Misc. imagery"),
-        ("/polar_vortex", "Polar vortex"),
-        ("/newsletter", "Newsletter"),
-        ("/articles", "Articles"),
-    )
-)
+def site_nav(current):
+    def link(href, label):
+        attr = ' aria-current="page"' if href == current else ""
+        return f'<a href="{href}"{attr}>{label}</a>'
+    script = """
+    <script>
+    (function () {
+      var nav = document.currentScript.closest("nav");
+      document.addEventListener("click", function (event) {
+        nav.querySelectorAll("details[open]").forEach(function (menu) {
+          if (!menu.contains(event.target)) menu.open = false;
+        });
+      });
+      document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape") return;
+        nav.querySelectorAll("details[open]").forEach(function (menu) { menu.open = false; });
+      });
+    })();
+    </script>"""
+    lines = [
+        link("/latest_posts", "Latest posts"),
+        link("/articles", "Articles"),
+        link("/newsletter", "Newsletter"),
+        '<details class="menu">',
+        "<summary>Graphics</summary>",
+        '<div class="panel">',
+        '<details class="menu">',
+        "<summary>Long range</summary>",
+        '<div class="panel">',
+        link("/copernicus", "Copernicus"),
+        link("/snow", "Snow"),
+        link("/nmme", "NMME"),
+        "</div>",
+        "</details>",
+        link("/moisture", "Moisture"),
+        link("/deepmind", "DeepMind"),
+        link("/polar_vortex", "Polar vortex"),
+        link("/climate", "Climate stuff"),
+        "</div>",
+        "</details>",
+        script.strip("\n"),
+    ]
+    inner = "\n".join(f"      {line}" for line in lines)
+    return f'<nav aria-label="Sections">\n{inner}\n    </nav>'
+
+GALLERY_NAV_CSS = """
+    nav { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    nav a, nav summary { color: inherit; text-decoration: none; border: 1px solid #c8ccd2; border-radius: 999px; padding: 7px 11px; background: #fff; font: inherit; cursor: pointer; }
+    nav > a, nav > .menu > summary { display: inline-block; }
+    nav summary { list-style: none; }
+    nav summary::-webkit-details-marker { display: none; }
+    nav summary::after { content: ""; display: inline-block; margin-left: 7px; border-width: 4px 4px 0; border-style: solid; border-color: currentColor transparent transparent; vertical-align: 2px; }
+    nav a:hover, nav summary:hover, nav summary:focus-visible { text-decoration: underline; }
+    nav a[aria-current="page"], nav .menu:has(a[aria-current="page"]) > summary { background: #e7eef8; border-color: #8aa8cc; font-weight: 700; }
+    nav .menu { position: relative; }
+    nav .panel { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; display: grid; gap: 6px; min-width: 190px; padding: 8px; border: 1px solid #d9dce1; border-radius: 12px; background: #fff; box-shadow: 0 8px 24px rgba(0,0,0,.12); }
+    nav .panel a, nav .panel summary { display: block; text-align: left; }
+    nav .menu .menu .panel { position: static; min-width: 0; margin-top: 6px; padding: 0 0 0 8px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+    @media (max-width: 650px) {
+      nav .panel { position: static; margin-top: 6px; box-shadow: none; }
+    }
+    @media (prefers-color-scheme: dark) {
+      nav a, nav summary, nav .panel { background: #1b1e24; border-color: #373c46; }
+      nav a[aria-current="page"], nav .menu:has(a[aria-current="page"]) > summary { background: #29394d; border-color: #6086ad; }
+      nav .menu .menu .panel { background: transparent; border-color: transparent; }
+    }
+""".strip("\n")
+nav = site_nav(current_tab)
 page = f'''<!doctype html>
 <html lang="en">
 <head>
@@ -401,9 +454,7 @@ page = f'''<!doctype html>
     header {{ position: sticky; top: 0; z-index: 5; padding: 18px 24px; background: rgba(255,255,255,.96); border-bottom: 1px solid #d9dce1; backdrop-filter: blur(8px); }}
     h1 {{ margin: 0 0 5px; font-size: 27px; }}
     header p {{ margin: 0; color: #5d626a; }}
-    nav {{ margin-top: 12px; display: flex; flex-wrap: wrap; gap: 8px; }}
-    nav a {{ color: inherit; text-decoration: none; border: 1px solid #c8ccd2; border-radius: 999px; padding: 7px 11px; background: #fff; }}
-    nav a:hover {{ text-decoration: underline; }}
+    {GALLERY_NAV_CSS}
     main {{ padding: 22px; max-width: 1500px; margin: 0 auto; }}
     .controls {{ display: grid; grid-template-columns: minmax(220px,1fr) auto; gap: 10px; margin-bottom: 10px; }}
     input, select, button {{ font: inherit; }}
@@ -453,9 +504,7 @@ page = f'''<!doctype html>
   <header>
     <h1>Weather window shopping by BenNollWeather</h1>
     <p>An always-updating gallery of operational weather graphics</p>
-    <nav>
-{nav}
-    </nav>
+    {nav}
   </header>
   <main>
     <div class="controls"><input id="search" class="search" type="search" placeholder="Search graphics, cities, variables or months…"><select id="sort" class="sort"><option value="newest">Newest</option><option value="oldest">Oldest</option><option value="name">Name</option><option value="size">Largest</option></select></div>
