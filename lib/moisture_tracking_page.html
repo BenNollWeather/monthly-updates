@@ -272,26 +272,26 @@
     const image = document.getElementById(isDark() ? "logo-dark" : "logo-light");
     return image && image.complete && image.naturalWidth ? image : null;
   }
-  function drawWordmark(ctx, right, top, ink, size) {
+  function drawWordmark(ctx, right, bottom, ink, size) {
     ctx.save();
     ctx.fillStyle = ink;
     ctx.font = font(700, size || 28);
     ctx.textAlign = "right";
-    ctx.textBaseline = "top";
-    ctx.fillText("BNW", right, top + Math.round((size || 28) * 0.64));
+    ctx.textBaseline = "bottom";
+    ctx.fillText("BNW", right, bottom);
     ctx.restore();
   }
-  function drawLogo(ctx, width, pad, colors, height) {
+  function drawLogo(ctx, right, bottom, colors, height) {
     const logoH = 84;
     const markH = height || logoH;
     const image = logoImage();
     if (!image) {
-      drawWordmark(ctx, width - pad, pad, colors.ink, height ? 18 : 28);
+      drawWordmark(ctx, right, bottom, colors.ink, height ? 18 : 28);
       return height ? 56 : 96;
     }
     const logoW = markH * (image.naturalWidth / image.naturalHeight);
     ctx.globalAlpha = height ? 0.72 : 1;
-    ctx.drawImage(image, width - pad - logoW, pad, logoW, markH);
+    ctx.drawImage(image, right - logoW, bottom - markH, logoW, markH);
     ctx.globalAlpha = 1;
     return logoW;
   }
@@ -925,26 +925,18 @@
     const pair = sizes[kind] || sizes.stripes;
     return { w: pair[0], h: pair[1] };
   }
-  function cardFooter(ctx, width, height, pad, colors) {
-    ctx.save();
-    ctx.font = font(600, 22);
-    ctx.fillStyle = colors.muted;
-    ctx.textBaseline = "alphabetic";
-    ctx.textAlign = "right";
-    ctx.fillText("benweather.com", width - pad, height - 46);
-    ctx.restore();
-  }
   function drawCard(ctx, kind) {
     const card = cardSize(kind);
     const cardW = card.w;
     const cardH = card.h;
     const pad = 64;
     const colors = palette();
+    const markH = kind === "stripes" ? 42 : 84;
+    const footer = markH + 44;
     ctx.save();
     ctx.fillStyle = colors.card;
     ctx.fillRect(0, 0, cardW, cardH);
-    const logoW = drawLogo(ctx, cardW, pad, colors, kind === "stripes" ? 42 : 0);
-    const textW = cardW - pad * 2 - logoW - 28;
+    const textW = cardW - pad * 2;
     const plotW = cardW - pad * 2;
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
@@ -959,7 +951,7 @@
       const dekY = pad + titleSize + 12;
       ctx.fillText(DATA.monthYear, pad, dekY);
       const top = dekY + dekSize + 28;
-      drawMap(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+      drawMap(ctx, { x: pad, y: top, w: plotW, h: cardH - footer - top }, colors);
     } else if (kind === "month") {
       const titleSize = fitSize(ctx, DATA.monthTitle, textW, 42, 28, 700);
       ctx.font = font(700, titleSize);
@@ -971,23 +963,23 @@
       const rankY = pad + titleSize + 12;
       ctx.fillText(DATA.rank, pad, rankY);
       const top = rankY + rankSize + 28;
-      drawMonth(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+      drawMonth(ctx, { x: pad, y: top, w: plotW, h: cardH - footer - top }, colors);
     } else if (kind === "year") {
       const titleSize = fitSize(ctx, DATA.yearTitle, textW, 40, 26, 700);
       ctx.font = font(700, titleSize);
       ctx.fillStyle = colors.ink;
       ctx.fillText(DATA.yearTitle, pad, pad);
       const top = pad + titleSize + 28;
-      drawYear(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+      drawYear(ctx, { x: pad, y: top, w: plotW, h: cardH - footer - top }, colors);
     } else if (kind === "stripes") {
       const titleSize = fitSize(ctx, DATA.range, textW, 64, 40, 700);
       ctx.font = font(700, titleSize);
       ctx.fillStyle = colors.ink;
       ctx.fillText(DATA.range, pad, pad);
       const top = pad + titleSize + 28;
-      drawStripes(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+      drawStripes(ctx, { x: pad, y: top, w: plotW, h: cardH - footer - top }, colors);
     }
-    cardFooter(ctx, cardW, cardH, pad, colors);
+    drawLogo(ctx, cardW - pad, cardH - 28, colors, kind === "stripes" ? 42 : 0);
     ctx.restore();
   }
   function paint(canvas, cssW, cssH, scale, draw) {
