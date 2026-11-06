@@ -549,6 +549,7 @@ try:
     fig.subplots_adjust(bottom=0.12)
 except Exception:
     pass
+plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/snow/ecmwf-snow_globe_season1.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 plt.savefig(fig_path/'{}-{}_globe.png'.format(valid_time[0], valid_time[2]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 
 plt.close("all")
@@ -609,6 +610,7 @@ try:
     fig.subplots_adjust(bottom=0.12)
 except Exception:
     pass
+plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/snow/ecmwf-snow_globe_season2.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 plt.savefig(fig_path/'{}-{}_globe.png'.format(valid_time[3], valid_time[5]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 
 plt.close("all")
@@ -673,6 +675,7 @@ try:
     fig.subplots_adjust(bottom=0.12)
 except Exception:
     pass
+plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/snow/ecmwf-snow_usa_season1.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 plt.savefig(fig_path/'{}-{}_usa.png'.format(valid_time[0], valid_time[2]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 
 plt.close("all")
@@ -737,6 +740,7 @@ try:
     fig.subplots_adjust(bottom=0.12)
 except Exception:
     pass
+plt.savefig(_os.path.join(_WORK, 'copernicus_imagery/snow/ecmwf-snow_usa_season2.png'), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 plt.savefig(fig_path/'{}-{}_usa.png'.format(valid_time[3], valid_time[5]), facecolor=fig.get_facecolor(), bbox_inches="tight", pad_inches=0.18, dpi=100)
 
 plt.close("all")

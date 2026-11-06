@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from pathlib import Path
 
 import matplotlib
 
@@ -75,6 +76,32 @@ class SnowAnomalyScaleTests(unittest.TestCase):
         self.assertAlmostEqual(float(scaled[2]), 29.0, places=6)
         self.assertAlmostEqual(float(scaled[3]), 30.0, places=6)
         self.assertAlmostEqual(float(seasonal_snow_inches(per_day)), 90.0, places=6)
+
+    def test_seasonal_maps_are_saved_into_the_snow_gallery(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+
+        def active(name: str) -> str:
+            text = (root / "operational_bundle" / "scripts" / name).read_text(encoding="utf-8")
+            return "\n".join(line for line in text.splitlines() if not line.lstrip().startswith("#"))
+
+        ecmwf = active("ecmwf_snow.py")
+        c3s = active("snow.py")
+        for name in (
+            "ecmwf-snow_usa_season1.png",
+            "ecmwf-snow_usa_season2.png",
+            "ecmwf-snow_globe_season1.png",
+            "ecmwf-snow_globe_season2.png",
+        ):
+            self.assertIn(f"copernicus_imagery/snow/{name}", ecmwf)
+        for name in (
+            "snow_usa_season1.png",
+            "snow_usa_season2.png",
+            "snow_globe_season1.png",
+            "snow_globe_season2.png",
+            "snow_usa_winter.png",
+            "snow_globe_winter.png",
+        ):
+            self.assertIn(f"copernicus_imagery/snow/{name}", c3s)
 
     def test_within_an_inch_is_white_and_the_outer_bins_stay_colored(self) -> None:
         levels = np.linspace(-6, 6, 13)
