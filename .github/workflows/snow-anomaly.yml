@@ -1,15 +1,19 @@
 name: Snow page
 on:
-  schedule:
-    # Same hours as the rain and temperature job. 10:41 is also after the
-    # NOAA season-to-date file, which is usually posted around 08:20 UTC.
-    - cron: "41 2,10,14,22 * * *"
+  # EventBridge rule monthly-updates-snow-anomaly fires this at 02:41, 10:41,
+  # 14:41, and 22:41 UTC. 10:41 is also after the NOAA season-to-date file,
+  # which is usually posted around 08:20 UTC.
   workflow_dispatch:
     inputs:
       upload_to_s3:
         description: "Upload the page and the basemap"
         required: false
         default: true
+        type: boolean
+      scheduled:
+        description: "Count this run as the scheduled event"
+        required: false
+        default: false
         type: boolean
 concurrency:
   group: monthly-snow-anomaly
@@ -32,6 +36,7 @@ jobs:
       MPLCONFIGDIR: /tmp/matplotlib
       MPLBACKEND: Agg
       PYTHONUNBUFFERED: "1"
+      SCHEDULED_EVENT: ${{ inputs.scheduled }}
     steps:
       - uses: actions/checkout@v4
 
@@ -53,7 +58,7 @@ jobs:
         run: bash snowfall/bin/run_snow_anomaly.sh
 
       - name: Configure temporary AWS credentials
-        if: ${{ github.event_name == 'schedule' || inputs.upload_to_s3 }}
+        if: ${{ inputs.upload_to_s3 }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -61,7 +66,7 @@ jobs:
           role-session-name: snow-anomaly-${{ github.run_id }}
       - name: Upload page
         id: upload
-        if: ${{ steps.process.outcome == 'success' && (github.event_name == 'schedule' || inputs.upload_to_s3) }}
+        if: ${{ steps.process.outcome == 'success' && (inputs.upload_to_s3) }}
         run: |
           if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           aws s3 cp "$WORK_ROOT/index.html" s3://bennollweather/snow-anomaly \
@@ -89,7 +94,7 @@ jobs:
             --cache-control "public, max-age=86400" \
             --only-show-errors
       - name: Publish heartbeat
-        if: ${{ always() && (github.event_name == 'schedule' || inputs.upload_to_s3) }}
+        if: ${{ always() && (inputs.upload_to_s3) }}
         run: |
           if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           if [[ "${{ steps.process.outcome }}" == "success" && "${{ steps.upload.outcome }}" == "success" ]]; then

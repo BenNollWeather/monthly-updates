@@ -1,15 +1,19 @@
 name: Oceans
 on:
-  schedule:
-    # 20:41 UTC is after the Coral Reef Watch afternoon update in both
-    # Eastern standard time and Eastern daylight time.
-    - cron: "41 20 * * *"
+  # EventBridge rule monthly-updates-oceans fires this at 20:41 UTC, after
+  # the Coral Reef Watch afternoon update in both Eastern standard time and
+  # Eastern daylight time.
   workflow_dispatch:
     inputs:
       upload_to_s3:
         description: "Upload the page and the maps"
         required: false
         default: true
+        type: boolean
+      scheduled:
+        description: "Count this run as the scheduled event"
+        required: false
+        default: false
         type: boolean
 concurrency:
   group: monthly-oceans
@@ -33,6 +37,7 @@ jobs:
       MPLBACKEND: Agg
       CARTOPY_DATA_DIR: /tmp/cartopy
       PYTHONUNBUFFERED: "1"
+      SCHEDULED_EVENT: ${{ inputs.scheduled }}
     steps:
       - uses: actions/checkout@v4
 
@@ -54,7 +59,7 @@ jobs:
         run: bash oceans/bin/run_oceans.sh
 
       - name: Configure temporary AWS credentials
-        if: ${{ github.event_name == 'schedule' || inputs.upload_to_s3 }}
+        if: ${{ inputs.upload_to_s3 }}
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
@@ -62,7 +67,7 @@ jobs:
           role-session-name: oceans-${{ github.run_id }}
       - name: Upload page
         id: upload
-        if: ${{ steps.process.outcome == 'success' && (github.event_name == 'schedule' || inputs.upload_to_s3) }}
+        if: ${{ steps.process.outcome == 'success' && (inputs.upload_to_s3) }}
         run: |
           if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           aws s3 cp "$WORK_ROOT/index.html" s3://bennollweather/climate/oceans \
@@ -80,7 +85,7 @@ jobs:
               --only-show-errors
           done
       - name: Publish heartbeat
-        if: ${{ always() && (github.event_name == 'schedule' || inputs.upload_to_s3) }}
+        if: ${{ always() && (inputs.upload_to_s3) }}
         run: |
           if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           if [[ "${{ steps.process.outcome }}" == "success" && "${{ steps.upload.outcome }}" == "success" ]]; then

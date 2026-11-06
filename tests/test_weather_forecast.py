@@ -340,7 +340,10 @@ class PageTests(unittest.TestCase):
     def test_workflow_is_separate_from_snow(self):
         workflow = (ROOT / ".github/workflows/weather-forecast.yml").read_text(encoding="utf-8")
         snow = (ROOT / ".github/workflows/snow-anomaly.yml").read_text(encoding="utf-8")
-        self.assertIn("41 2,10,14,22 * * *", workflow)
+        self.assertIn("monthly-updates-weather-forecast", workflow)
+        self.assertIn("SCHEDULED_EVENT:", workflow)
+        self.assertNotIn("cron:", workflow)
+        self.assertNotIn("cron:", snow)
         self.assertNotIn("41 15 * * *", workflow)
         self.assertNotIn("41 0,6,12,18 * * *", workflow)
         self.assertIn("s3://bennollweather/rain", workflow)
