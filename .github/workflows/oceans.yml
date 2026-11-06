@@ -1,7 +1,9 @@
 name: Oceans
 on:
   schedule:
-    - cron: "41 15 * * *"
+    # 20:41 UTC is after the Coral Reef Watch afternoon update in both
+    # Eastern standard time and Eastern daylight time.
+    - cron: "41 20 * * *"
   workflow_dispatch:
     inputs:
       upload_to_s3:
@@ -25,7 +27,7 @@ jobs:
       AWS_PROFILE: ""
       STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
       PRODUCT_ID: oceans
-      PRODUCT_SCHEDULE: "15:41 UTC"
+      PRODUCT_SCHEDULE: "20:41 UTC"
       PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/climate/oceans","s3://bennollweather/climate/oceans/anomaly.png","s3://bennollweather/climate/oceans/sst.png","s3://bennollweather/climate/oceans/heatwaves.png","s3://bennollweather/climate/oceans/anomaly-4k.png","s3://bennollweather/climate/oceans/sst-4k.png","s3://bennollweather/climate/oceans/heatwaves-4k.png"]'
       MPLCONFIGDIR: /tmp/matplotlib
       MPLBACKEND: Agg

@@ -1,7 +1,9 @@
 name: Rain and temperature
 on:
   schedule:
-    - cron: "41 0,6,12,18 * * *"
+    # 02:41 is after the 18 UTC AIFS run, 10:41 after the 00 UTC IFS 0.1° run,
+    # 14:41 after the 06 UTC AIFS run, and 22:41 after the 12 UTC IFS 0.1° run.
+    - cron: "41 2,10,14,22 * * *"
   workflow_dispatch:
     inputs:
       upload_to_s3:
@@ -25,7 +27,7 @@ jobs:
       AWS_PROFILE: ""
       STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
       PRODUCT_ID: weather-forecast
-      PRODUCT_SCHEDULE: "00:41, 06:41, 12:41, and 18:41 UTC"
+      PRODUCT_SCHEDULE: "02:41, 10:41, 14:41, and 22:41 UTC"
       PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/rain","s3://bennollweather/temperature-maximum","s3://bennollweather/temperature-minimum"]'
       MPLCONFIGDIR: /tmp/matplotlib
       MPLBACKEND: Agg

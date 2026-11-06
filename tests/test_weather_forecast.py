@@ -337,15 +337,16 @@ class PageTests(unittest.TestCase):
     def test_workflow_is_separate_from_snow(self):
         workflow = (ROOT / ".github/workflows/weather-forecast.yml").read_text(encoding="utf-8")
         snow = (ROOT / ".github/workflows/snow-anomaly.yml").read_text(encoding="utf-8")
-        self.assertIn("41 0,6,12,18 * * *", workflow)
+        self.assertIn("41 2,10,14,22 * * *", workflow)
         self.assertNotIn("41 15 * * *", workflow)
+        self.assertNotIn("41 0,6,12,18 * * *", workflow)
         self.assertIn("s3://bennollweather/rain", workflow)
         self.assertIn("s3://bennollweather/temperature-maximum", workflow)
         self.assertIn("s3://bennollweather/temperature-minimum", workflow)
         self.assertNotIn("temperature-maximum", snow)
         self.assertNotIn("s3://bennollweather/rain", snow)
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("| Weekly precipitation | 00:41, 06:41, 12:41, and 18:41 every day |", readme)
+        self.assertIn("| Weekly precipitation | 02:41, 10:41, 14:41, and 22:41 every day |", readme)
         self.assertIn("| Weekly maximum and minimum temperature |", readme)
         for rel in (
             "lib/c3s_globes.py",

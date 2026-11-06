@@ -247,14 +247,14 @@ class PageTests(unittest.TestCase):
     def test_the_job_runs_once_a_day(self) -> None:
         workflow = (ROOT / ".github/workflows/oceans.yml").read_text(encoding="utf-8")
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn('cron: "41 15 * * *"', workflow)
+        self.assertIn('cron: "41 20 * * *"', workflow)
         self.assertNotIn("0,6,12,18", workflow)
         self.assertIn("workflow_dispatch", workflow)
         self.assertIn("PRODUCT_ID: oceans", workflow)
         self.assertIn("s3://bennollweather/climate/oceans", workflow)
         self.assertIn("no-cache, no-store, must-revalidate", workflow)
         self.assertIn("public, max-age=86400", workflow)
-        self.assertIn("| Oceans | 15:41 every day |", readme)
+        self.assertIn("| Oceans | 20:41 every day |", readme)
 
 
 class MapTests(unittest.TestCase):
