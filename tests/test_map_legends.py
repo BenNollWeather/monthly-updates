@@ -18,6 +18,7 @@ from lib.map_style import (
     _add_missing_colorbar,
     _unit_from_text,
     apply,
+    monthly_snow_inches,
     seasonal_snow_inches,
     snow_anomaly_cmap,
     snow_anomaly_norm,
@@ -62,6 +63,18 @@ class SnowAnomalyScaleTests(unittest.TestCase):
         one_inch = seasonal_snow_inches(1.0 / SNOW_INCHES_FROM_RATE)
         self.assertAlmostEqual(float(one_inch), 1.0, places=9)
         self.assertAlmostEqual(SNOW_INCHES_FROM_RATE, 39.3701 * 10 * 86400 * 90)
+
+    def test_each_month_uses_its_own_length(self) -> None:
+        per_day = 1.0 / (39.3701 * 10 * 86400)
+        scaled = monthly_snow_inches(
+            np.array([per_day, per_day, per_day, per_day]),
+            ["2026-01", "2026-02", "2024-02", "2026-04"],
+        )
+        self.assertAlmostEqual(float(scaled[0]), 31.0, places=6)
+        self.assertAlmostEqual(float(scaled[1]), 28.0, places=6)
+        self.assertAlmostEqual(float(scaled[2]), 29.0, places=6)
+        self.assertAlmostEqual(float(scaled[3]), 30.0, places=6)
+        self.assertAlmostEqual(float(seasonal_snow_inches(per_day)), 90.0, places=6)
 
     def test_within_an_inch_is_white_and_the_outer_bins_stay_colored(self) -> None:
         levels = np.linspace(-6, 6, 13)

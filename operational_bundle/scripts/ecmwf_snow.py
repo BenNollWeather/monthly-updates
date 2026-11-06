@@ -20,7 +20,7 @@ def _apply_house_style() -> None:
 
 
 _apply_house_style()
-from lib.map_style import seasonal_snow_inches, snow_anomaly_cmap, snow_anomaly_norm  # noqa: E402
+from lib.map_style import monthly_snow_inches, seasonal_snow_inches, snow_anomaly_cmap, snow_anomaly_norm  # noqa: E402
 """Auto-converted from ecmwf_snow.ipynb.
 
 Generated for the operational monthly runner. Styling and output filenames are preserved as much as possible.
@@ -319,12 +319,13 @@ snow.load()
 
 # %% Notebook cell 35
 
-# m/s of water equivalent -> inches of snow over a 90-day season, 10:1 ratio.
-snow = seasonal_snow_inches(snow['sfara'].data)
+# m/s of water equivalent, 10:1. Each month uses its own length.
+# Three-month maps stay on a 90-day scaling.
+rates = snow['sfara'].data
 
 # %% Notebook cell 36
 
-snow, cyclic_lons = add_cyclic_point(snow, coord=lon)
+rates, cyclic_lons = add_cyclic_point(rates, coord=lon)
 
 # %% Notebook cell 37
 
@@ -332,9 +333,10 @@ lons, lats = np.meshgrid(cyclic_lons, lat)
 
 # %% Notebook cell 38
 
-season1 = (snow[0]+snow[1]+snow[2])/3
-season2 = (snow[3]+snow[4]+snow[5])/3
-winter = (snow[2]+snow[3]+snow[4])/3
+snow = monthly_snow_inches(rates, valid_time)
+season1 = seasonal_snow_inches((rates[0]+rates[1]+rates[2])/3)
+season2 = seasonal_snow_inches((rates[3]+rates[4]+rates[5])/3)
+winter = seasonal_snow_inches((rates[2]+rates[3]+rates[4])/3)
 
 # %% Notebook cell 40
 

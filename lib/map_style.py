@@ -63,9 +63,38 @@ _APPLIED = False
 _IMPORT_PATCHED = False
 
 
+def snow_inches_over_days(rate, days):
+    """Inches of snow over `days` from an m/s water-equivalent rate, at 10:1."""
+    return rate * (SNOW_METERS_TO_INCHES * SNOW_TO_LIQUID * 86400 * days)
+
+
 def seasonal_snow_inches(rate):
     """Inches of snow over a 90-day season from an m/s water-equivalent rate."""
-    return rate * SNOW_INCHES_FROM_RATE
+    return snow_inches_over_days(rate, 90)
+
+
+def monthly_snow_inches(rates, labels):
+    """Inches of snow for each calendar month from an m/s water-equivalent rate.
+
+    `labels` are YYYY-MM strings, one per time step. February has 29 days in
+    a leap year.
+    """
+    import calendar
+
+    import numpy as np
+
+    rates = np.asarray(rates)
+    labels = [str(label) for label in labels]
+    if rates.shape[0] != len(labels):
+        raise ValueError(
+            f"snowfall time axis has {rates.shape[0]} steps and {len(labels)} month labels"
+        )
+    scaled = np.empty(rates.shape, dtype=float)
+    for index, label in enumerate(labels):
+        year_text, month_text = label.split("-")[:2]
+        days = calendar.monthrange(int(year_text), int(month_text))[1]
+        scaled[index] = snow_inches_over_days(rates[index], days)
+    return scaled
 
 
 def snow_anomaly_cmap():
