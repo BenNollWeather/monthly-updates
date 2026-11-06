@@ -50,7 +50,7 @@ jobs:
       STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
       PRODUCT_ID: era5-pwat
       PRODUCT_SCHEDULE: "21:41 UTC on the 6th"
-      PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/atmospheric_moisture/tcw_map.png","s3://bennollweather/atmospheric_moisture/tcw_chart.png","s3://bennollweather/atmospheric_moisture/moistening_stripes.png","s3://bennollweather/atmospheric_moisture/tcw_monthly_chart.png","s3://bennollweather/moisture-tracking","s3://bennollweather/moisture-trends"]'
+      PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/atmospheric_moisture/tcw_map.png","s3://bennollweather/atmospheric_moisture/tcw_chart.png","s3://bennollweather/atmospheric_moisture/moistening_stripes.png","s3://bennollweather/atmospheric_moisture/tcw_monthly_chart.png","s3://bennollweather/moisture-tracking"]'
       MPLCONFIGDIR: /tmp/matplotlib
       CARTOPY_DATA_DIR: /tmp/cartopy
       PYTHONUNBUFFERED: "1"
@@ -134,10 +134,6 @@ jobs:
           if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
           aws s3 sync "$WORK_ROOT/imagery" s3://bennollweather/atmospheric_moisture/ --exclude ".DS_Store" --only-show-errors
           aws s3 cp "$WORK_ROOT/publish/moisture-tracking.html" s3://bennollweather/moisture-tracking \
-            --content-type "text/html; charset=utf-8" \
-            --cache-control "no-cache, no-store, must-revalidate" \
-            --only-show-errors
-          aws s3 cp "$WORK_ROOT/publish/moisture-trends.html" s3://bennollweather/moisture-trends \
             --content-type "text/html; charset=utf-8" \
             --cache-control "no-cache, no-store, must-revalidate" \
             --only-show-errors
