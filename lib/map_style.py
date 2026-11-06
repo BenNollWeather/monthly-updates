@@ -435,6 +435,10 @@ def _add_missing_colorbar(ax) -> None:
         extend="both",
         drawedges=banded,
     )
+    # BoundaryNorm puts a minor tick on every color edge. Snow labels every
+    # second inch, so the unlabeled edges should not draw a tick.
+    if discrete:
+        cbar.minorticks_off()
     # SST colorbars use labelsize 24. Height and snow should match.
     if discrete or "height anomaly" in title:
         cbar.ax.tick_params(labelsize=24)

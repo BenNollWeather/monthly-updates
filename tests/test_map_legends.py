@@ -58,6 +58,29 @@ class UnitTests(unittest.TestCase):
         self.assertEqual(fig.axes[-1].get_yticklabels()[0].get_fontsize(), 24)
         plt.close(fig)
 
+    def test_snow_colorbar_omits_ticks_that_have_no_label(self) -> None:
+        apply()
+        fig, ax = plt.subplots()
+        ax.set_title("ECMWF snowfall anomaly", loc="left")
+        levels = np.linspace(-6, 6, 13)
+        field = np.tile(levels, (2, 1))
+        ax.contourf(
+            field,
+            levels=levels,
+            cmap=snow_anomaly_cmap(),
+            norm=snow_anomaly_norm(levels),
+            extend="both",
+        )
+        _add_missing_colorbar(ax)
+        cax = fig.axes[-1]
+        fig.canvas.draw()
+        visible = []
+        for tick in list(cax.yaxis.get_major_ticks()) + list(cax.yaxis.get_minor_ticks()):
+            if tick.tick1line.get_visible() or tick.tick2line.get_visible():
+                visible.append(float(tick.get_loc()))
+        self.assertEqual(visible, [-6.0, -4.0, -2.0, 0.0, 2.0, 4.0, 6.0])
+        plt.close(fig)
+
 
 class SnowAnomalyScaleTests(unittest.TestCase):
     def test_rate_converts_to_ninety_day_snow_inches(self) -> None:
