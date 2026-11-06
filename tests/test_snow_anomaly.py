@@ -376,7 +376,7 @@ class PageTests(unittest.TestCase):
         self.assertNotIn("41 15 * * *", workflow)
         self.assertNotIn("41 0,6,12,18 * * *", workflow)
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
-        self.assertIn("| Snowfall percentage of average | 10:41 every day |", readme)
+        self.assertIn("| Snowfall percentage of average | 18:41 every day |", readme)
         self.assertIn("| Predicted snowfall | 02:41, 10:41, 14:41, and 22:41 every day |", readme)
         self.assertIn("EventBridge starts the daily snow, rainfall, temperature, and ocean jobs.", readme)
         requirements = (ROOT / "requirements/maps.txt").read_text(encoding="utf-8")

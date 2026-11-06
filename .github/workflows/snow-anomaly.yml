@@ -1,8 +1,9 @@
 name: Snow page
 on:
   # EventBridge rule monthly-updates-snow-anomaly fires this at 02:41, 10:41,
-  # 14:41, and 22:41 UTC. 10:41 is also after the NOAA season-to-date file,
-  # which is usually posted around 08:20 UTC.
+  # 14:41, 18:41, and 22:41 UTC. 18:41 is the NOAA season-to-date check.
+  # 10:41 and 22:41 follow the 00 and 12 UTC IFS runs, and 02:41 and 14:41
+  # follow the 18 and 06 UTC AIFS runs.
   workflow_dispatch:
     inputs:
       upload_to_s3:
@@ -31,7 +32,7 @@ jobs:
       AWS_PROFILE: ""
       STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
       PRODUCT_ID: snow-anomaly
-      PRODUCT_SCHEDULE: "02:41, 10:41, 14:41, and 22:41 UTC"
+      PRODUCT_SCHEDULE: "02:41, 10:41, 14:41, 18:41, and 22:41 UTC"
       PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/snow-anomaly","s3://bennollweather/snow-forecast","s3://bennollweather/snow","s3://bennollweather/climate_imagery/snow_basemap.js","s3://bennollweather/climate_imagery/snow_terrain.jpg","s3://bennollweather/climate_imagery/snow_counties.png"]'
       MPLCONFIGDIR: /tmp/matplotlib
       MPLBACKEND: Agg
