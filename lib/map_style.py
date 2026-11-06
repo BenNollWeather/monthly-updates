@@ -52,8 +52,50 @@ COLD = "#2166AC"
 # multiply by 1000; NMME precipitation rates are already kg m-2 s-1.
 INCHES_PER_90_DAYS = 86400 * 0.0394 * 90
 
+# CDS snowfall_anomalous_rate_of_accumulation is metres of water equivalent
+# per second. 39.3701 in/m, a 10:1 snow-to-liquid ratio, and 90 days.
+SNOW_METERS_TO_INCHES = 39.3701
+SNOW_TO_LIQUID = 10.0
+SNOW_SEASON_SECONDS = 86400 * 90
+SNOW_INCHES_FROM_RATE = SNOW_METERS_TO_INCHES * SNOW_TO_LIQUID * SNOW_SEASON_SECONDS
+
 _APPLIED = False
 _IMPORT_PATCHED = False
+
+
+def seasonal_snow_inches(rate):
+    """Inches of snow over a 90-day season from an m/s water-equivalent rate."""
+    return rate * SNOW_INCHES_FROM_RATE
+
+
+def snow_anomaly_cmap():
+    """curl_r with the two central one-inch bins drawn solid white.
+
+    Pair this with levels np.linspace(-6, 6, 13) and snow_anomaly_norm.
+    Those 13 edges make 12 bins. Bins [-1, 0] and [0, 1] are white, so an
+    anomaly within an inch of average is blank. Exactly +1 inch is the
+    first colored bin.
+    """
+    import cmocean
+    import numpy as np
+    from matplotlib.colors import ListedColormap
+
+    samples = np.array(cmocean.cm.curl_r(np.linspace(0, 1, 12)), copy=True)
+    samples[5] = (1.0, 1.0, 1.0, 1.0)
+    samples[6] = (1.0, 1.0, 1.0, 1.0)
+    return ListedColormap(samples, name="snow_anomaly").with_extremes(
+        under=tuple(samples[0]),
+        over=tuple(samples[-1]),
+    )
+
+
+def snow_anomaly_norm(levels):
+    """One solid color per inch, including the white center bins."""
+    import numpy as np
+    from matplotlib.colors import BoundaryNorm
+
+    edges = np.asarray(levels, dtype=float)
+    return BoundaryNorm(edges, snow_anomaly_cmap().N)
 
 
 def work_root(name: str) -> Path:

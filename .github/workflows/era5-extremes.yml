@@ -27,6 +27,11 @@ on:
         required: false
         default: "0"
         type: string
+      use_alternate_cds_key:
+        description: "This run only: use the alternate CDS credential instead of the default"
+        required: false
+        default: false
+        type: boolean
 concurrency:
   group: monthly-era5-extremes
   cancel-in-progress: false
@@ -61,6 +66,7 @@ jobs:
       WAIT_FOR_DATA: ${{ inputs.wait_for_data }}
       TARGET_MONTH: ${{ inputs.target_month }}
       STARTUP_DELAY_SECONDS: ${{ inputs.startup_delay_seconds }}
+      USE_ALT_CDS: ${{ inputs.use_alternate_cds_key }}
     steps:
       - uses: actions/checkout@v4
 
@@ -80,8 +86,22 @@ jobs:
       - name: Configure CDS credentials
         env:
           CDSAPI_KEY: ${{ secrets.CDSAPI_KEY }}
+          CDSAPI_KEY_ALT: ${{ secrets.CDSAPI_KEY_ALT }}
           CDSAPI_URL: ${{ secrets.CDSAPI_URL }}
-        run: bash .github/scripts/write_cdsapirc.sh
+          USE_ALT_CDS: ${{ inputs.use_alternate_cds_key }}
+        run: |
+          if [[ "${USE_ALT_CDS}" == "true" ]]; then
+            if [[ -z "${CDSAPI_KEY_ALT}" ]]; then
+              echo "Alternate CDS credential is not set." >&2
+              exit 1
+            fi
+            export CDSAPI_KEY="${CDSAPI_KEY_ALT}"
+            unset CDSAPI_KEY_ALT
+            echo "This run is using the alternate CDS credential."
+          else
+            echo "This run is using the default CDS credential."
+          fi
+          bash .github/scripts/write_cdsapirc.sh
 
       - name: Wait for the monthly release
         id: wait

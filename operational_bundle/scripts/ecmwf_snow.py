@@ -20,6 +20,7 @@ def _apply_house_style() -> None:
 
 
 _apply_house_style()
+from lib.map_style import seasonal_snow_inches, snow_anomaly_cmap, snow_anomaly_norm  # noqa: E402
 """Auto-converted from ecmwf_snow.ipynb.
 
 Generated for the operational monthly runner. Styling and output filenames are preserved as much as possible.
@@ -319,7 +320,7 @@ snow.load()
 # %% Notebook cell 35
 
 # m/s of water equivalent -> inches of snow over a 90-day season, 10:1 ratio.
-snow = snow['sfara'].data * (39.3701 * 10 * 86400 * 90)
+snow = seasonal_snow_inches(snow['sfara'].data)
 
 # %% Notebook cell 36
 
@@ -346,7 +347,7 @@ for i in range(len(snow)):
 
     levels = np.linspace(-6, 6, 13)
 
-    data = plt.contourf(lons, lats, snow[i], levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+    data = plt.contourf(lons, lats, snow[i], levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
     states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',
@@ -419,7 +420,7 @@ for i in range(len(snow)):
 
     levels = np.linspace(-6, 6, 13)
 
-    data = plt.contourf(lons, lats, snow[i], levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+    data = plt.contourf(lons, lats, snow[i], levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
     states_provinces = cfeature.NaturalEarthFeature(
     category='cultural',
@@ -498,7 +499,7 @@ ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
 levels = np.linspace(-6, 6, 13)
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+data = plt.contourf(lons, lats, season1, levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -558,7 +559,7 @@ ax = plt.axes(projection=ccrs.PlateCarree(central_longitude=180))
 
 levels = np.linspace(-6, 6, 13)
 
-data = plt.contourf(lons, lats, season2, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+data = plt.contourf(lons, lats, season2, levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -619,7 +620,7 @@ ax.set_extent([205, 315, 20, 60])
 
 levels = np.linspace(-6, 6, 13)
 
-data = plt.contourf(lons, lats, season1, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+data = plt.contourf(lons, lats, season1, levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -683,7 +684,7 @@ ax.set_extent([205, 315, 20, 60])
 
 levels = np.linspace(-6, 6, 13)
 
-data = plt.contourf(lons, lats, season2, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+data = plt.contourf(lons, lats, season2, levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
 states_provinces = cfeature.NaturalEarthFeature(
 category='cultural',
@@ -747,7 +748,7 @@ plt.close("all")
 
 # levels = np.linspace(-6, 6, 13)
 
-# data = plt.contourf(lons, lats, winter, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+# data = plt.contourf(lons, lats, winter, levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
 # states_provinces = cfeature.NaturalEarthFeature(
 # category='cultural',
@@ -806,7 +807,7 @@ plt.close("all")
 
 # levels = np.linspace(-6, 6, 13)
 
-# data = plt.contourf(lons, lats, winter, levels=levels, cmap=cmocean.cm.curl_r, transform=ccrs.PlateCarree(), extend='both')
+# data = plt.contourf(lons, lats, winter, levels=levels, cmap=snow_anomaly_cmap(), norm=snow_anomaly_norm(levels), transform=ccrs.PlateCarree(), extend='both')
 
 # states_provinces = cfeature.NaturalEarthFeature(
 # category='cultural',

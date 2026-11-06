@@ -11,7 +11,17 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
-from lib.map_style import _add_missing_colorbar, _unit_from_text, apply
+from matplotlib.colors import BoundaryNorm
+
+from lib.map_style import (
+    SNOW_INCHES_FROM_RATE,
+    _add_missing_colorbar,
+    _unit_from_text,
+    apply,
+    seasonal_snow_inches,
+    snow_anomaly_cmap,
+    snow_anomaly_norm,
+)
 from lib.regions import MDR_BOUNDS, REGIONS, region_label_anchors
 
 
@@ -44,6 +54,43 @@ class UnitTests(unittest.TestCase):
             ["−6 in.", "−4 in.", "−2 in.", "0 in.", "+2 in.", "+4 in.", "+6 in."],
         )
         self.assertEqual(fig.axes[-1].get_yticklabels()[0].get_fontsize(), 24)
+        plt.close(fig)
+
+
+class SnowAnomalyScaleTests(unittest.TestCase):
+    def test_rate_converts_to_ninety_day_snow_inches(self) -> None:
+        one_inch = seasonal_snow_inches(1.0 / SNOW_INCHES_FROM_RATE)
+        self.assertAlmostEqual(float(one_inch), 1.0, places=9)
+        self.assertAlmostEqual(SNOW_INCHES_FROM_RATE, 39.3701 * 10 * 86400 * 90)
+
+    def test_within_an_inch_is_white_and_the_outer_bins_stay_colored(self) -> None:
+        levels = np.linspace(-6, 6, 13)
+        cmap = snow_anomaly_cmap()
+        norm = snow_anomaly_norm(levels)
+        self.assertIsInstance(norm, BoundaryNorm)
+        self.assertEqual(cmap.N, 12)
+
+        def rgba(value: float):
+            return np.asarray(cmap(norm(np.array([value])))[0], dtype=float)
+
+        white = np.array([1.0, 1.0, 1.0, 1.0])
+        for value in (-0.5, 0.0, 0.5, 0.999, -0.999):
+            self.assertTrue(np.allclose(rgba(value), white), value)
+        for value in (1.0, 2.0, -1.5, -3.0, 6.5, -6.5):
+            self.assertFalse(np.allclose(rgba(value), white), value)
+
+        fig, ax = plt.subplots()
+        field = np.tile(np.linspace(-6, 6, 13), (2, 1))
+        filled = ax.contourf(
+            field,
+            levels=levels,
+            cmap=cmap,
+            norm=norm,
+            extend="both",
+        )
+        mapped = np.asarray(filled.cmap(filled.norm(np.array([0.5, 2.0]))))
+        self.assertTrue(np.allclose(mapped[0], white))
+        self.assertFalse(np.allclose(mapped[1], white))
         plt.close(fig)
 
 
