@@ -52,8 +52,8 @@
     main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 8px 0 40px; }
     .dek { margin: 0; color: var(--muted); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
     .chart { background: var(--card); border-radius: 16px; padding: 18px 20px 16px; margin: 0 0 16px; }
-    .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 8px; }
-    .chart-head > div { min-width: 0; flex: 1; }
+    .chart-head { display: flex; align-items: flex-start; gap: 12px 16px; max-width: 100%; margin-bottom: 8px; }
+    .chart-head > :first-child { min-width: 0; flex: 1 1 auto; }
     .chart-head h3 { margin: 0; font-size: clamp(32px, 4.4vw, 48px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; }
     .chart-head h3.plot-title { font-size: clamp(26px, 3.8vw, 38px); letter-spacing: -0.03em; line-height: 1.15; }
     .chart-head .dek { margin-top: 6px; }
@@ -62,7 +62,7 @@
     #month-canvas { height: 380px; }
     #year-canvas { height: 420px; }
     #stripe-canvas { height: 220px; }
-    .chart-actions { display: flex; flex: none; gap: 8px; align-items: flex-start; }
+    .chart-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; align-items: center; gap: 8px; margin-left: auto; max-width: 100%; }
     .save-card { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 18px; font-weight: 700; border-radius: 999px; padding: 12px 18px; cursor: pointer; }
     .save-card:hover, .save-card:focus-visible { border-color: var(--ink); }
     .save-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
@@ -73,7 +73,7 @@
     .site-foot a:hover, .site-foot a:focus-visible { color: var(--link); }
     .site-foot svg { display: block; width: 18px; height: 18px; }
     @media (max-width: 720px) {
-      .chart-head { flex-direction: column; align-items: flex-start; }
+      .save-card { font-size: 16px; padding: 8px 12px; }
     }
     @media (max-width: 650px) {
       .brand { gap: 12px; }
@@ -144,8 +144,8 @@
           <p class="dek">__RANK__</p>
         </div>
         <div class="chart-actions">
-          <button class="save-card" type="button" data-csv="month">Data</button>
           <button class="save-card" type="button" data-card="month">Download</button>
+          <button class="save-card" type="button" data-csv="month">Data</button>
         </div>
       </div>
       <canvas class="plot" id="month-canvas" role="img" aria-label="__MONTH_TITLE__"></canvas>
@@ -154,8 +154,8 @@
       <div class="chart-head">
         <h3 class="plot-title">__YEAR_TITLE__</h3>
         <div class="chart-actions">
-          <button class="save-card" type="button" data-csv="year">Data</button>
           <button class="save-card" type="button" data-card="year">Download</button>
+          <button class="save-card" type="button" data-csv="year">Data</button>
         </div>
       </div>
       <canvas class="plot" id="year-canvas" role="img" aria-label="__YEAR_TITLE__"></canvas>
@@ -942,7 +942,7 @@
     const cardH = card.h;
     const pad = 64;
     const colors = palette();
-    const markH = kind === "stripes" ? 42 : 84;
+    const markH = 42;
     const footer = markH + 44;
     ctx.save();
     ctx.fillStyle = colors.card;
@@ -990,7 +990,7 @@
       const top = pad + titleSize + 28;
       drawStripes(ctx, { x: pad, y: top, w: plotW, h: cardH - footer - top }, colors);
     }
-    drawLogo(ctx, cardW - pad, cardH - 28, colors, kind === "stripes" ? 42 : 0);
+    drawLogo(ctx, cardW - pad, cardH - 28, colors, 42);
     ctx.restore();
   }
   function paint(canvas, cssW, cssH, scale, draw) {
@@ -1085,14 +1085,9 @@
     downloadText("moisture-tracking-month.csv", rows.map((row) => row.join(",")).join("\n") + "\n");
   }
   function yearCsv() {
-    const cycle = DATA.cycle;
-    const header = ["month", "lowest_inches", "highest_inches", "average_inches"];
-    cycle.series.forEach((series) => header.push(series.year + "_inches"));
-    const rows = [header];
-    CSV_MONTHS.forEach((name, index) => {
-      const row = [name, csvNumber(cycle.lo[index]), csvNumber(cycle.hi[index]), csvNumber(cycle.avg[index])];
-      cycle.series.forEach((series) => row.push(csvNumber(series.values[index])));
-      rows.push(row);
+    const rows = [["year", "month", "precipitable_water_inches"]];
+    (DATA.history || []).forEach((item) => {
+      rows.push([String(item[0]), CSV_MONTHS[item[1] - 1] || "", csvNumber(item[2])]);
     });
     downloadText("moisture-tracking-year.csv", rows.map((row) => row.join(",")).join("\n") + "\n");
   }

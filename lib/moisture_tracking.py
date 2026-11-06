@@ -179,6 +179,18 @@ def _cycle(monthly: dict[tuple[int, int], float], target: pd.Timestamp, start: i
     return {"lo": lo, "hi": hi, "avg": avg, "series": series, "envelope": envelope}
 
 
+def month_history(monthly: dict[tuple[int, int], float], start: int, target: pd.Timestamp) -> list[list]:
+    """Every month's global precipitable water, in inches, from the start year through the target month."""
+    rows = []
+    end_year = int(target.year)
+    end_month = int(target.month)
+    for year in range(int(start), end_year + 1):
+        last_month = end_month if year == end_year else 12
+        for month in range(1, last_month + 1):
+            rows.append([year, month, _num(monthly.get((year, month)))])
+    return rows
+
+
 def build_payload(perc: xr.DataArray, month_ds: xr.Dataset, monthly_ds: xr.Dataset, target: pd.Timestamp) -> dict:
     target = pd.Timestamp(year=int(target.year), month=int(target.month), day=1)
     month_values = {year: value for (year, month), value in _lookup(month_ds).items() if month == int(target.month)}
@@ -223,6 +235,7 @@ def build_payload(perc: xr.DataArray, month_ds: xr.Dataset, monthly_ds: xr.Datas
         "envelope": cycle.pop("envelope"),
         "map": pack_percent(perc),
         "cycle": cycle,
+        "history": month_history(monthly, start, target),
     }
 
 
