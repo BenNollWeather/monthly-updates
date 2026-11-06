@@ -1,0 +1,31 @@
+name: operational-monthly
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - numpy
+  - pandas
+  - xarray
+  - dask
+  - netcdf4
+  - h5netcdf
+  - scipy
+  - matplotlib
+  - seaborn
+  - cartopy
+  - cfgrib
+  - eccodes
+  - cdsapi
+  - cmocean
+  - gcsfs
+  - zarr
+  - metpy
+  - dateparser
+  - openpyxl
+  - bottleneck
+  - pygrib
+  - windspharm
+  - boto3
+  - pip:
+      - dataframe-image

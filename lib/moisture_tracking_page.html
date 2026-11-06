@@ -1,0 +1,1085 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/latest_posts/brand/favicon-bnw-black.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="/latest_posts/brand/favicon-bnw-offwhite.png" type="image/png" media="(prefers-color-scheme: dark)">
+  <title>__TITLE__</title>
+  __SEO__
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=libre-franklin:400,600,700">
+  <script src="__COASTS_URL__" defer></script>
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f5f7;
+      --ink: #171717;
+      --muted: #5c656e;
+      --line: #d9dce1;
+      --card: #fff;
+      --nav: #fff;
+      --nav-line: #c8ccd2;
+      --nav-on: #e7eef8;
+      --nav-on-line: #8aa8cc;
+      --header: rgba(255,255,255,.96);
+      --header-line: #d9dce1;
+      --link: #1256a0;
+      --shadow: rgba(0,0,0,.12);
+      --tag: #5d626a;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.45; }
+    header { position: sticky; top: 0; z-index: 5; padding: 18px 24px 14px; background: var(--header); border-bottom: 1px solid var(--header-line); backdrop-filter: blur(8px); }
+    .brand { display: flex; align-items: center; gap: 20px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy h1 { margin: 0 0 5px; font-size: 27px; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
+    .brand-copy p { margin: 0; color: var(--tag); font-size: 16px; line-height: 1.3; }
+    .brand-mark { flex: none; color: inherit; text-decoration: none; }
+    .brand-mark img { display: block; height: 56px; width: auto; }
+    nav { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    nav a, nav summary { color: inherit; text-decoration: none; border: 1px solid var(--nav-line); border-radius: 999px; padding: 7px 11px; background: var(--nav); font: inherit; cursor: pointer; }
+    nav > a, nav > .menu > summary { display: inline-block; }
+    nav summary { list-style: none; }
+    nav summary::-webkit-details-marker { display: none; }
+    nav summary::after { content: ""; display: inline-block; margin-left: 7px; border-width: 4px 4px 0; border-style: solid; border-color: currentColor transparent transparent; vertical-align: 2px; }
+    nav a:hover, nav summary:hover, nav summary:focus-visible { text-decoration: underline; }
+    nav a[aria-current="page"], nav .menu:has(a[aria-current="page"]) > summary { background: var(--nav-on); border-color: var(--nav-on-line); font-weight: 700; }
+    nav .menu { position: relative; }
+    nav > details.menu:last-of-type > .panel { left: auto; right: 0; }
+    nav .panel { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; display: grid; gap: 6px; min-width: 190px; padding: 8px; border: 1px solid var(--header-line); border-radius: 12px; background: var(--nav); box-shadow: 0 8px 24px var(--shadow); }
+    nav .panel a, nav .panel summary { display: block; text-align: left; }
+    nav .menu .menu .panel { position: static; min-width: 0; margin-top: 6px; padding: 0 0 0 8px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+    main { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 8px 0 40px; }
+    .dek { margin: 0; color: var(--muted); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+    .chart { background: var(--card); border-radius: 16px; padding: 18px 20px 16px; margin: 0 0 16px; }
+    .chart-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 8px; }
+    .chart-head > div { min-width: 0; flex: 1; }
+    .chart-head h3 { margin: 0; font-size: clamp(32px, 4.4vw, 48px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; }
+    .chart-head h3.plot-title { font-size: clamp(26px, 3.8vw, 38px); letter-spacing: -0.03em; line-height: 1.15; }
+    .chart-head .dek { margin-top: 6px; }
+    canvas.plot { width: 100%; display: block; }
+    #map-canvas { height: 520px; }
+    #month-canvas { height: 380px; }
+    #year-canvas { height: 420px; }
+    #stripe-canvas { height: 220px; }
+    .save-card { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 18px; font-weight: 700; border-radius: 999px; padding: 12px 18px; cursor: pointer; }
+    .save-card:hover, .save-card:focus-visible { border-color: var(--ink); }
+    .save-card:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+    .notes { margin: 22px 0 8px; max-width: 820px; color: var(--muted); font-size: 20px; }
+    .notes p { margin: 0; }
+    .site-foot { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin: 0; padding: 8px 24px 32px; line-height: 0; }
+    .site-foot a { color: #8b919a; text-decoration: none; }
+    .site-foot a:hover, .site-foot a:focus-visible { color: var(--link); }
+    .site-foot svg { display: block; width: 18px; height: 18px; }
+    @media (max-width: 720px) {
+      .chart-head { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 650px) {
+      .brand { gap: 12px; }
+      .brand-copy h1 { font-size: 22px; }
+      .brand-mark img { height: 44px; }
+      nav { position: relative; align-items: flex-start; }
+      nav > details.menu { position: static; }
+      nav > details.menu > .panel,
+      nav > details.menu:last-of-type > .panel {
+        left: 0;
+        right: 0;
+        min-width: 0;
+        max-height: calc(100vh - 140px);
+        overflow: auto;
+      }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111317;
+        --ink: #f3f4f6;
+        --muted: #aeb4bd;
+        --tag: #aeb4bd;
+        --line: #373c46;
+        --card: #1b1e24;
+        --nav: #1b1e24;
+        --nav-line: #373c46;
+        --nav-on: #29394d;
+        --nav-on-line: #6086ad;
+        --header: rgba(20,22,26,.96);
+        --header-line: #333842;
+        --link: #7db7ff;
+        --shadow: rgba(0,0,0,.45);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-copy">
+        <h1>BenNollWeather</h1>
+        <p>Bringing weather and climate data to life</p>
+      </div>
+      <a class="brand-mark" href="/latest_posts"><picture>
+        <source srcset="/latest_posts/brand/bnw-brick-offwhite.png" media="(prefers-color-scheme: dark)">
+        <img src="/latest_posts/brand/bnw-brick-black.png" alt="Ben Noll Weather" width="1156" height="508">
+      </picture></a>
+    </div>
+    __NAV__
+  </header>
+  <main>
+    <section class="chart" id="map">
+      <div class="chart-head">
+        <div>
+          <h3 class="plot-title">__MAP_TITLE__</h3>
+          <p class="dek">__MONTH_YEAR__</p>
+        </div>
+        <button class="save-card" type="button" data-card="map">Save</button>
+      </div>
+      <canvas class="plot" id="map-canvas" role="img" aria-label="__MAP_TITLE__, __MONTH_YEAR__"></canvas>
+    </section>
+    <section class="chart" id="month">
+      <div class="chart-head">
+        <div>
+          <h3 class="plot-title">__MONTH_TITLE__</h3>
+          <p class="dek">__RANK__</p>
+        </div>
+        <button class="save-card" type="button" data-card="month">Save</button>
+      </div>
+      <canvas class="plot" id="month-canvas" role="img" aria-label="__MONTH_TITLE__"></canvas>
+    </section>
+    <section class="chart" id="year">
+      <div class="chart-head">
+        <h3 class="plot-title">__YEAR_TITLE__</h3>
+        <button class="save-card" type="button" data-card="year">Save</button>
+      </div>
+      <canvas class="plot" id="year-canvas" role="img" aria-label="__YEAR_TITLE__"></canvas>
+    </section>
+    <section class="chart" id="stripes">
+      <div class="chart-head">
+        <h3>__RANGE__</h3>
+        <button class="save-card" type="button" data-card="stripes">Save</button>
+      </div>
+      <canvas class="plot" id="stripe-canvas" role="img" aria-label="__RANGE__"></canvas>
+    </section>
+    <section class="notes">
+      <p>ERA5 total column water, compared with the 1991–2020 average.</p>
+    </section>
+  </main>
+  <footer class="site-foot"><a href="https://www.bennollsays.com/about" aria-label="About" title="About"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v5"/><path d="M12 8h.01" stroke-width="2.5"/></svg></a><a href="mailto:bennollweather@gmail.com" aria-label="Email Ben Noll" title="Email Ben Noll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></svg></a></footer>
+  <img id="logo-light" src="/latest_posts/brand/bnw-brick-black.png" alt="" hidden>
+  <img id="logo-dark" src="/latest_posts/brand/bnw-brick-offwhite.png" alt="" hidden>
+  <script>
+  const DATA = __DATA__;
+  const MONTHS = ["Jan.", "Feb.", "March", "April", "May", "June", "July", "Aug.", "Sept.", "Oct.", "Nov.", "Dec."];
+  const FILES = {
+    map: "moisture-tracking-map.png",
+    month: "moisture-tracking-month.png",
+    year: "moisture-tracking-year.png",
+    stripes: "moisture-tracking-stripes.png"
+  };
+  const BROWN = [122, 78, 36];
+  const BROWN_DEEP = [74, 42, 14];
+  const BROWN_CAP = [36, 16, 6];
+  const BLUE = [47, 104, 168];
+  const BLUE_DEEP = [16, 52, 112];
+  const BLUE_CAP = [5, 20, 58];
+  const STRIPE_STOPS = [[0, [58, 38, 14]], [0.18, [108, 80, 36]], [0.38, [164, 142, 102]], [0.52, [232, 226, 214]], [0.68, [148, 178, 204]], [0.84, [62, 110, 164]], [1, [12, 40, 92]]];
+  let GRID = null;
+  let fieldCache = null;
+  let fieldKey = "";
+
+  function isDark() {
+    return matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  function palette() {
+    const style = getComputedStyle(document.documentElement);
+    const pick = (name, fallback) => style.getPropertyValue(name).trim() || fallback;
+    return {
+      bg: pick("--bg", "#f4f5f7"),
+      ink: pick("--ink", "#171717"),
+      muted: pick("--muted", "#5c656e"),
+      card: pick("--card", "#ffffff"),
+      line: pick("--line", "#d9dce1")
+    };
+  }
+  function parseCss(color) {
+    const value = (color || "").trim();
+    if (value.startsWith("#")) {
+      let hex = value.slice(1);
+      if (hex.length === 3) hex = hex[0] + hex[0] + hex[1] + hex[1] + hex[2] + hex[2];
+      return [parseInt(hex.slice(0, 2), 16), parseInt(hex.slice(2, 4), 16), parseInt(hex.slice(4, 6), 16)];
+    }
+    const parts = value.match(/[\d.]+/g);
+    if (!parts) return [255, 255, 255];
+    return [Number(parts[0]), Number(parts[1]), Number(parts[2])];
+  }
+  function mix(a, b, t) {
+    return a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  }
+  function css(rgb) {
+    return "rgb(" + rgb[0] + ", " + rgb[1] + ", " + rgb[2] + ")";
+  }
+  function inches(value) {
+    return (Math.round(value * 100) / 100).toFixed(2) + " in.";
+  }
+  function finite(values) {
+    return values.filter((value) => value != null && isFinite(value));
+  }
+  function quantile(values, p) {
+    const sorted = finite(values).sort((a, b) => a - b);
+    if (!sorted.length) return null;
+    const k = (sorted.length - 1) * p;
+    const i = Math.floor(k);
+    const f = k - i;
+    return sorted[i] * (1 - f) + sorted[Math.min(sorted.length - 1, i + 1)] * f;
+  }
+  function stripeColor(t) {
+    const u = Math.max(0, Math.min(1, t));
+    for (let i = 1; i < STRIPE_STOPS.length; i++) {
+      if (u <= STRIPE_STOPS[i][0]) {
+        const span = STRIPE_STOPS[i][0] - STRIPE_STOPS[i - 1][0];
+        const f = span ? (u - STRIPE_STOPS[i - 1][0]) / span : 0;
+        return mix(STRIPE_STOPS[i - 1][1], STRIPE_STOPS[i][1], f);
+      }
+    }
+    return STRIPE_STOPS[STRIPE_STOPS.length - 1][1];
+  }
+  const SCALE_LO = 70;
+  const SCALE_HI = 130;
+  const SCALE_STEP = 5;
+  function fieldColor(pct, paper) {
+    const quiet = 3;
+    const span = (SCALE_HI - 100) - quiet;
+    const bin = Math.round(pct / SCALE_STEP) * SCALE_STEP;
+    if (bin < SCALE_LO) return BROWN_CAP;
+    if (bin > SCALE_HI) return BLUE_CAP;
+    let t;
+    if (bin >= 100) t = Math.max(0, bin - 100 - quiet) / span;
+    else t = -Math.max(0, 100 - quiet - bin) / span;
+    t = Math.max(-1, Math.min(1, t));
+    if (t >= 0) {
+      if (t < 0.62) return mix(paper, BLUE, t / 0.62);
+      return mix(BLUE, BLUE_DEEP, (t - 0.62) / 0.38);
+    }
+    const u = -t;
+    if (u < 0.62) return mix(paper, BROWN, u / 0.62);
+    return mix(BROWN, BROWN_DEEP, (u - 0.62) / 0.38);
+  }
+  function font(weight, size) {
+    return weight + " " + size + 'px "Libre Franklin", sans-serif';
+  }
+  function px(width, base) {
+    return Math.max(14, Math.round(base * Math.min(1.28, Math.max(1, width / 900))));
+  }
+  function logoImage() {
+    const image = document.getElementById(isDark() ? "logo-dark" : "logo-light");
+    return image && image.complete && image.naturalWidth ? image : null;
+  }
+  function drawWordmark(ctx, right, top, ink, size) {
+    ctx.save();
+    ctx.fillStyle = ink;
+    ctx.font = font(700, size || 28);
+    ctx.textAlign = "right";
+    ctx.textBaseline = "top";
+    ctx.fillText("BNW", right, top + Math.round((size || 28) * 0.64));
+    ctx.restore();
+  }
+  function drawLogo(ctx, width, pad, colors, height) {
+    const logoH = 84;
+    const markH = height || logoH;
+    const image = logoImage();
+    if (!image) {
+      drawWordmark(ctx, width - pad, pad, colors.ink, height ? 18 : 28);
+      return height ? 56 : 96;
+    }
+    const logoW = markH * (image.naturalWidth / image.naturalHeight);
+    ctx.globalAlpha = height ? 0.72 : 1;
+    ctx.drawImage(image, width - pad - logoW, pad, logoW, markH);
+    ctx.globalAlpha = 1;
+    return logoW;
+  }
+  function fitSize(ctx, text, maxWidth, start, minSize, weight) {
+    let size = start;
+    ctx.font = font(weight, size);
+    while (size > minSize && ctx.measureText(text).width > maxWidth) {
+      size -= 2;
+      ctx.font = font(weight, size);
+    }
+    return size;
+  }
+  function halo(ctx, text, x, y, fill, paper) {
+    ctx.lineWidth = 5;
+    ctx.strokeStyle = paper;
+    ctx.lineJoin = "round";
+    ctx.miterLimit = 2;
+    ctx.strokeText(text, x, y);
+    ctx.fillStyle = fill;
+    ctx.fillText(text, x, y);
+  }
+  function spread(items, gap, minY, maxY) {
+    const rows = items.map((item) => ({
+      y: item.y,
+      text: item.text,
+      lines: item.lines || (item.text ? [item.text] : []),
+      color: item.color,
+      weight: item.weight,
+      span: item.span || gap,
+    }));
+    rows.sort((a, b) => a.y - b.y);
+    for (let i = 1; i < rows.length; i++) {
+      const need = rows[i - 1].span === gap && rows[i].span === gap
+        ? gap
+        : (rows[i - 1].span + rows[i].span) / 2 + 4;
+      if (rows[i].y < rows[i - 1].y + need) rows[i].y = rows[i - 1].y + need;
+    }
+    if (rows.length && rows[rows.length - 1].y > maxY) {
+      const shift = rows[rows.length - 1].y - maxY;
+      rows.forEach((row) => { row.y -= shift; });
+    }
+    if (rows.length && rows[0].y < minY) {
+      const shift = minY - rows[0].y;
+      rows.forEach((row) => { row.y += shift; });
+    }
+    return rows;
+  }
+  function gridBytes() {
+    if (GRID) return GRID;
+    const raw = atob(DATA.map.grid);
+    GRID = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) GRID[i] = raw.charCodeAt(i) & 255;
+    return GRID;
+  }
+  function fieldImage(paper) {
+    if (fieldCache && fieldKey === paper) return fieldCache;
+    const map = DATA.map;
+    const canvas = document.createElement("canvas");
+    canvas.width = map.nlon;
+    canvas.height = map.nlat;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    const image = ctx.createImageData(map.nlon, map.nlat);
+    const bytes = gridBytes();
+    const paperRgb = parseCss(paper);
+    const dest = image.data;
+    for (let i = 0; i < bytes.length; i++) {
+      const rgb = bytes[i] === 255 ? paperRgb : fieldColor(bytes[i], paperRgb);
+      const p = i * 4;
+      dest[p] = rgb[0];
+      dest[p + 1] = rgb[1];
+      dest[p + 2] = rgb[2];
+      dest[p + 3] = 255;
+    }
+    ctx.putImageData(image, 0, 0);
+    fieldCache = canvas;
+    fieldKey = paper;
+    return canvas;
+  }
+  function traceLayer(ctx, x, y, w, h, lines) {
+    if (!lines || !lines.length) return;
+    ctx.beginPath();
+    lines.forEach((seg) => {
+      let open = false;
+      let prev = null;
+      for (let i = 0; i < seg.length; i++) {
+        if (seg[i][1] < -89) {
+          open = false;
+          prev = null;
+          continue;
+        }
+        const px = x + (seg[i][0] / 360) * w;
+        const py = y + ((90 - seg[i][1]) / 180) * h;
+        const jump = prev && (Math.abs(px - prev[0]) > w * 0.18 || Math.abs(py - prev[1]) > h * 0.12);
+        if (!open || jump) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+        open = true;
+        prev = [px, py];
+      }
+    });
+    ctx.stroke();
+  }
+  function traceCoasts(ctx, x, y, w, h) {
+    const coastWidth = ctx.lineWidth || 0.7;
+    ctx.lineWidth = coastWidth;
+    ctx.globalAlpha = 0.92;
+    traceLayer(ctx, x, y, w, h, typeof COASTS === "undefined" ? [] : COASTS);
+    ctx.lineWidth = coastWidth * 0.8;
+    ctx.globalAlpha = 0.7;
+    traceLayer(ctx, x, y, w, h, typeof COUNTRIES === "undefined" ? [] : COUNTRIES);
+    ctx.lineWidth = coastWidth * 0.55;
+    ctx.globalAlpha = 0.42;
+    traceLayer(ctx, x, y, w, h, typeof STATES === "undefined" ? [] : STATES);
+    ctx.lineWidth = coastWidth;
+    ctx.globalAlpha = 0.92;
+    traceLayer(ctx, x, y, w, h, typeof LAKES === "undefined" ? [] : LAKES);
+  }
+  function roundRect(ctx, x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+  function drawScale(ctx, x, y, width, colors) {
+    const barH = 14;
+    const capW = Math.round(barH * 1.05);
+    const paper = parseCss(colors.card);
+    const bins = [];
+    for (let pct = SCALE_LO; pct <= SCALE_HI; pct += SCALE_STEP) bins.push(pct);
+    const barX = x + capW;
+    const barRight = x + width - capW;
+    const barW = Math.max(bins.length, barRight - barX);
+    const segW = barW / bins.length;
+    const midY = y + barH / 2;
+    ctx.beginPath();
+    ctx.moveTo(x, midY);
+    ctx.lineTo(barX, y);
+    ctx.lineTo(barX, y + barH);
+    ctx.closePath();
+    ctx.fillStyle = css(BROWN_CAP);
+    ctx.fill();
+    bins.forEach((pct, i) => {
+      const left = barX + i * segW;
+      const seg = i === bins.length - 1 ? barRight - left : segW + 0.4;
+      ctx.fillStyle = css(fieldColor(pct, paper));
+      ctx.fillRect(left, y, seg, barH);
+    });
+    ctx.beginPath();
+    ctx.moveTo(x + width, midY);
+    ctx.lineTo(barRight, y);
+    ctx.lineTo(barRight, y + barH);
+    ctx.closePath();
+    ctx.fillStyle = css(BLUE_CAP);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.moveTo(x, midY);
+    ctx.lineTo(barX, y);
+    ctx.lineTo(barRight, y);
+    ctx.lineTo(x + width, midY);
+    ctx.lineTo(barRight, y + barH);
+    ctx.lineTo(barX, y + barH);
+    ctx.closePath();
+    ctx.strokeStyle = colors.line;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    const tens = bins.filter((pct) => pct % 10 === 0);
+    const anchors = [SCALE_LO, 100, SCALE_HI];
+    const gapOf = (choice) => {
+      let minGap = Infinity;
+      for (let i = 1; i < choice.length; i++) {
+        minGap = Math.min(minGap, (bins.indexOf(choice[i]) - bins.indexOf(choice[i - 1])) * segW);
+      }
+      return minGap;
+    };
+    const wide = (trySize) => {
+      ctx.font = font(700, trySize);
+      return Math.max(ctx.measureText("100").width, ctx.measureText("70%").width);
+    };
+    let shown = anchors;
+    let size = 14;
+    const choices = [bins, tens, anchors];
+    for (let n = 0; n < choices.length; n++) {
+      let trySize = px(width, 17);
+      while (trySize > 14 && wide(trySize) + 8 > gapOf(choices[n])) trySize -= 1;
+      if (wide(trySize) + 8 <= gapOf(choices[n])) {
+        shown = choices[n];
+        size = trySize;
+        break;
+      }
+    }
+    ctx.textBaseline = "top";
+    const row = y + barH + 8;
+    const wordRow = row + size + 6;
+    const words = { 70: "Drier", 100: "Average", 130: "Wetter" };
+    shown.forEach((pct) => {
+      const tx = barX + (bins.indexOf(pct) + 0.5) * segW;
+      ctx.textAlign = "center";
+      ctx.fillStyle = colors.ink;
+      ctx.font = font(700, size);
+      ctx.fillText(pct === SCALE_LO ? "70%" : String(pct), tx, row);
+      if (words[pct]) {
+        ctx.fillStyle = colors.muted;
+        ctx.font = font(600, size);
+        const word = words[pct];
+        const wordW = ctx.measureText(word).width;
+        let wx = tx;
+        ctx.textAlign = "center";
+        if (tx - wordW / 2 < x) {
+          ctx.textAlign = "left";
+          wx = x;
+        } else if (tx + wordW / 2 > x + width) {
+          ctx.textAlign = "right";
+          wx = x + width;
+        }
+        ctx.fillText(word, wx, wordRow);
+      }
+    });
+  }
+  function drawMap(ctx, box, colors) {
+    ctx.save();
+    const scaleBlock = 118;
+    const availW = box.w;
+    const availH = Math.max(24, box.h - scaleBlock);
+    let mapW = availW;
+    let mapH = mapW / 2;
+    if (mapH > availH) {
+      mapH = availH;
+      mapW = mapH * 2;
+    }
+    const x = box.x + (availW - mapW) / 2;
+    const y = box.y;
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(fieldImage(colors.card), x, y, mapW, mapH);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x, y, mapW, mapH);
+    ctx.clip();
+    ctx.strokeStyle = colors.ink;
+    ctx.globalAlpha = 0.82;
+    ctx.lineWidth = 0.7;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    traceCoasts(ctx, x, y, mapW, mapH);
+    ctx.restore();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = colors.line;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x + 0.5, y + 0.5, mapW - 1, mapH - 1);
+    drawScale(ctx, x, y + mapH + 16, mapW, colors);
+    ctx.restore();
+  }
+  function domain(values) {
+    const ready = finite(values);
+    let lo = Math.min.apply(null, ready);
+    let hi = Math.max.apply(null, ready);
+    if (!isFinite(lo) || !isFinite(hi)) return [0, 1];
+    if (hi === lo) {
+      lo -= 0.05;
+      hi += 0.05;
+    } else {
+      const pad = (hi - lo) * 0.08;
+      lo -= pad;
+      hi += pad;
+    }
+    return [lo, hi];
+  }
+  function yearTicks(start, end, step) {
+    if (end - start < 16) return end === start ? [start] : [start, end];
+    const ticks = [start];
+    const gap = step || 20;
+    for (let year = start + gap; year <= end; year += gap) ticks.push(year);
+    return ticks;
+  }
+  function drawMonth(ctx, box, colors) {
+    ctx.save();
+    const values = DATA.inches;
+    const ready = finite(values);
+    const p10 = quantile(values, 0.1);
+    const p50 = quantile(values, 0.5);
+    const p90 = quantile(values, 0.9);
+    const last = ready.length ? ready[ready.length - 1] : null;
+    const labelSize = px(box.w, 15);
+    const narrow = box.w < 640;
+    const percentileLines = (rank, value) => {
+      if (value == null) return [];
+      const amount = inches(value);
+      if (narrow) return [rank + " · " + amount, "percentile"];
+      return [rank + " percentile · " + amount];
+    };
+    const p10Lines = percentileLines("10th", p10);
+    const p50Lines = p50 == null ? [] : ["Median · " + inches(p50)];
+    const p90Lines = percentileLines("90th", p90);
+    const lastLines = last == null ? [] : [inches(last)];
+    ctx.font = font(700, labelSize);
+    let gutter = 64;
+    [p10Lines, p50Lines, p90Lines, lastLines].forEach((lines) => {
+      lines.forEach((text) => {
+        gutter = Math.max(gutter, Math.ceil(ctx.measureText(text).width) + 22);
+      });
+    });
+    const left = box.x + 8;
+    const right = box.x + box.w - gutter;
+    const top = box.y + 16;
+    const bottom = box.y + box.h - 32;
+    const plotW = Math.max(10, right - left);
+    const plotH = Math.max(10, bottom - top);
+    const span = domain(ready.concat([p10, p50, p90].filter((value) => value != null)));
+    const yMin = span[0];
+    const yMax = span[1];
+    const xOf = (index) => left + (values.length <= 1 ? 0.5 : index / (values.length - 1)) * plotW;
+    const yOf = (value) => top + (1 - (value - yMin) / (yMax - yMin)) * plotH;
+    const lo = quantile(values, 0.02);
+    const hi = quantile(values, 0.98);
+    const tone = (value) => {
+      const t = hi == null || lo == null || hi === lo ? 0.5 : Math.max(0, Math.min(1, (value - lo) / (hi - lo)));
+      return mix(stripeColor(t), parseCss(colors.ink), 0.42);
+    };
+    ctx.setLineDash([2, 4]);
+    ctx.lineWidth = 1;
+    ctx.strokeStyle = colors.muted;
+    ctx.globalAlpha = 0.85;
+    [p10, p50, p90].forEach((level) => {
+      if (level == null) return;
+      const y = yOf(level);
+      ctx.beginPath();
+      ctx.moveTo(left, y);
+      ctx.lineTo(right, y);
+      ctx.stroke();
+    });
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.lineWidth = Math.max(2.2, box.w / 420);
+    for (let i = 1; i < values.length; i++) {
+      if (values[i] == null || values[i - 1] == null) continue;
+      ctx.beginPath();
+      ctx.strokeStyle = css(tone((values[i - 1] + values[i]) / 2));
+      ctx.moveTo(xOf(i - 1), yOf(values[i - 1]));
+      ctx.lineTo(xOf(i), yOf(values[i]));
+      ctx.stroke();
+    }
+    let lastIndex = -1;
+    for (let i = values.length - 1; i >= 0; i--) {
+      if (values[i] != null) { lastIndex = i; break; }
+    }
+    if (lastIndex >= 0) {
+      const lastX = xOf(lastIndex);
+      const lastY = yOf(values[lastIndex]);
+      ctx.beginPath();
+      ctx.fillStyle = css(BLUE_DEEP);
+      ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = colors.card;
+      ctx.stroke();
+      const tags = [];
+      const pushLines = (lines, y, color, weight) => {
+        if (!lines.length) return;
+        const lineH = labelSize + 2;
+        tags.push({
+          y: y,
+          lines: lines,
+          color: color,
+          weight: weight,
+          span: lines.length * lineH + 4,
+        });
+      };
+      pushLines(p10Lines, yOf(p10), colors.muted, 600);
+      pushLines(p50Lines, yOf(p50), colors.muted, 600);
+      pushLines(p90Lines, yOf(p90), colors.muted, 600);
+      pushLines(lastLines, lastY, colors.ink, 700);
+      ctx.textAlign = "left";
+      ctx.textBaseline = "middle";
+      spread(tags, labelSize + 6, top + 8, bottom - 8).forEach((row) => {
+        ctx.font = font(row.weight, labelSize);
+        ctx.fillStyle = row.color;
+        const lineH = labelSize + 2;
+        const block = (row.lines.length - 1) * lineH;
+        row.lines.forEach((line, i) => {
+          ctx.fillText(line, right + 10, row.y - block / 2 + i * lineH);
+        });
+      });
+    }
+    ctx.font = font(600, px(box.w, 14));
+    ctx.fillStyle = colors.muted;
+    ctx.textBaseline = "alphabetic";
+    const yearY = box.y + box.h - 4;
+    if (narrow) {
+      const labels = yearTicks(DATA.start, DATA.year, 40).map((year) => ({
+        year: year,
+        text: String(year),
+        width: ctx.measureText(String(year)).width,
+        x: xOf(year - DATA.start),
+      }));
+      if (labels.length) {
+        const first = labels[0];
+        const last = labels[labels.length - 1];
+        const middles = labels.slice(1, -1);
+        const lastOnEnd = last.year === DATA.year;
+        const lastLeft = labels.length === 1 ? first.x : lastOnEnd ? last.x - last.width : last.x - last.width / 2;
+        const occupied = middles.reduce((sum, label) => sum + label.width, 0);
+        const gaps = Math.max(1, middles.length + 1);
+        const free = lastLeft - (first.x + first.width) - occupied;
+        const gap = free / gaps;
+        ctx.textAlign = "left";
+        ctx.fillText(first.text, first.x, yearY);
+        let cursor = first.x + first.width + gap;
+        middles.forEach((label) => {
+          ctx.fillText(label.text, cursor, yearY);
+          cursor += label.width + gap;
+        });
+        if (labels.length > 1) {
+          ctx.textAlign = lastOnEnd ? "right" : "center";
+          ctx.fillText(last.text, last.x, yearY);
+        }
+      }
+    } else {
+      let yearEdge = -Infinity;
+      yearTicks(DATA.start, DATA.year, 20).forEach((year, index) => {
+        const label = String(year);
+        const labelW = ctx.measureText(label).width;
+        const x = xOf(year - DATA.start);
+        const align = index === 0 ? "left" : year === DATA.year ? "right" : "center";
+        const edge = align === "right" ? x - labelW : align === "center" ? x - labelW / 2 : x;
+        if (index !== 0 && edge < yearEdge + 10) return;
+        ctx.textAlign = align;
+        ctx.fillText(label, x, yearY);
+        yearEdge = edge + labelW;
+      });
+    }
+    ctx.restore();
+  }
+  function strokeSeries(ctx, values, xOf, yOf) {
+    let open = false;
+    values.forEach((value, i) => {
+      if (value == null || !isFinite(value)) {
+        open = false;
+        return;
+      }
+      const x = xOf(i);
+      const y = yOf(value);
+      if (!open) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+      open = true;
+    });
+  }
+  function niceTicks(lo, hi) {
+    const span = hi - lo;
+    if (!(span > 0)) return [];
+    const raw = span / 4;
+    const pow = Math.pow(10, Math.floor(Math.log10(raw)));
+    const err = raw / pow;
+    const step = err >= 5 ? 5 * pow : err >= 2 ? 2 * pow : pow;
+    const out = [];
+    for (let value = Math.ceil(lo / step) * step; value < hi - step * 0.2; value += step) {
+      out.push(Math.round(value * 1000) / 1000);
+    }
+    return out;
+  }
+  function drawYear(ctx, box, colors) {
+    ctx.save();
+    const cycle = DATA.cycle;
+    const pool = finite(cycle.lo.concat(cycle.hi, cycle.avg));
+    cycle.series.forEach((series) => finite(series.values).forEach((value) => pool.push(value)));
+    const span = domain(pool);
+    const yMin = span[0];
+    const yMax = span[1];
+    const labelSize = px(box.w, 15);
+    ctx.font = font(700, labelSize);
+    const gutter = Math.ceil(ctx.measureText("Average").width) + 16;
+    const axisSize = px(box.w, 13);
+    ctx.font = font(600, axisSize);
+    const yTicks = niceTicks(yMin, yMax);
+    let topTick = null;
+    yTicks.forEach((tick) => { if (topTick == null || tick > topTick) topTick = tick; });
+    const yLabel = (tick) => tick.toFixed(2) + (tick === topTick ? " in." : "");
+    let yGutter = box.w < 560 ? 52 : 62;
+    yTicks.forEach((tick) => {
+      yGutter = Math.max(yGutter, Math.ceil(ctx.measureText(yLabel(tick)).width) + 18);
+    });
+    const left = box.x + yGutter;
+    const right = box.x + box.w - gutter;
+    const top = box.y + 18;
+    const bottom = box.y + box.h - 32;
+    const plotW = Math.max(10, right - left);
+    const plotH = Math.max(10, bottom - top);
+    const xOf = (month) => left + (month / 11) * plotW;
+    const yOf = (value) => top + (1 - (value - yMin) / (yMax - yMin)) * plotH;
+    const ink = parseCss(colors.ink);
+    if (finite(cycle.lo).length === 12 && finite(cycle.hi).length === 12) {
+      ctx.beginPath();
+      cycle.hi.forEach((value, i) => {
+        const x = xOf(i);
+        const y = yOf(value);
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      for (let i = cycle.lo.length - 1; i >= 0; i--) ctx.lineTo(xOf(i), yOf(cycle.lo[i]));
+      ctx.closePath();
+      ctx.fillStyle = "rgba(" + ink[0] + ", " + ink[1] + ", " + ink[2] + ", 0.08)";
+      ctx.fill();
+    }
+    ctx.setLineDash([4, 5]);
+    ctx.lineWidth = 1.75;
+    ctx.strokeStyle = colors.ink;
+    ctx.globalAlpha = 0.55;
+    ctx.beginPath();
+    strokeSeries(ctx, cycle.avg, xOf, yOf);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.globalAlpha = 1;
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    ctx.lineWidth = Math.max(2.25, box.w / 380);
+    cycle.series.forEach((series) => {
+      ctx.beginPath();
+      ctx.strokeStyle = series.color;
+      strokeSeries(ctx, series.values, xOf, yOf);
+      ctx.stroke();
+    });
+    if (DATA.envelope && cycle.lo[0] != null && cycle.hi[0] != null) {
+      const noteSize = px(box.w, 16);
+      ctx.font = font(600, noteSize);
+      ctx.textBaseline = "middle";
+      const yTop = Math.min(yOf(cycle.hi[0]), yOf(cycle.lo[0]));
+      const yBot = Math.max(yOf(cycle.hi[0]), yOf(cycle.lo[0]));
+      const lines = [];
+      if (cycle.avg[0] != null) lines.push(yOf(cycle.avg[0]));
+      cycle.series.forEach((series) => {
+        if (series.values[0] != null) lines.push(yOf(series.values[0]));
+      });
+      const inside = lines.filter((value) => value >= yTop && value <= yBot).sort((a, b) => a - b);
+      const below = inside.length ? yBot - inside[inside.length - 1] : yBot - yTop;
+      const y = inside.length && below >= noteSize * 0.6
+        ? (inside[inside.length - 1] + yBot) / 2
+        : (yTop + yBot) / 2;
+      ctx.textAlign = "left";
+      halo(ctx, DATA.envelope, xOf(0) + 8, y, colors.muted, colors.card);
+    }
+    const margin = [];
+    cycle.series.slice(0, -1).forEach((series) => {
+      const value = series.values[series.values.length - 1];
+      if (value == null) return;
+      margin.push({ y: yOf(value), text: String(series.year), color: series.color, weight: 700 });
+    });
+    if (cycle.avg[11] != null) margin.push({ y: yOf(cycle.avg[11]), text: "Average", color: colors.muted, weight: 700 });
+    ctx.textAlign = "left";
+    ctx.textBaseline = "middle";
+    spread(margin, labelSize + 6, top + 8, bottom - 8).forEach((row) => {
+      ctx.font = font(row.weight, labelSize);
+      ctx.fillStyle = row.color;
+      ctx.fillText(row.text, right + 10, row.y);
+    });
+    const latest = cycle.series[cycle.series.length - 1];
+    if (latest) {
+      let end = -1;
+      latest.values.forEach((value, i) => { if (value != null) end = i; });
+      if (end >= 0) {
+        ctx.font = font(700, labelSize);
+        ctx.textAlign = "left";
+        ctx.textBaseline = "bottom";
+        halo(ctx, String(latest.year), xOf(end) + 6, yOf(latest.values[end]) - 8, latest.color, colors.card);
+      }
+    }
+    ctx.font = font(600, axisSize);
+    ctx.fillStyle = colors.muted;
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    yTicks.forEach((tick) => ctx.fillText(yLabel(tick), left - 8, yOf(tick)));
+    ctx.textBaseline = "alphabetic";
+    ctx.font = font(600, px(box.w, 14));
+    const monthY = box.y + box.h - 4;
+    const monthCount = 4;
+    const monthLabels = [];
+    for (let i = 0; i < monthCount; i++) {
+      const text = MONTHS[Math.round((i * 11) / (monthCount - 1))];
+      monthLabels.push({ text: text, width: ctx.measureText(text).width });
+    }
+    const monthGap = (plotW - monthLabels.reduce((sum, label) => sum + label.width, 0)) / (monthCount - 1);
+    let monthX = left;
+    ctx.textAlign = "left";
+    monthLabels.forEach((label) => {
+      ctx.fillText(label.text, monthX, monthY);
+      monthX += label.width + monthGap;
+    });
+    ctx.restore();
+  }
+  function drawStripes(ctx, box, colors) {
+    ctx.save();
+    const values = DATA.inches;
+    const word = px(box.w, 26);
+    const topLabel = word + 14;
+    const bottomLabel = 30;
+    const height = Math.max(12, box.h - topLabel - bottomLabel);
+    const y = box.y + topLabel;
+    const ready = finite(values);
+    const lo = quantile(ready, 0.02);
+    const hi = quantile(ready, 0.98);
+    const stripeW = box.w / Math.max(1, values.length);
+    values.forEach((value, i) => {
+      const x = box.x + i * stripeW;
+      const next = box.x + (i + 1) * stripeW;
+      if (value == null) {
+        ctx.fillStyle = colors.card;
+      } else {
+        const t = hi == null || lo == null || hi === lo ? 0.5 : Math.max(0, Math.min(1, (value - lo) / (hi - lo)));
+        ctx.fillStyle = css(stripeColor(t));
+      }
+      ctx.fillRect(x, y, next - x + 0.4, height);
+    });
+    ctx.font = font(700, word);
+    ctx.textBaseline = "alphabetic";
+    ctx.fillStyle = colors.ink;
+    ctx.textAlign = "left";
+    ctx.fillText("Drier", box.x, box.y + word);
+    ctx.textAlign = "right";
+    ctx.fillText("Wetter", box.x + box.w, box.y + word);
+    ctx.font = font(600, px(box.w, 15));
+    ctx.fillStyle = colors.muted;
+    ctx.textAlign = "left";
+    ctx.fillText(String(DATA.start), box.x, box.y + box.h - 4);
+    ctx.textAlign = "right";
+    ctx.fillText(String(DATA.year), box.x + box.w, box.y + box.h - 4);
+    ctx.restore();
+  }
+  function cardSize(kind) {
+    const sizes = { map: [1400, 980], month: [1400, 860], year: [1400, 920], stripes: [1400, 500] };
+    const pair = sizes[kind] || sizes.stripes;
+    return { w: pair[0], h: pair[1] };
+  }
+  function cardFooter(ctx, width, height, pad, colors) {
+    ctx.save();
+    ctx.font = font(600, 22);
+    ctx.fillStyle = colors.muted;
+    ctx.textBaseline = "alphabetic";
+    ctx.textAlign = "right";
+    ctx.fillText("benweather.com", width - pad, height - 46);
+    ctx.restore();
+  }
+  function drawCard(ctx, kind) {
+    const card = cardSize(kind);
+    const cardW = card.w;
+    const cardH = card.h;
+    const pad = 64;
+    const colors = palette();
+    ctx.save();
+    ctx.fillStyle = colors.card;
+    ctx.fillRect(0, 0, cardW, cardH);
+    const logoW = drawLogo(ctx, cardW, pad, colors, kind === "stripes" ? 42 : 0);
+    const textW = cardW - pad * 2 - logoW - 28;
+    const plotW = cardW - pad * 2;
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    if (kind === "map") {
+      const titleSize = fitSize(ctx, DATA.mapTitle, textW, 48, 28, 700);
+      ctx.font = font(700, titleSize);
+      ctx.fillStyle = colors.ink;
+      ctx.fillText(DATA.mapTitle, pad, pad);
+      const dekSize = fitSize(ctx, DATA.monthYear, textW, 32, 22, 600);
+      ctx.font = font(600, dekSize);
+      ctx.fillStyle = colors.muted;
+      const dekY = pad + titleSize + 12;
+      ctx.fillText(DATA.monthYear, pad, dekY);
+      const top = dekY + dekSize + 28;
+      drawMap(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+    } else if (kind === "month") {
+      const titleSize = fitSize(ctx, DATA.monthTitle, textW, 42, 28, 700);
+      ctx.font = font(700, titleSize);
+      ctx.fillStyle = colors.ink;
+      ctx.fillText(DATA.monthTitle, pad, pad);
+      const rankSize = fitSize(ctx, DATA.rank, textW, 32, 22, 600);
+      ctx.font = font(600, rankSize);
+      ctx.fillStyle = colors.muted;
+      const rankY = pad + titleSize + 12;
+      ctx.fillText(DATA.rank, pad, rankY);
+      const top = rankY + rankSize + 28;
+      drawMonth(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+    } else if (kind === "year") {
+      const titleSize = fitSize(ctx, DATA.yearTitle, textW, 40, 26, 700);
+      ctx.font = font(700, titleSize);
+      ctx.fillStyle = colors.ink;
+      ctx.fillText(DATA.yearTitle, pad, pad);
+      const top = pad + titleSize + 28;
+      drawYear(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+    } else if (kind === "stripes") {
+      const titleSize = fitSize(ctx, DATA.range, textW, 64, 40, 700);
+      ctx.font = font(700, titleSize);
+      ctx.fillStyle = colors.ink;
+      ctx.fillText(DATA.range, pad, pad);
+      const top = pad + titleSize + 28;
+      drawStripes(ctx, { x: pad, y: top, w: plotW, h: cardH - 96 - top }, colors);
+    }
+    cardFooter(ctx, cardW, cardH, pad, colors);
+    ctx.restore();
+  }
+  function paint(canvas, cssW, cssH, scale, draw) {
+    canvas.width = Math.max(1, Math.round(cssW * scale));
+    canvas.height = Math.max(1, Math.round(cssH * scale));
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+    draw(ctx, { x: 0, y: 0, w: cssW, h: cssH }, palette());
+  }
+  function paintCard(canvas, kind, scale) {
+    const card = cardSize(kind);
+    canvas.width = card.w * scale;
+    canvas.height = card.h * scale;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    ctx.imageSmoothingEnabled = true;
+    ctx.imageSmoothingQuality = "high";
+    ctx.setTransform(scale, 0, 0, scale, 0, 0);
+    drawCard(ctx, kind);
+  }
+  function heights(width) {
+    return {
+      map: Math.round(width * 0.52 + 126),
+      month: Math.round(Math.max(320, width * 0.42)),
+      year: Math.round(Math.max(340, width * 0.44)),
+      stripes: Math.round(Math.max(190, width * 0.22 + 48))
+    };
+  }
+  function drawCharts() {
+    const pageScale = Math.min(2, window.devicePixelRatio || 1);
+    [["month-canvas", "month", drawMonth], ["year-canvas", "year", drawYear], ["stripe-canvas", "stripes", drawStripes]].forEach((item) => {
+      const canvas = document.getElementById(item[0]);
+      if (!canvas) return;
+      const width = canvas.clientWidth;
+      if (!width) return;
+      const h = heights(width)[item[1]];
+      canvas.style.height = h + "px";
+      paint(canvas, width, h, pageScale, item[2]);
+    });
+  }
+  function drawMapCanvas() {
+    const pageScale = Math.min(2, window.devicePixelRatio || 1);
+    const canvas = document.getElementById("map-canvas");
+    if (!canvas) return;
+    const width = canvas.clientWidth;
+    if (!width) return;
+    const h = heights(width).map;
+    canvas.style.height = h + "px";
+    paint(canvas, width, h, pageScale, drawMap);
+  }
+  function drawAll() {
+    drawCharts();
+    if (typeof COASTS !== "undefined") drawMapCanvas();
+  }
+  function saveCard(kind) {
+    const canvas = document.createElement("canvas");
+    const scale = 3;
+    paintCard(canvas, kind, scale);
+    canvas.toBlob((blob) => {
+      if (!blob) return;
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = FILES[kind];
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1500);
+    }, "image/png");
+  }
+  document.body.addEventListener("click", (event) => {
+    const button = event.target.closest("[data-card]");
+    if (!button) return;
+    saveCard(button.dataset.card);
+  });
+  let frame = 0;
+  function schedule() {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(drawAll);
+  }
+  drawCharts();
+  document.addEventListener("DOMContentLoaded", drawAll);
+  window.addEventListener("load", drawAll);
+  document.fonts.ready.then(drawAll);
+  if (window.ResizeObserver) new ResizeObserver(schedule).observe(document.querySelector("main"));
+  matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+    fieldCache = null;
+    schedule();
+  });
+  </script>
+  <script defer>
+  drawAll();
+  </script>
+</body>
+</html>

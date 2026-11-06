@@ -1,0 +1,1122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="/latest_posts/brand/favicon-bnw-black.png" type="image/png" media="(prefers-color-scheme: light)">
+  <link rel="icon" href="/latest_posts/brand/favicon-bnw-offwhite.png" type="image/png" media="(prefers-color-scheme: dark)">
+  <title>__TITLE__</title>
+  __SEO__
+  <link rel="stylesheet" href="https://fonts.bunny.net/css?family=libre-franklin:400,600,700">
+  <style>
+    :root {
+      color-scheme: light dark;
+      --bg: #f4f5f7;
+      --ink: #171717;
+      --muted: #5c656e;
+      --line: #d9dce1;
+      --card: #fff;
+      --nav: #fff;
+      --nav-line: #c8ccd2;
+      --nav-on: #e7eef8;
+      --nav-on-line: #8aa8cc;
+      --header: rgba(255,255,255,.96);
+      --header-line: #d9dce1;
+      --link: #1256a0;
+      --shadow: rgba(0,0,0,.12);
+      --tag: #5d626a;
+      --track: #e7eaee;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: "Libre Franklin", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); font-size: 16px; line-height: 1.45; }
+    header { position: sticky; top: 0; z-index: 5; padding: 18px 24px 14px; background: var(--header); border-bottom: 1px solid var(--header-line); backdrop-filter: blur(8px); }
+    .brand { display: flex; align-items: center; gap: 20px; }
+    .brand-copy { min-width: 0; }
+    .brand-copy h1 { margin: 0 0 5px; font-size: 27px; font-weight: 700; letter-spacing: 0; line-height: 1.2; }
+    .brand-copy p { margin: 0; color: var(--tag); font-size: 16px; line-height: 1.3; }
+    .brand-mark { flex: none; color: inherit; text-decoration: none; }
+    .brand-mark img { display: block; height: 56px; width: auto; }
+    nav { margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    nav a, nav summary { color: inherit; text-decoration: none; border: 1px solid var(--nav-line); border-radius: 999px; padding: 7px 11px; background: var(--nav); font: inherit; cursor: pointer; }
+    nav > a, nav > .menu > summary { display: inline-block; }
+    nav summary { list-style: none; }
+    nav summary::-webkit-details-marker { display: none; }
+    nav summary::after { content: ""; display: inline-block; margin-left: 7px; border-width: 4px 4px 0; border-style: solid; border-color: currentColor transparent transparent; vertical-align: 2px; }
+    nav a:hover, nav summary:hover, nav summary:focus-visible { text-decoration: underline; }
+    nav a[aria-current="page"], nav .menu:has(a[aria-current="page"]) > summary { background: var(--nav-on); border-color: var(--nav-on-line); font-weight: 700; }
+    nav .menu { position: relative; }
+    nav > details.menu:last-of-type > .panel { left: auto; right: 0; }
+    nav .panel { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; display: grid; gap: 6px; min-width: 190px; padding: 8px; border: 1px solid var(--header-line); border-radius: 12px; background: var(--nav); box-shadow: 0 8px 24px var(--shadow); }
+    nav .panel a, nav .panel summary { display: block; text-align: left; }
+    nav .menu .menu .panel { position: static; min-width: 0; margin-top: 6px; padding: 0 0 0 8px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
+    main { width: min(1180px, calc(100% - 32px)); margin: 0 auto; padding: 8px 0 28px; }
+    main h2 { margin: 26px 0 0; font-size: clamp(32px, 4.4vw, 48px); font-weight: 700; letter-spacing: -0.035em; line-height: 1.05; }
+    main h2.compare { margin-top: 34px; font-size: clamp(26px, 3.4vw, 36px); }
+    .dek { margin: 8px 0 0; color: var(--muted); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
+    .map-card { background: transparent; color: inherit; margin-top: 22px; }
+    .scale-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
+    .scale { width: min(480px, 100%); flex: 0 1 480px; margin: 0 0 8px; }
+    .scale-top { display: flex; justify-content: space-between; gap: 12px; font-size: 18px; font-weight: 600; margin: 0 12px 6px 0; }
+    .scale .below { color: #8A5A43; }
+    .scale .above { color: #1A548E; }
+    .swatches { position: relative; height: 16px; margin-right: 12px; }
+    .swatches i { position: absolute; top: 0; bottom: 0; }
+    .swatches i:first-child { border-radius: 2px 0 0 2px; }
+    .swatches::after { content: ""; position: absolute; right: -11px; top: 0; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 11px solid #0C2248; }
+    .ticks { position: relative; height: 22px; margin: 4px 12px 0 0; font-size: 15px; font-weight: 600; color: var(--muted); font-variant-numeric: tabular-nums; }
+    .ticks span { position: absolute; top: 0; transform: translateX(-50%); white-space: nowrap; }
+    .ticks span:first-child { transform: translateX(0); }
+    .ticks span:last-child { transform: translateX(-100%); }
+    .ticks span.break,
+    .ticks span.break:last-child { transform: translateX(-50%); }
+    .download { flex: none; margin-bottom: 8px; border: 1px solid var(--line); background: var(--card); color: var(--ink); font: inherit; font-size: 18px; font-weight: 700; border-radius: 999px; padding: 12px 18px; cursor: pointer; }
+    .download:hover, .download:focus-visible { border-color: var(--ink); }
+    .download:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+    .download:disabled { cursor: wait; opacity: 0.55; }
+    .snow-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 18px 0 0; }
+    .snow-controls[hidden] { display: none; }
+    .model-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .model-row[hidden] { display: none; }
+    .model-row button { font: inherit; font-size: 16px; font-weight: 700; border: 1px solid var(--line); background: var(--card); color: var(--ink); border-radius: 999px; padding: 8px 14px; cursor: pointer; }
+    .model-row button[aria-selected="true"] { background: var(--nav-on); border-color: var(--nav-on-line); }
+    .model-row button:hover, .model-row button:focus-visible { border-color: var(--ink); }
+    .model-row button:focus-visible { outline: 2px solid var(--ink); outline-offset: 1px; }
+    .model-row button:disabled { cursor: wait; opacity: 0.55; }
+    .snow-scale { width: 100%; max-width: 100%; overflow-x: auto; flex: 1 1 auto; }
+    /* ch is resolved on the element that uses it. One track keeps the swatches and the labels the same width. */
+    .snow-scale .legend-track { width: max(100%, var(--legend-min, 100%)); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+    .snow-scale .swatches, .snow-scale .ticks { width: 100%; font-size: 14px; }
+    .snow-scale .swatches { margin-right: 0; }
+    .snow-scale .swatches::after { content: none; }
+    .snow-scale .swatches i:last-child { border-radius: 0 2px 2px 0; }
+    .snow-scale .ticks { margin-right: 0; font-size: 14px; }
+    .snow-scale .ticks span, .snow-scale .ticks span:first-child, .snow-scale .ticks span:last-child { transform: translateX(-50%); }
+    .snow-scale.wide { width: 100%; }
+    .map-scroll { overflow: visible; }
+    #snow-map { display: block; width: 100%; height: auto; }
+    .rank-list { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; }
+    .rank-list li { display: grid; grid-template-columns: 32px 88px minmax(0, 1fr) 72px; gap: 12px; align-items: center; font-size: 18px; font-weight: 600; }
+    .rank-list .n { color: var(--muted); font-variant-numeric: tabular-nums; }
+    .rank-list .year, .rank-list .pct { font-variant-numeric: tabular-nums; }
+    .rank-list .pct { text-align: right; }
+    .rank-list .track { height: 16px; background: var(--track); border-radius: 999px; overflow: hidden; }
+    .rank-list .bar { display: block; height: 100%; border-radius: 999px; }
+    .rank-list li.now .year, .rank-list li.now .pct, .rank-list li.now .n { font-weight: 700; color: var(--ink); }
+    .notes { margin: 22px 0 8px; max-width: 820px; color: var(--muted); font-size: 18px; }
+    .notes p { margin: 0; }
+    .site-foot { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin: 0; padding: 8px 24px 32px; line-height: 0; }
+    .site-foot a { color: #8b919a; text-decoration: none; }
+    .site-foot a:hover, .site-foot a:focus-visible { color: var(--link); }
+    .site-foot svg { display: block; width: 18px; height: 18px; }
+    @media (max-width: 650px) {
+      .brand { gap: 12px; }
+      .brand-copy h1 { font-size: 22px; }
+      .brand-mark img { height: 44px; }
+      nav { position: relative; align-items: flex-start; }
+      nav > details.menu { position: static; }
+      nav > details.menu > .panel,
+      nav > details.menu:last-of-type > .panel {
+        left: 0;
+        right: 0;
+        min-width: 0;
+        max-height: calc(100vh - 140px);
+        overflow: auto;
+      }
+      .dek { font-size: 20px; }
+      .download { padding: 10px 16px; }
+      .map-scroll { overflow-x: auto; }
+      #snow-map { width: 860px; max-width: none; }
+      .ticks span.minor { display: none; }
+      .snow-scale .legend-track, .snow-scale .swatches, .snow-scale .ticks { font-size: 13px; letter-spacing: 0; }
+      .rank-list li { grid-template-columns: 26px 76px minmax(0, 1fr) 58px; gap: 8px; font-size: 16px; }
+    }
+    @media (max-width: 420px) {
+      .snow-scale .legend-track, .snow-scale .swatches, .snow-scale .ticks { font-size: 13px; letter-spacing: 0; }
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #111317;
+        --ink: #f3f4f6;
+        --muted: #aeb4bd;
+        --tag: #aeb4bd;
+        --line: #373c46;
+        --card: #1b1e24;
+        --nav: #1b1e24;
+        --nav-line: #373c46;
+        --nav-on: #29394d;
+        --nav-on-line: #6086ad;
+        --header: rgba(20,22,26,.96);
+        --header-line: #333842;
+        --link: #7db7ff;
+        --shadow: rgba(0,0,0,.45);
+        --track: #2c313a;
+      }
+      .scale .below { color: #e0b56a; }
+      .scale .above { color: #9ec3ea; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-copy">
+        <h1>BenNollWeather</h1>
+        <p>Bringing weather and climate data to life</p>
+      </div>
+      <a class="brand-mark" href="/latest_posts"><picture>
+        <source srcset="/latest_posts/brand/bnw-brick-offwhite.png" media="(prefers-color-scheme: dark)">
+        <img src="/latest_posts/brand/bnw-brick-black.png" alt="Ben Noll Weather" width="1156" height="508">
+      </picture></a>
+    </div>
+    __NAV__
+  </header>
+  <main>
+    __VIEW_BUTTONS__
+    <h2 id="snow-title">__H2__</h2>
+    <p class="dek" id="snow-span">__SPAN__</p>
+    <p class="dek" id="snow-rank">__RANK__</p>
+    <section class="map-card">
+      <div class="scale-row">
+        __SCALE__
+        __SNOW_SCALE__
+        <button class="download" id="download" type="button" disabled>Download</button>
+      </div>
+      <div class="map-scroll" id="map-scroll">
+        <canvas id="snow-map" role="img"></canvas>
+      </div>
+    </section>
+    <div id="anomaly-ranks"__RANKS_HIDDEN__>
+      <h2 class="compare">Percent of average by season</h2>
+      __RANKS__
+    </div>
+    <section class="notes">
+      <p id="snow-source">__SOURCE__</p>
+    </section>
+  </main>
+  <footer class="site-foot"><a href="https://www.bennollsays.com/about" aria-label="About" title="About"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v5"/><path d="M12 8h.01" stroke-width="2.5"/></svg></a><a href="mailto:bennollweather@gmail.com" aria-label="Email Ben Noll" title="Email Ben Noll"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 7 9-7"/></svg></a></footer>
+  <img id="logo" src="/latest_posts/brand/bnw-brick-black.png" alt="" hidden>
+  <img id="field" alt="" hidden src="data:image/png;base64,__FIELD__">
+  __FORECAST_FIELDS__
+  <img id="terrain" alt="" hidden src="/climate_imagery/snow_terrain.jpg?v=1">
+  <img id="counties" alt="" hidden src="/climate_imagery/snow_counties.png?v=1">
+  <script src="__BASEMAP__"></script>
+  <script>
+  const DATA = __DATA__;
+  const EXTENT = DATA.frame || DATA.extent;
+  const ASPECT = (EXTENT[1] - EXTENT[0]) / (EXTENT[3] - EXTENT[2]);
+  const COLORS = DATA.colors.map(hexToRgb);
+  const OVER = hexToRgb(DATA.over);
+  const VIEWS = DATA.views || null;
+  function snowPath() {
+    return location.pathname.replace(/\/+$/, "");
+  }
+  const snowHash = (location.hash || "").replace("#", "");
+  const snowForecastHash = snowHash === "forecast" || snowHash === "ecmwf" || snowHash === "aifs";
+  function hasAnomalyView() {
+    return !!(VIEWS && VIEWS.anomaly);
+  }
+  if (hasAnomalyView() && snowPath() !== "/weather/snow-forecast" && snowForecastHash) {
+    const nextHash = snowHash === "ecmwf" || snowHash === "aifs" ? "#" + snowHash : "";
+    location.replace("/weather/snow-forecast" + nextHash + location.search);
+  }
+  let active = (!hasAnomalyView() || snowPath() === "/weather/snow-forecast")
+    ? (snowHash === "aifs" ? "aifs" : "ecmwf")
+    : "anomaly";
+  const rasters = {};
+  const pageScale = Math.min(2, window.devicePixelRatio || 1);
+
+  function activeSpec() {
+    if (VIEWS && VIEWS[active]) return VIEWS[active];
+    return {
+      title: "Snowfall percentage of average",
+      span: DATA.span,
+      rank: DATA.rank,
+      source: DATA.source,
+      alt: DATA.alt,
+      nlat: DATA.nlat,
+      nlon: DATA.nlon,
+      latNorth: DATA.latNorth,
+      latSouth: DATA.latSouth,
+      lonWest: DATA.lonWest,
+      lonEast: DATA.lonEast,
+      colors: DATA.colors,
+      over: DATA.over,
+      smooth: true,
+      pin: null,
+      kind: "anomaly",
+      filename: "snowfall-percentage-of-average.png"
+    };
+  }
+  let terrainImg = null;
+  let countyImg = null;
+  let fieldCanvas = null;
+  let ready = false;
+
+  function hexToRgb(value) {
+    return [parseInt(value.slice(1, 3), 16), parseInt(value.slice(3, 5), 16), parseInt(value.slice(5, 7), 16)];
+  }
+
+  function raster(image, spec) {
+    const colors = spec.colors.map(hexToRgb);
+    const over = hexToRgb(spec.over);
+    const canvas = document.createElement("canvas");
+    canvas.width = spec.nlon;
+    canvas.height = spec.nlat;
+    const ctx = canvas.getContext("2d", { alpha: true, willReadFrequently: true });
+    ctx.drawImage(image, 0, 0);
+    const pixels = ctx.getImageData(0, 0, spec.nlon, spec.nlat);
+    const painted = ctx.createImageData(spec.nlon, spec.nlat);
+    const alpha = 232;
+    for (let i = 0; i < spec.nlat * spec.nlon; i += 1) {
+      const bin = pixels.data[i * 4];
+      if (!bin) continue;
+      const rgb = bin > colors.length ? over : colors[bin - 1];
+      const offset = i * 4;
+      painted.data[offset] = rgb[0];
+      painted.data[offset + 1] = rgb[1];
+      painted.data[offset + 2] = rgb[2];
+      painted.data[offset + 3] = alpha;
+    }
+    ctx.putImageData(painted, 0, 0);
+    return canvas;
+  }
+
+  function trace(ctx, polys, project, keepPath) {
+    if (!keepPath) ctx.beginPath();
+    polys.forEach((poly) => {
+      poly.forEach((ring) => {
+        if (ring.length < 6) return;
+        ctx.moveTo(project(ring[0], ring[1]).x, project(ring[0], ring[1]).y);
+        for (let i = 2; i < ring.length; i += 2) {
+          const point = project(ring[i], ring[i + 1]);
+          ctx.lineTo(point.x, point.y);
+        }
+        ctx.closePath();
+      });
+    });
+  }
+
+  function pageGround() {
+    const color = getComputedStyle(document.body).backgroundColor;
+    return color && color !== "rgba(0, 0, 0, 0)" ? color : "#f4f5f7";
+  }
+
+  function luminance(color) {
+    const parts = String(color).match(/[\d.]+/g);
+    if (!parts || parts.length < 3) return 1;
+    const scale = String(color).includes("%") ? 100 : 255;
+    const channels = parts.slice(0, 3).map((value) => {
+      const channel = Number(value) / scale;
+      return channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+    });
+    return 0.2126 * channels[0] + 0.7152 * channels[1] + 0.0722 * channels[2];
+  }
+
+  function segmentIndex(segments, cell) {
+    const bins = new Map();
+    segments.forEach((seg) => {
+      const steps = Math.max(1, Math.ceil(Math.hypot(seg[2] - seg[0], seg[3] - seg[1]) / cell));
+      for (let step = 0; step <= steps; step += 1) {
+        const t = step / steps;
+        const key = Math.round((seg[0] + (seg[2] - seg[0]) * t) / cell) + ":" + Math.round((seg[1] + (seg[3] - seg[1]) * t) / cell);
+        const list = bins.get(key);
+        if (!list) bins.set(key, [seg]);
+        else if (list[list.length - 1] !== seg) list.push(seg);
+      }
+    });
+    return { bins: bins, cell: cell };
+  }
+
+  function nearSegment(index, lon, lat, maxDist) {
+    const cell = index.cell;
+    const reach = Math.ceil(maxDist / cell);
+    const cx = Math.round(lon / cell);
+    const cy = Math.round(lat / cell);
+    for (let ix = cx - reach; ix <= cx + reach; ix += 1) {
+      for (let iy = cy - reach; iy <= cy + reach; iy += 1) {
+        const list = index.bins.get(ix + ":" + iy);
+        if (!list) continue;
+        for (let i = 0; i < list.length; i += 1) {
+          const seg = list[i];
+          const dx = seg[2] - seg[0];
+          const dy = seg[3] - seg[1];
+          const len2 = dx * dx + dy * dy;
+          let t = 0;
+          if (len2 > 0) t = Math.max(0, Math.min(1, ((lon - seg[0]) * dx + (lat - seg[1]) * dy) / len2));
+          if (Math.hypot(seg[0] + t * dx - lon, seg[1] + t * dy - lat) < maxDist) return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function ringEdges(ring) {
+    const edges = [];
+    for (let i = 0; i < ring.length - 2; i += 2) edges.push([ring[i], ring[i + 1], ring[i + 2], ring[i + 3]]);
+    return edges;
+  }
+
+  function keepChains(ring, keep) {
+    const chains = [];
+    let current = null;
+    for (let i = 0; i < ring.length - 2; i += 2) {
+      const x1 = ring[i];
+      const y1 = ring[i + 1];
+      const x2 = ring[i + 2];
+      const y2 = ring[i + 3];
+      if (!keep(x1, y1, x2, y2)) {
+        if (current && current.length >= 4) chains.push(current);
+        current = null;
+        continue;
+      }
+      if (!current) current = [x1, y1, x2, y2];
+      else current.push(x2, y2);
+    }
+    if (current && current.length >= 4) chains.push(current);
+    return chains;
+  }
+
+  function strokeChains(ctx, chains, project) {
+    ctx.beginPath();
+    chains.forEach((chain) => {
+      const start = project(chain[0], chain[1]);
+      ctx.moveTo(start.x, start.y);
+      for (let i = 2; i < chain.length; i += 2) {
+        const point = project(chain[i], chain[i + 1]);
+        ctx.lineTo(point.x, point.y);
+      }
+    });
+    ctx.stroke();
+  }
+
+  let mapLines = null;
+  function landInside(lon, lat) {
+    let inside = false;
+    SNOW_BASE.land.forEach((poly) => {
+      poly.forEach((ring) => {
+        if (!ring) return;
+        for (let i = 0; i < ring.length - 2; i += 2) {
+          const y1 = ring[i + 1];
+          const y2 = ring[i + 3];
+          if ((y1 > lat) === (y2 > lat)) continue;
+          const x = ring[i] + (lat - y1) / (y2 - y1) * (ring[i + 2] - ring[i]);
+          if (x > lon) inside = !inside;
+        }
+      });
+    });
+    return inside;
+  }
+
+  // Rounding leaves a few shared borders, such as Michigan–Indiana, about
+  // 0.001° apart. The union keeps them as outer edges, and a coast stroke is
+  // twice a state line. Land on both sides means the clip never halves it.
+  function interiorEdge(x1, y1, x2, y2) {
+    const dx = x2 - x1;
+    const dy = y2 - y1;
+    const len = Math.hypot(dx, dy);
+    if (len < 0.4) return false;
+    const mx = (x1 + x2) / 2;
+    const my = (y1 + y2) / 2;
+    const off = 0.006;
+    const nx = -dy / len * off;
+    const ny = dx / len * off;
+    return landInside(mx + nx, my + ny) && landInside(mx - nx, my - ny);
+  }
+
+  function mapLinework() {
+    if (mapLines) return mapLines;
+    const coastEdges = [];
+    const coasts = [];
+    SNOW_BASE.land.forEach((poly) => {
+      const ring = poly[0];
+      if (!ring || ring.length < 4) return;
+      coasts.push(...keepChains(ring, (x1, y1, x2, y2) => !interiorEdge(x1, y1, x2, y2)));
+    });
+    coasts.forEach((ring) => coastEdges.push(...ringEdges(ring)));
+    const coastIndex = segmentIndex(coastEdges, 0.08);
+    const lakes = [];
+    const lakeEdges = [];
+    (SNOW_BASE.lakes || []).forEach((poly) => {
+      const ring = poly[0];
+      if (!ring || ring.length < 8) return;
+      let touches = false;
+      for (let i = 0; i < ring.length; i += 2) {
+        if (nearSegment(coastIndex, ring[i], ring[i + 1], 0.4)) {
+          touches = true;
+          break;
+        }
+      }
+      if (!touches) return;
+      lakes.push(poly);
+      poly.forEach((part) => {
+        if (part && part.length >= 8) lakeEdges.push(...ringEdges(part));
+      });
+    });
+    const lakeIndex = segmentIndex(lakeEdges, 0.08);
+    const seen = new Set();
+    const borders = [];
+    SNOW_BASE.states.forEach((poly) => {
+      poly.forEach((ring) => {
+        borders.push(...keepChains(ring, (x1, y1, x2, y2) => {
+          // Drop an edge only when it runs along the water. Touching the shore
+          // at the ends is not enough: Wisconsin–Minnesota meets Lake Superior,
+          // and a straight border can touch the outline at both ends.
+          const onWater = (lon, lat) => nearSegment(lakeIndex, lon, lat, 0.02) || nearSegment(coastIndex, lon, lat, 0.02);
+          const midLon = (x1 + x2) / 2;
+          const midLat = (y1 + y2) / 2;
+          if (onWater(x1, y1) && onWater(x2, y2) && onWater(midLon, midLat)) return false;
+          const quantize = (value) => Math.round(value * 50);
+          const ax = quantize(x1);
+          const ay = quantize(y1);
+          const bx = quantize(x2);
+          const by = quantize(y2);
+          const key = ax < bx || (ax === bx && ay <= by)
+            ? ax + ":" + ay + ":" + bx + ":" + by
+            : bx + ":" + by + ":" + ax + ":" + ay;
+          if (seen.has(key)) return false;
+          seen.add(key);
+          return true;
+        }));
+      });
+    });
+    mapLines = { lakes: lakes, coasts: coasts, borders: borders };
+    return mapLines;
+  }
+
+  function landShadow(box, project, scale) {
+    // The same drop shadow as the snowfall-agreement figures: black copies of
+    // the land, shifted 0.025 in right and 0.04 in down on a 13.8 in map,
+    // with a wider, fainter edge on each copy. The land is painted over this
+    // afterward, so the shadow only remains outside the shoreline.
+    const pxPerInch = box.w / 13.8;
+    const dx = 0.025 * pxPerInch;
+    const dy = 0.04 * pxPerInch;
+    const layers = [[0, 0.07], [2, 0.045], [4, 0.03], [6, 0.02], [8, 0.012]];
+    const pad = Math.ceil(dx + dy + (8 / 72) * pxPerInch + 2);
+    const width = Math.max(1, Math.ceil((box.w + pad * 2) * scale));
+    const height = Math.max(1, Math.ceil((box.h + pad * 2) * scale));
+    const canvas = document.createElement("canvas");
+    canvas.width = width;
+    canvas.height = height;
+    const sctx = canvas.getContext("2d");
+    sctx.scale(scale, scale);
+    sctx.translate(pad - box.x, pad - box.y);
+    sctx.lineJoin = "round";
+    sctx.lineCap = "round";
+    sctx.fillStyle = "#000";
+    sctx.strokeStyle = "#000";
+    layers.forEach((layer) => {
+      const lwPt = layer[0];
+      const alpha = layer[1];
+      sctx.save();
+      sctx.globalAlpha = alpha;
+      sctx.translate(dx, dy);
+      sctx.lineWidth = (lwPt / 72) * pxPerInch;
+      trace(sctx, SNOW_BASE.land, project);
+      sctx.fill("evenodd");
+      if (lwPt > 0) sctx.stroke();
+      sctx.restore();
+    });
+    return { canvas: canvas, pad: pad };
+  }
+
+  function drawMap(ctx, box, ground) {
+    const west = EXTENT[0];
+    const east = EXTENT[1];
+    const south = EXTENT[2];
+    const north = EXTENT[3];
+    const xOf = (lon) => box.x + (lon - west) / (east - west) * box.w;
+    const yOf = (lat) => box.y + (north - lat) / (north - south) * box.h;
+    const project = (lon, lat) => ({ x: xOf(lon), y: yOf(lat) });
+    const dark = luminance(ground) < 0.4;
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(box.x, box.y, box.w, box.h);
+    ctx.clip();
+    ctx.fillStyle = ground;
+    ctx.fillRect(box.x, box.y, box.w, box.h);
+    const lines = mapLinework();
+    const scale = ctx.getTransform ? (ctx.getTransform().a || 1) : 1;
+    const shadow = landShadow(box, project, scale);
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(shadow.canvas, box.x - shadow.pad, box.y - shadow.pad, box.w + shadow.pad * 2, box.h + shadow.pad * 2);
+    const paintGeography = () => {
+      if (terrainImg) {
+        const extent = SNOW_BASE.terrainExtent;
+        const left = xOf(extent[0]);
+        const right = xOf(extent[1]);
+        const top = yOf(extent[3]);
+        const bottom = yOf(extent[2]);
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(terrainImg, left, top, right - left, bottom - top);
+      }
+      if (fieldCanvas) {
+        const spec = activeSpec();
+        const dlat = (spec.latNorth - spec.latSouth) / Math.max(1, spec.nlat - 1);
+        const dlon = (spec.lonEast - spec.lonWest) / Math.max(1, spec.nlon - 1);
+        const left = xOf(spec.lonWest - dlon / 2);
+        const right = xOf(spec.lonEast + dlon / 2);
+        const top = yOf(spec.latNorth + dlat / 2);
+        const bottom = yOf(spec.latSouth - dlat / 2);
+        ctx.imageSmoothingEnabled = spec.smooth !== false;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(fieldCanvas, left, top, right - left, bottom - top);
+      }
+      if (countyImg) {
+        const counties = DATA.extent;
+        ctx.imageSmoothingEnabled = true;
+        ctx.drawImage(
+          countyImg,
+          xOf(counties[0]),
+          yOf(counties[3]),
+          xOf(counties[1]) - xOf(counties[0]),
+          yOf(counties[2]) - yOf(counties[3])
+        );
+      }
+    };
+    ctx.fillStyle = "#fff";
+    trace(ctx, SNOW_BASE.land, project);
+    ctx.fill("evenodd");
+    ctx.save();
+    trace(ctx, SNOW_BASE.land, project);
+    ctx.clip("evenodd");
+    paintGeography();
+    ctx.restore();
+    // Paint the Great Lakes back to the map ground so the drop shadow does
+    // not sit in the water. The shore stroke is clipped to the lake, so it
+    // covers the antialiased edge without erasing color on the land.
+    if (SNOW_BASE.lakes) {
+      ctx.save();
+      ctx.fillStyle = ground;
+      SNOW_BASE.lakes.forEach((poly) => {
+        trace(ctx, [poly], project);
+        ctx.fill("evenodd");
+      });
+      ctx.restore();
+      ctx.save();
+      ctx.beginPath();
+      SNOW_BASE.lakes.forEach((poly) => {
+        trace(ctx, [poly], project, true);
+      });
+      ctx.clip("evenodd");
+      ctx.strokeStyle = ground;
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      ctx.lineWidth = Math.max(2.5, box.w / 450);
+      SNOW_BASE.lakes.forEach((poly) => {
+        trace(ctx, [poly], project);
+        ctx.stroke();
+      });
+      ctx.restore();
+    }
+
+    const line = Math.max(0.9, box.w / 1280);
+    ctx.lineJoin = "round";
+    ctx.lineCap = "round";
+    // Minimum temperature passes a lighter line. #4a4a4a disappears on the dark blue bins.
+    ctx.strokeStyle = DATA.line || "#4a4a4a";
+    ctx.lineWidth = line;
+    strokeChains(ctx, lines.borders, project);
+    // The United States shore, including the Great Lakes, is clipped to the
+    // land, so the visible half of a double-width stroke matches a state line.
+    ctx.save();
+    trace(ctx, SNOW_BASE.land, project);
+    ctx.clip("evenodd");
+    ctx.lineWidth = line * 2;
+    strokeChains(ctx, lines.coasts, project);
+    ctx.restore();
+
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    if (box.w >= 640) DATA.labels.forEach((item) => {
+      const small = item[3];
+      const size = Math.max(small ? 11 : 13, box.w / (small ? 100 : 78));
+      const anchor = project(item[1], item[2]);
+      const label = project(item[4], item[5]);
+      const dx = label.x - anchor.x;
+      const dy = label.y - anchor.y;
+      const len = Math.hypot(dx, dy);
+      ctx.font = "600 " + size.toFixed(1) + "px \"Libre Franklin\", sans-serif";
+      const led = len > 6;
+      if (led) {
+        const textW = ctx.measureText(item[0]).width;
+        const pad = textW / 2 + size * 0.45;
+        const reach = len - pad;
+        ctx.strokeStyle = dark ? "rgba(232, 234, 238, 0.9)" : "#3a3a3a";
+        ctx.fillStyle = ctx.strokeStyle;
+        ctx.lineWidth = Math.max(1, box.w / 1400);
+        if (reach > 6) {
+          ctx.beginPath();
+          ctx.moveTo(anchor.x, anchor.y);
+          ctx.lineTo(anchor.x + dx / len * reach, anchor.y + dy / len * reach);
+          ctx.stroke();
+        }
+        ctx.beginPath();
+        ctx.arc(anchor.x, anchor.y, Math.max(1.6, box.w / 800), 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.lineWidth = Math.max(2.5, size * 0.32);
+      ctx.strokeStyle = led ? ground : "rgba(255,255,255,0.94)";
+      ctx.fillStyle = led && dark ? "#f3f4f6" : "#1c1c1c";
+      ctx.strokeText(item[0], label.x, label.y);
+      ctx.fillText(item[0], label.x, label.y);
+    });
+    const pinSpec = activeSpec();
+    if (pinSpec.pin) drawPin(ctx, box, project, pinSpec.pin);
+    ctx.restore();
+  }
+
+  function textRect(x, y, align, textW, fontSize) {
+    const left = align === "right" ? x - textW : align === "center" ? x - textW / 2 : x;
+    const half = fontSize * 0.62;
+    return { left: left, top: y - half, right: left + textW, bottom: y + half };
+  }
+
+  function rectsOverlap(a, b, pad) {
+    return a.left < b.right + pad && a.right > b.left - pad && a.top < b.bottom + pad && a.bottom > b.top - pad;
+  }
+
+  function stateLabelRects(ctx, box, project) {
+    const rects = [];
+    if (box.w < 640 || !DATA.labels) return rects;
+    DATA.labels.forEach((item) => {
+      const small = item[3];
+      const size = Math.max(small ? 11 : 13, box.w / (small ? 100 : 78));
+      const label = project(item[4], item[5]);
+      ctx.font = "600 " + size.toFixed(1) + "px \"Libre Franklin\", sans-serif";
+      rects.push(textRect(label.x, label.y, "center", ctx.measureText(item[0]).width, size));
+    });
+    return rects;
+  }
+
+  function drawPin(ctx, box, project, pin) {
+    const point = project(pin.lon, pin.lat);
+    const fontSize = Math.max(12, box.w / 100);
+    ctx.save();
+    const labels = stateLabelRects(ctx, box, project);
+    ctx.font = "700 " + fontSize.toFixed(1) + "px \"Libre Franklin\", sans-serif";
+    const textW = ctx.measureText(pin.label).width;
+    const half = fontSize * 0.62;
+    const margin = Math.max(8, fontSize * 0.35);
+    const gap = Math.max(8, fontSize * 0.55);
+    const dotR = Math.max(2.6, box.w / 520);
+    const pad = Math.max(4, fontSize * 0.22);
+    const onMap = (rect) => rect.left >= box.x + margin && rect.right <= box.x + box.w - margin && rect.top >= box.y + margin && rect.bottom <= box.y + box.h - margin;
+    const clear = (rect) => onMap(rect) && !labels.some((item) => rectsOverlap(rect, item, pad));
+    const candidates = [];
+    const consider = (textX, textY, align, lead) => {
+      candidates.push({ textX: textX, textY: textY, align: align, lead: lead, rect: textRect(textX, textY, align, textW, fontSize) });
+    };
+    consider(point.x + dotR + gap, point.y, "left", false);
+    consider(point.x - dotR - gap, point.y, "right", false);
+    [1.7, 2.6, 3.6, 4.8].forEach((step) => {
+      const reach = (dotR + gap + fontSize * 0.45) * step;
+      [0, 32, -32, 64, -64, 100, -100, 140, -140, 180, 90, -90].forEach((deg) => {
+        const rad = deg * Math.PI / 180;
+        const align = Math.cos(rad) >= 0 ? "left" : "right";
+        const textX = point.x + Math.cos(rad) * reach + (align === "left" ? gap : -gap);
+        const textY = point.y + Math.sin(rad) * reach;
+        consider(textX, textY, align, true);
+      });
+    });
+    let chosen = candidates.find((item) => clear(item.rect));
+    if (!chosen) {
+      chosen = candidates.find((item) => onMap(item.rect));
+      if (chosen) chosen.lead = true;
+    }
+    if (!chosen) {
+      const edge = margin + 2;
+      chosen = {
+        textX: Math.min(Math.max(point.x + dotR + gap, box.x + edge), box.x + box.w - edge - textW),
+        textY: Math.min(Math.max(point.y, box.y + edge + half), box.y + box.h - edge - half),
+        align: "left",
+        lead: true
+      };
+    }
+    const textX = chosen.textX;
+    const textY = chosen.textY;
+    const align = chosen.align;
+    if (chosen.lead) {
+      const labelLeft = align === "left" ? textX : textX - textW;
+      const endX = Math.max(labelLeft, Math.min(point.x, labelLeft + textW));
+      const endY = Math.max(textY - half, Math.min(point.y, textY + half));
+      const dx = endX - point.x;
+      const dy = endY - point.y;
+      const len = Math.hypot(dx, dy);
+      const start = dotR + 2;
+      const stop = Math.max(start + 4, len - Math.max(5, fontSize * 0.35));
+      if (stop > start && len > 0) {
+        const x0 = point.x + dx / len * start;
+        const y0 = point.y + dy / len * start;
+        const x1 = point.x + dx / len * stop;
+        const y1 = point.y + dy / len * stop;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(x0, y0);
+        ctx.lineTo(x1, y1);
+        ctx.strokeStyle = "rgba(255,255,255,0.92)";
+        ctx.lineWidth = Math.max(2.4, box.w / 700);
+        ctx.stroke();
+        ctx.strokeStyle = "#3a3a3a";
+        ctx.lineWidth = Math.max(1, box.w / 1400);
+        ctx.stroke();
+      }
+    }
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, dotR + 1.1, 0, Math.PI * 2);
+    ctx.fillStyle = "rgba(255,255,255,0.95)";
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(point.x, point.y, dotR, 0, Math.PI * 2);
+    ctx.fillStyle = "#3a3a3a";
+    ctx.fill();
+    ctx.textAlign = align;
+    ctx.textBaseline = "middle";
+    ctx.lineJoin = "round";
+    ctx.lineWidth = Math.max(3, fontSize * 0.28);
+    ctx.strokeStyle = "rgba(255,255,255,0.96)";
+    ctx.strokeText(pin.label, textX, textY);
+    ctx.fillStyle = "#1c1c1c";
+    ctx.fillText(pin.label, textX, textY);
+    ctx.restore();
+  }
+
+  function drawScale(ctx, x, y, width, fonts) {
+    const titleSize = fonts.title;
+    const tickSize = fonts.tick;
+    const barH = fonts.bar;
+    const gap = Math.max(2, width / 420);
+    const arrow = Math.round(barH * 0.7);
+    const barW = width - arrow;
+    ctx.textBaseline = "top";
+    ctx.font = "600 " + titleSize + "px \"Libre Franklin\", sans-serif";
+    ctx.textAlign = "left";
+    ctx.fillStyle = DATA.below;
+    ctx.fillText("Below average", x, y);
+    ctx.textAlign = "right";
+    ctx.fillStyle = DATA.above;
+    ctx.fillText("Above average", x + width, y);
+    const barY = y + titleSize + 16;
+    COLORS.forEach((rgb, index) => {
+      const slot = barW / COLORS.length;
+      const x0 = x + slot * index;
+      ctx.fillStyle = "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+      ctx.fillRect(x0, barY, Math.max(1, slot - gap), barH);
+    });
+    ctx.fillStyle = "rgb(" + OVER[0] + "," + OVER[1] + "," + OVER[2] + ")";
+    ctx.beginPath();
+    ctx.moveTo(x + barW, barY);
+    ctx.lineTo(x + barW + arrow, barY + barH / 2);
+    ctx.lineTo(x + barW, barY + barH);
+    ctx.closePath();
+    ctx.fill();
+    const tickY = barY + barH + 14;
+    ctx.fillStyle = "#5c656e";
+    ctx.font = "600 " + tickSize + "px \"Libre Franklin\", sans-serif";
+    [0, 50, 100, 150, 200, 250, 300].forEach((value) => {
+      const tickX = x + (value / 300) * barW;
+      const label = value === 300 ? "300%+" : value + "%";
+      ctx.textAlign = value === 0 ? "left" : "center";
+      ctx.fillText(label, tickX, tickY);
+    });
+    return tickY + tickSize - y + 8;
+  }
+
+  const SNOW_TICKS = ["0.5–1 in.", "1–3", "3–6", "6–9", "9–12", "12–18", "18–24", "24+"];
+
+  function legendTicks() {
+    const spec = activeSpec();
+    if (spec && spec.ticks && spec.ticks.length) return spec.ticks;
+    return SNOW_TICKS;
+  }
+
+  function discreteKind(spec) {
+    return !!spec && (spec.kind === "snow" || spec.kind === "rain" || spec.kind === "temp");
+  }
+
+  function drawSnowScale(ctx, x, y, width, fonts) {
+    const colors = activeSpec().colors.map(hexToRgb);
+    const ticks = legendTicks();
+    const tickSize = fonts.tick;
+    const barH = fonts.bar;
+    const gap = Math.max(2, width / 420);
+    const barY = y;
+    const slot = width / ticks.length;
+    colors.forEach((rgb, index) => {
+      ctx.fillStyle = "rgb(" + rgb[0] + "," + rgb[1] + "," + rgb[2] + ")";
+      ctx.fillRect(x + slot * index, barY, Math.max(1, slot - gap), barH);
+    });
+    const tickY = barY + barH + 14;
+    ctx.textBaseline = "top";
+    ctx.fillStyle = "#5c656e";
+    ctx.font = "700 " + tickSize + "px \"Libre Franklin\", sans-serif";
+    ctx.textAlign = "center";
+    ticks.forEach((label, index) => {
+      ctx.fillText(label, x + slot * (index + 0.5), tickY);
+    });
+    return tickY + tickSize - y + 8;
+  }
+
+  function wrapLines(text, ctx, maxWidth) {
+    const words = String(text).split(" ");
+    const lines = [];
+    let line = "";
+    words.forEach((word) => {
+      const next = line ? line + " " + word : word;
+      if (line && ctx.measureText(next).width > maxWidth) {
+        lines.push(line);
+        line = word;
+      } else {
+        line = next;
+      }
+    });
+    if (line) lines.push(line);
+    return lines;
+  }
+
+  function cardLegendWidth(fonts) {
+    const measure = document.createElement("canvas").getContext("2d");
+    measure.font = "600 " + fonts.tick + "px \"Libre Franklin\", sans-serif";
+    const between = measure.measureText("250%").width / 2 + measure.measureText("300%+").width;
+    const gap = Math.round(fonts.tick * 2.4);
+    const arrow = Math.round(fonts.bar * 0.7);
+    return Math.ceil((between + gap) * 6 + arrow);
+  }
+
+  function cardSnowLegendWidth(fonts) {
+    const ticks = legendTicks();
+    const measure = document.createElement("canvas").getContext("2d");
+    measure.font = "700 " + fonts.tick + "px \"Libre Franklin\", sans-serif";
+    let widest = 0;
+    ticks.forEach((label) => { widest = Math.max(widest, measure.measureText(label).width); });
+    const gap = Math.round(fonts.tick * (ticks.length > 8 ? 0.45 : 1.6));
+    return Math.ceil(widest * ticks.length + gap * (ticks.length - 1));
+  }
+
+  function paintCard(canvas) {
+    const spec = activeSpec();
+    const width = 3840;
+    const pad = 115;
+    const mapW = width - pad * 2;
+    const mapH = Math.round(mapW / ASPECT);
+    const titleSize = 110;
+    const dekSize = 60;
+    const sourceSize = 41;
+    const sourceLineH = 58;
+    const logoH = 115;
+    const discrete = discreteKind(spec);
+    const roomy = { title: 48, tick: 48, bar: 36 };
+    const scaleFonts = discrete && cardSnowLegendWidth(roomy) > mapW
+      ? { title: 48, tick: 30, bar: 36 }
+      : roomy;
+    const legendW = Math.min(mapW, discrete ? cardSnowLegendWidth(scaleFonts) : cardLegendWidth(scaleFonts));
+    const measure = document.createElement("canvas").getContext("2d");
+    measure.font = "400 " + sourceSize + "px \"Libre Franklin\", sans-serif";
+    const sourceMax = mapW - 580;
+    const sourceLines = wrapLines(spec.source, measure, sourceMax);
+    const sourceH = Math.max(sourceLines.length * sourceLineH, logoH);
+    const scaleH = discrete
+      ? scaleFonts.bar + 14 + scaleFonts.tick + 8
+      : scaleFonts.title + 16 + scaleFonts.bar + 14 + scaleFonts.tick + 8;
+    const head = titleSize + 22 + dekSize + 10 + dekSize + 34;
+    const height = pad + head + scaleH + 20 + mapH + 44 + sourceH + pad;
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext("2d", { alpha: false });
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(0, 0, width, height);
+    let y = pad;
+    ctx.fillStyle = "#171717";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    ctx.font = "700 " + titleSize + "px \"Libre Franklin\", sans-serif";
+    ctx.fillText(spec.title, pad, y);
+    y += titleSize + 22;
+    ctx.fillStyle = "#5c656e";
+    ctx.font = "600 " + dekSize + "px \"Libre Franklin\", sans-serif";
+    ctx.fillText(spec.span, pad, y);
+    y += dekSize + 10;
+    ctx.fillText(spec.rank, pad, y);
+    y += dekSize + 34;
+    const used = discrete ? drawSnowScale(ctx, pad, y, legendW, scaleFonts) : drawScale(ctx, pad, y, legendW, scaleFonts);
+    y += used + 20;
+    drawMap(ctx, { x: pad, y: y, w: mapW, h: mapH }, "#ffffff");
+    y += mapH + 44;
+    ctx.fillStyle = "#5c656e";
+    ctx.font = "400 " + sourceSize + "px \"Libre Franklin\", sans-serif";
+    ctx.textAlign = "left";
+    ctx.textBaseline = "top";
+    sourceLines.forEach((item, index) => ctx.fillText(item, pad, y + index * sourceLineH));
+    const logo = document.getElementById("logo");
+    if (logo && logo.complete && logo.naturalWidth) {
+      const logoW = logoH * logo.naturalWidth / logo.naturalHeight;
+      ctx.globalAlpha = 0.72;
+      ctx.drawImage(logo, width - pad - logoW, y + Math.max(0, (sourceH - logoH) / 2), logoW, logoH);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  function drawPage() {
+    const canvas = document.getElementById("snow-map");
+    if (!canvas) return;
+    const cssW = canvas.clientWidth;
+    if (!cssW) {
+      requestAnimationFrame(schedule);
+      return;
+    }
+    const cssH = Math.round(cssW / ASPECT);
+    canvas.style.height = cssH + "px";
+    canvas.width = Math.max(1, Math.round(cssW * pageScale));
+    canvas.height = Math.max(1, Math.round(cssH * pageScale));
+    const spec = activeSpec();
+    if (rasters[active]) fieldCanvas = rasters[active];
+    canvas.setAttribute("aria-label", spec.alt);
+    const ctx = canvas.getContext("2d");
+    ctx.setTransform(pageScale, 0, 0, pageScale, 0, 0);
+    const ground = pageGround();
+    if (!ready) {
+      ctx.fillStyle = ground;
+      ctx.fillRect(0, 0, cssW, cssH);
+      return;
+    }
+    drawMap(ctx, { x: 0, y: 0, w: cssW, h: cssH }, ground);
+    pinEast();
+  }
+
+  let pinned = false;
+  function pinEast() {
+    if (pinned) return;
+    const scroller = document.getElementById("map-scroll");
+    if (!scroller || scroller.scrollWidth <= scroller.clientWidth + 1) return;
+    scroller.scrollLeft = scroller.scrollWidth;
+    pinned = scroller.scrollLeft > 0;
+  }
+
+  let frame = 0;
+  function schedule() {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(drawPage);
+  }
+
+  function whenImage(image) {
+    if (image.complete && image.naturalWidth) return Promise.resolve(image);
+    return new Promise((resolve, reject) => {
+      image.addEventListener("load", () => resolve(image), { once: true });
+      image.addEventListener("error", () => reject(new Error(image.id || "image")), { once: true });
+    });
+  }
+
+  let forecastModel = "ecmwf";
+
+  function showView(name, fromUser) {
+    if (!VIEWS) return;
+    if (name === "forecast") name = forecastModel;
+    if (!VIEWS[name]) return;
+    active = name;
+    if (name === "ecmwf" || name === "aifs") forecastModel = name;
+    const forecast = discreteKind(VIEWS[name]);
+    document.querySelectorAll("#model-row [data-view]").forEach((button) => {
+      button.setAttribute("aria-selected", button.dataset.view === name ? "true" : "false");
+    });
+    const modelRow = document.getElementById("model-row");
+    if (modelRow) modelRow.hidden = !forecast;
+    const controls = document.getElementById("snow-controls");
+    if (controls) controls.hidden = !forecast;
+    const spec = VIEWS[name];
+    document.getElementById("snow-title").textContent = spec.title;
+    document.getElementById("snow-span").textContent = spec.span;
+    document.getElementById("snow-rank").textContent = spec.rank;
+    document.getElementById("snow-source").textContent = spec.source;
+    document.getElementById("anomaly-scale").hidden = forecast;
+    document.getElementById("snow-scale").hidden = !forecast;
+    document.getElementById("anomaly-ranks").hidden = forecast;
+    if (fromUser && window.history && window.history.replaceState) {
+      const hash = name === "ecmwf" || name === "aifs" ? "#" + name : "";
+      window.history.replaceState(null, "", location.pathname + location.search + hash);
+    }
+    schedule();
+  }
+
+  function boot() {
+    const field = document.getElementById("field");
+    const terrain = document.getElementById("terrain");
+    const counties = document.getElementById("counties");
+    const jobs = [
+      (hasAnomalyView() || !VIEWS)
+        ? whenImage(field).then((image) => {
+            rasters.anomaly = raster(image, VIEWS ? VIEWS.anomaly : activeSpec());
+          })
+        : Promise.resolve(null),
+      whenImage(terrain),
+      whenImage(counties),
+    ];
+    ["ecmwf", "aifs"].forEach((name) => {
+      const image = document.getElementById("field-" + name);
+      if (image && VIEWS && VIEWS[name]) {
+        jobs.push(whenImage(image).then((loaded) => { rasters[name] = raster(loaded, VIEWS[name]); }));
+      }
+    });
+    Promise.all(jobs).then((images) => {
+      fieldCanvas = rasters.anomaly || rasters.ecmwf;
+      terrainImg = images[1];
+      countyImg = images[2];
+      ready = true;
+      document.getElementById("download").disabled = false;
+      document.querySelectorAll("#snow-controls button").forEach((button) => { button.disabled = false; });
+      document.body.dataset.map = "ready";
+      if (!hasAnomalyView() || snowPath() === "/weather/snow-forecast" || snowForecastHash) {
+        showView(snowHash === "ecmwf" || snowHash === "aifs" ? snowHash : "forecast");
+      } else schedule();
+      requestAnimationFrame(() => requestAnimationFrame(pinEast));
+    }).catch(() => {
+      ready = false;
+      document.body.dataset.map = "error";
+      schedule();
+    });
+  }
+
+  const controls = document.getElementById("snow-controls");
+  if (controls) {
+    controls.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-view]");
+      if (!button || !ready) return;
+      showView(button.dataset.view, true);
+    });
+  }
+  window.addEventListener("hashchange", () => {
+    const hash = (location.hash || "").replace("#", "");
+    if (hasAnomalyView() && snowPath() !== "/weather/snow-forecast" && (hash === "forecast" || hash === "ecmwf" || hash === "aifs")) {
+      location.replace("/weather/snow-forecast" + (hash === "ecmwf" || hash === "aifs" ? "#" + hash : "") + location.search);
+      return;
+    }
+    if (hash === "forecast" || hash === "ecmwf" || hash === "aifs") showView(hash);
+    else if (hasAnomalyView() && snowPath() !== "/weather/snow-forecast") showView("anomaly");
+  });
+
+  document.getElementById("download").addEventListener("click", () => {
+    if (!ready) return;
+    const save = () => {
+      const canvas = document.createElement("canvas");
+      paintCard(canvas);
+      canvas.toBlob((blob) => {
+        if (!blob) return;
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = activeSpec().filename;
+        link.click();
+        setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+      }, "image/png");
+    };
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(save);
+    else save();
+  });
+
+  window.addEventListener("resize", schedule);
+  const colorScheme = window.matchMedia("(prefers-color-scheme: dark)");
+  if (colorScheme.addEventListener) colorScheme.addEventListener("change", schedule);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  boot();
+  </script>
+</body>
+</html>

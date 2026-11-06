@@ -1,0 +1,177 @@
+name: Monthly C3S seasonal globes
+on:
+  workflow_dispatch:
+    inputs:
+      upload_to_s3:
+        description: "Upload the page and publish the heartbeat"
+        required: false
+        default: true
+        type: boolean
+      scheduled:
+        description: "Count this run as the monthly scheduled event"
+        required: false
+        default: false
+        type: boolean
+      wait_for_data:
+        description: "Check again until this initialization is available"
+        required: false
+        default: true
+        type: boolean
+      target_month:
+        description: "Initialization month YYYY-MM. Leave blank to choose it from today's date."
+        required: false
+        default: ""
+        type: string
+      startup_delay_seconds:
+        description: "Pause this many seconds before the first check. Automatic retries set this."
+        required: false
+        default: "0"
+        type: string
+      use_alternate_cds_key:
+        description: "This run only: use the alternate CDS credential instead of the default"
+        required: false
+        default: false
+        type: boolean
+concurrency:
+  group: monthly-c3s-globes
+  cancel-in-progress: false
+permissions:
+  contents: read
+  id-token: write
+  actions: write
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      WORK_ROOT: /tmp/monthly-updates/c3s-globes
+      AWS_REGION: ${{ vars.AWS_REGION || 'us-east-1' }}
+      AWS_PROFILE: ""
+      STATUS_S3_PREFIX: ${{ vars.STATUS_S3_PREFIX || 's3://bennollweather/climate_imagery/status' }}
+      PRODUCT_ID: c3s-globes
+      PRODUCT_SCHEDULE: "00:47 UTC on the 11th"
+      PRODUCT_OUTPUTS_JSON: '["s3://bennollweather/climate"]'
+      MPLCONFIGDIR: /tmp/matplotlib
+      CARTOPY_DATA_DIR: /tmp/cartopy
+      PYTHONUNBUFFERED: "1"
+      SKIP_UPLOAD: "1"
+      USE_SYSTEM_PYTHON: "1"
+      KEEP_WORK: "1"
+      SCHEDULED_EVENT: ${{ inputs.scheduled }}
+      WORKFLOW_FILE: c3s-globes.yml
+      DATA_WAIT_INTERVAL_SECONDS: "1800"
+      DATA_MAX_WAIT_MINUTES: "240"
+      DATA_JOB_TIMEOUT_MINUTES: "360"
+      DATA_PROCESS_BUDGET_MINUTES: "300"
+      WAIT_FOR_DATA: ${{ inputs.wait_for_data }}
+      TARGET_MONTH: ${{ inputs.target_month }}
+      STARTUP_DELAY_SECONDS: ${{ inputs.startup_delay_seconds }}
+    defaults:
+      run:
+        shell: bash -el {0}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: conda-incubator/setup-miniconda@v3
+        with:
+          environment-file: operational_bundle/config/environment.yml
+          activate-environment: operational-monthly
+          auto-activate-base: false
+          miniconda-version: latest
+
+      - name: Record start
+        run: |
+          echo "RUN_STARTED_EPOCH=$(date +%s)" >> "$GITHUB_ENV"
+          echo "RUN_STARTED_UTC=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_ENV"
+
+      - name: Configure CDS credentials
+        env:
+          CDSAPI_KEY: ${{ secrets.CDSAPI_KEY }}
+          CDSAPI_KEY_ALT: ${{ secrets.CDSAPI_KEY_ALT }}
+          CDSAPI_URL: ${{ secrets.CDSAPI_URL }}
+          USE_ALT_CDS: ${{ inputs.use_alternate_cds_key }}
+        run: |
+          if [[ "${USE_ALT_CDS}" == "true" ]]; then
+            if [[ -z "${CDSAPI_KEY_ALT}" ]]; then
+              echo "Alternate CDS credential is not set." >&2
+              exit 1
+            fi
+            export CDSAPI_KEY="${CDSAPI_KEY_ALT}"
+            unset CDSAPI_KEY_ALT
+            echo "This run is using the alternate CDS credential."
+          else
+            echo "This run is using the default CDS credential."
+          fi
+          bash .github/scripts/write_cdsapirc.sh
+
+      - name: Wait for the monthly release
+        id: wait
+        timeout-minutes: 300
+        run: bash .github/scripts/wait_for_release.sh
+
+      - name: Process
+        id: process
+        if: steps.wait.outputs.action == 'process'
+        env:
+          TARGET_MONTH: ${{ steps.wait.outputs.target_month }}
+        run: |
+          set +e
+          bash operational_bundle/bin/run_c3s_globes.sh
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          exit $code
+
+      - name: Configure temporary AWS credentials
+        if: always() && (inputs.upload_to_s3)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+          role-session-name: c3s-globes-${{ github.run_id }}
+      - name: Upload the page
+        id: upload
+        if: steps.process.outcome == 'success' && (inputs.upload_to_s3)
+        run: |
+          if [[ -z "${AWS_PROFILE:-}" ]]; then unset AWS_PROFILE; fi
+          aws s3 cp "$WORK_ROOT/index.html" s3://bennollweather/climate \
+            --content-type "text/html; charset=utf-8" \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --only-show-errors
+          aws s3 cp "$WORK_ROOT/data.json" s3://bennollweather/climate/data.json \
+            --content-type "application/json" \
+            --cache-control "no-cache, no-store, must-revalidate" \
+            --only-show-errors
+          aws s3 cp lib/c3s_coastline.json s3://bennollweather/climate/coast.json \
+            --content-type "application/json" \
+            --cache-control "public, max-age=86400" \
+            --only-show-errors
+          aws s3 cp lib/c3s_land.json s3://bennollweather/climate/land.json \
+            --content-type "application/json" \
+            --cache-control "public, max-age=86400" \
+            --only-show-errors
+          aws s3 cp lib/c3s_cities.json s3://bennollweather/climate/cities.json \
+            --content-type "application/json" \
+            --cache-control "public, max-age=86400" \
+            --only-show-errors
+          USE_SYSTEM_PYTHON=1 bash operational_bundle/bin/update_s3_index.sh
+      - name: Publish heartbeat and queue the next check
+        id: release
+        if: always()
+        env:
+          WAIT_ACTION: ${{ steps.wait.outputs.action }}
+          WAIT_MESSAGE: ${{ steps.wait.outputs.message }}
+          RESOLVED_TARGET_MONTH: ${{ steps.wait.outputs.target_month }}
+          RETRY_UNTIL: ${{ steps.wait.outputs.retry_until }}
+          PROCESS_EXIT_CODE: ${{ steps.process.outputs.exit_code }}
+          PROCESS_OUTCOME: ${{ steps.process.outcome }}
+          UPLOAD_OUTCOME: ${{ steps.upload.outcome }}
+          UPLOAD_TO_S3: ${{ inputs.upload_to_s3 }}
+          SCHEDULED_INPUT: ${{ inputs.scheduled }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash .github/scripts/handle_release_result.sh
+      - name: Delete downloads, imagery, and credentials
+        if: always()
+        run: bash .github/scripts/cleanup.sh
+      - name: Fail the job when the release failed
+        if: always() && steps.release.outputs.outcome == 'fail'
+        run: exit 1
