@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import unittest
 from datetime import date
+from pathlib import Path
 
 import numpy as np
 
@@ -419,6 +420,16 @@ class GlobeRequestTests(unittest.TestCase):
         self.assertEqual(_season_month(np.datetime64("2026-11-30"), months), date(2026, 11, 1))
         self.assertEqual(_season_month(np.datetime64("2026-12-01"), months), date(2026, 11, 1))
         self.assertEqual(_season_month(np.datetime64("2027-02-01"), months), date(2027, 1, 1))
+
+
+class ScheduleTests(unittest.TestCase):
+    def test_eventbridge_starts_the_headlines(self) -> None:
+        root = Path(__file__).resolve().parents[1]
+        workflow = (root / ".github/workflows/c3s-globes.yml").read_text(encoding="utf-8")
+        readme = (root / "README.md").read_text(encoding="utf-8")
+        self.assertIn("monthly-updates-c3s-globes", workflow)
+        self.assertNotIn("cron:", workflow)
+        self.assertIn("| Climate headlines | 00:47 on the 11th |", readme)
 
 
 if __name__ == "__main__":

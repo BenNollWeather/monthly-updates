@@ -1,5 +1,7 @@
 name: Monthly C3S seasonal globes
 on:
+  # EventBridge rule monthly-updates-c3s-globes fires this at 00:47 UTC on
+  # the 11th, twelve hours after the C3S imagery.
   workflow_dispatch:
     inputs:
       upload_to_s3:
