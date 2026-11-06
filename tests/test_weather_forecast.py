@@ -4,6 +4,9 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
 import unittest
 from datetime import datetime
 from pathlib import Path
@@ -348,6 +351,19 @@ class PageTests(unittest.TestCase):
         readme = (ROOT / "README.md").read_text(encoding="utf-8")
         self.assertIn("| Weekly precipitation | 02:41, 10:41, 14:41, and 22:41 every day |", readme)
         self.assertIn("| Weekly maximum and minimum temperature |", readme)
+        env = os.environ.copy()
+        env.pop("PYTHONPATH", None)
+        env["MPLBACKEND"] = "Agg"
+        completed = subprocess.run(
+            [sys.executable, str(ROOT / "lib" / "weather_forecast.py"), "--help"],
+            cwd=ROOT,
+            env=env,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        self.assertIn("weekly precipitation", completed.stdout.lower())
         for rel in (
             "lib/c3s_globes.py",
             "operational_bundle/bin/operational_lib.sh",

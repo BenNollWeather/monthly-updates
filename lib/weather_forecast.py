@@ -13,13 +13,18 @@ from __future__ import annotations
 
 import argparse
 import json
+import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
 import numpy as np
 
-from lib.c3s_globes import _seo, _site_nav
-from lib.snow_anomaly import (
+ROOT = Path(__file__).resolve().parents[1]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+from lib.c3s_globes import _seo, _site_nav  # noqa: E402
+from lib.snow_anomaly import (  # noqa: E402
     BASEMAP_URL,
     EXTENT,
     FRAME,
@@ -30,7 +35,7 @@ from lib.snow_anomaly import (
     land_bounds,
     scale_html,
 )
-from lib.snow_forecast import (
+from lib.snow_forecast import (  # noqa: E402
     HOURS,
     SOURCES,
     _as_cycle,
@@ -44,7 +49,6 @@ from lib.snow_forecast import (
     snow_scale_html,
 )
 
-ROOT = Path(__file__).resolve().parents[1]
 # AIFS publishes instantaneous 2 m temperature every 6 hours.
 AIFS_TEMP_STEPS = tuple(range(6, HOURS + 1, 6))
 # IFS 00/12 files are 3-hourly through 144 hours and 6-hourly after that.
