@@ -118,7 +118,9 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertIn("Precipitable water percentage of average", html)
         self.assertIn('"70%"', html)
         self.assertIn("BROWN_CAP", html)
-        self.assertIn("BLUE_CAP", html)
+        self.assertIn("TEAL_CAP", html)
+        self.assertIn("const TEAL = [0, 168, 194]", html)
+        self.assertNotIn("BLUE_CAP", html)
         self.assertNotIn("createLinearGradient", html)
         month_head = html[html.index('id="month"'):html.index('id="year"')]
         self.assertIn(">Precipitable water in September<", month_head)

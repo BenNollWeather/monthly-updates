@@ -185,13 +185,14 @@
     year: "moisture-tracking-year.png",
     stripes: "moisture-tracking-stripes.png"
   };
-  const BROWN = [122, 78, 36];
-  const BROWN_DEEP = [74, 42, 14];
-  const BROWN_CAP = [36, 16, 6];
-  const BLUE = [47, 104, 168];
-  const BLUE_DEEP = [16, 52, 112];
-  const BLUE_CAP = [5, 20, 58];
-  const STRIPE_STOPS = [[0, [58, 38, 14]], [0.18, [108, 80, 36]], [0.38, [164, 142, 102]], [0.52, [232, 226, 214]], [0.68, [148, 178, 204]], [0.84, [62, 110, 164]], [1, [12, 40, 92]]];
+  const BROWN = [176, 112, 42];
+  const BROWN_DEEP = [122, 72, 22];
+  const BROWN_CAP = [68, 36, 12];
+  const TEAL_SOFT = [166, 220, 228];
+  const TEAL = [0, 168, 194];
+  const TEAL_DEEP = [0, 118, 156];
+  const TEAL_CAP = [0, 74, 112];
+  const STRIPE_STOPS = [[0, [68, 36, 12]], [0.16, [140, 78, 24]], [0.34, [196, 148, 90]], [0.48, [236, 228, 216]], [0.58, [186, 226, 230]], [0.74, [0, 176, 198]], [0.88, [0, 130, 164]], [1, [0, 82, 118]]];
   let GRID = null;
   let fieldCache = null;
   let fieldKey = "";
@@ -260,14 +261,15 @@
     const span = (SCALE_HI - 100) - quiet;
     const bin = Math.round(pct / SCALE_STEP) * SCALE_STEP;
     if (bin < SCALE_LO) return BROWN_CAP;
-    if (bin > SCALE_HI) return BLUE_CAP;
+    if (bin > SCALE_HI) return TEAL_CAP;
     let t;
     if (bin >= 100) t = Math.max(0, bin - 100 - quiet) / span;
     else t = -Math.max(0, 100 - quiet - bin) / span;
     t = Math.max(-1, Math.min(1, t));
     if (t >= 0) {
-      if (t < 0.62) return mix(paper, BLUE, t / 0.62);
-      return mix(BLUE, BLUE_DEEP, (t - 0.62) / 0.38);
+      if (t < 0.28) return mix(paper, TEAL_SOFT, t / 0.28);
+      if (t < 0.62) return mix(TEAL_SOFT, TEAL, (t - 0.28) / 0.34);
+      return mix(TEAL, TEAL_DEEP, (t - 0.62) / 0.38);
     }
     const u = -t;
     if (u < 0.62) return mix(paper, BROWN, u / 0.62);
@@ -457,7 +459,7 @@
     ctx.lineTo(barRight, y);
     ctx.lineTo(barRight, y + barH);
     ctx.closePath();
-    ctx.fillStyle = css(BLUE_CAP);
+    ctx.fillStyle = css(TEAL_CAP);
     ctx.fill();
     ctx.beginPath();
     ctx.moveTo(x, midY);
@@ -618,9 +620,9 @@
     const yOf = (value) => top + (1 - (value - yMin) / (yMax - yMin)) * plotH;
     const lo = quantile(values, 0.02);
     const hi = quantile(values, 0.98);
-    const tone = (value) => {
+    const tone = (value, wetMute, dryMute) => {
       const t = hi == null || lo == null || hi === lo ? 0.5 : Math.max(0, Math.min(1, (value - lo) / (hi - lo)));
-      return mix(stripeColor(t), parseCss(colors.ink), 0.42);
+      return mix(stripeColor(t), parseCss(colors.ink), t >= 0.66 ? wetMute : dryMute);
     };
     ctx.setLineDash([2, 4]);
     ctx.lineWidth = 1;
@@ -642,7 +644,7 @@
     for (let i = 1; i < values.length; i++) {
       if (values[i] == null || values[i - 1] == null) continue;
       ctx.beginPath();
-      ctx.strokeStyle = css(tone((values[i - 1] + values[i]) / 2));
+      ctx.strokeStyle = css(tone((values[i - 1] + values[i]) / 2, 0.14, 0.36));
       ctx.moveTo(xOf(i - 1), yOf(values[i - 1]));
       ctx.lineTo(xOf(i), yOf(values[i]));
       ctx.stroke();
@@ -655,7 +657,7 @@
       const lastX = xOf(lastIndex);
       const lastY = yOf(values[lastIndex]);
       ctx.beginPath();
-      ctx.fillStyle = css(BLUE_DEEP);
+      ctx.fillStyle = css(tone(values[lastIndex], 0.05, 0.22));
       ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.lineWidth = 2;
