@@ -188,11 +188,10 @@
   const BROWN = [176, 112, 42];
   const BROWN_DEEP = [122, 72, 22];
   const BROWN_CAP = [68, 36, 12];
-  const TEAL_SOFT = [166, 220, 228];
-  const TEAL = [0, 168, 194];
-  const TEAL_DEEP = [0, 118, 156];
-  const TEAL_CAP = [0, 74, 112];
-  const STRIPE_STOPS = [[0, [68, 36, 12]], [0.16, [140, 78, 24]], [0.34, [196, 148, 90]], [0.48, [236, 228, 216]], [0.58, [186, 226, 230]], [0.74, [0, 176, 198]], [0.88, [0, 130, 164]], [1, [0, 82, 118]]];
+  const TEAL = [48, 136, 166];
+  const TEAL_DEEP = [40, 90, 107];
+  const TEAL_CAP = [26, 47, 54];
+  const STRIPE_NEUTRAL = [244, 242, 238];
   let GRID = null;
   let fieldCache = null;
   let fieldKey = "";
@@ -242,16 +241,17 @@
     const f = k - i;
     return sorted[i] * (1 - f) + sorted[Math.min(sorted.length - 1, i + 1)] * f;
   }
+  function diverge(signed, paper) {
+    const amount = Math.min(1, Math.abs(signed));
+    if (!amount) return paper;
+    const mid = signed < 0 ? BROWN : TEAL;
+    const deep = signed < 0 ? BROWN_DEEP : TEAL_DEEP;
+    if (amount < 0.62) return mix(paper, mid, amount / 0.62);
+    return mix(mid, deep, (amount - 0.62) / 0.38);
+  }
   function stripeColor(t) {
     const u = Math.max(0, Math.min(1, t));
-    for (let i = 1; i < STRIPE_STOPS.length; i++) {
-      if (u <= STRIPE_STOPS[i][0]) {
-        const span = STRIPE_STOPS[i][0] - STRIPE_STOPS[i - 1][0];
-        const f = span ? (u - STRIPE_STOPS[i - 1][0]) / span : 0;
-        return mix(STRIPE_STOPS[i - 1][1], STRIPE_STOPS[i][1], f);
-      }
-    }
-    return STRIPE_STOPS[STRIPE_STOPS.length - 1][1];
+    return diverge((u - 0.5) * 2, STRIPE_NEUTRAL);
   }
   const SCALE_LO = 70;
   const SCALE_HI = 130;
@@ -262,18 +262,8 @@
     const bin = Math.round(pct / SCALE_STEP) * SCALE_STEP;
     if (bin < SCALE_LO) return BROWN_CAP;
     if (bin > SCALE_HI) return TEAL_CAP;
-    let t;
-    if (bin >= 100) t = Math.max(0, bin - 100 - quiet) / span;
-    else t = -Math.max(0, 100 - quiet - bin) / span;
-    t = Math.max(-1, Math.min(1, t));
-    if (t >= 0) {
-      if (t < 0.28) return mix(paper, TEAL_SOFT, t / 0.28);
-      if (t < 0.62) return mix(TEAL_SOFT, TEAL, (t - 0.28) / 0.34);
-      return mix(TEAL, TEAL_DEEP, (t - 0.62) / 0.38);
-    }
-    const u = -t;
-    if (u < 0.62) return mix(paper, BROWN, u / 0.62);
-    return mix(BROWN, BROWN_DEEP, (u - 0.62) / 0.38);
+    const amount = Math.max(0, Math.abs(bin - 100) - quiet) / span;
+    return diverge(Math.sign(bin - 100) * Math.min(1, amount), paper);
   }
   function font(weight, size) {
     return weight + " " + size + 'px "Libre Franklin", sans-serif';
@@ -620,9 +610,16 @@
     const yOf = (value) => top + (1 - (value - yMin) / (yMax - yMin)) * plotH;
     const lo = quantile(values, 0.02);
     const hi = quantile(values, 0.98);
-    const tone = (value, wetMute, dryMute) => {
-      const t = hi == null || lo == null || hi === lo ? 0.5 : Math.max(0, Math.min(1, (value - lo) / (hi - lo)));
-      return mix(stripeColor(t), parseCss(colors.ink), t >= 0.66 ? wetMute : dryMute);
+    const median = p50;
+    const reach = median == null || lo == null || hi == null ? 0 : Math.max(Math.abs(hi - median), Math.abs(median - lo));
+    const quiet = reach * 0.1;
+    const tone = (value, mute) => {
+      const card = parseCss(colors.card);
+      const ink = parseCss(colors.ink);
+      const delta = value - median;
+      const away = Math.abs(delta) - quiet;
+      const signed = median == null || !reach || away <= 0 ? 0 : Math.max(-1, Math.min(1, Math.sign(delta) * away / (reach - quiet)));
+      return mix(diverge(signed, card), ink, mute);
     };
     ctx.setLineDash([2, 4]);
     ctx.lineWidth = 1;
@@ -644,7 +641,7 @@
     for (let i = 1; i < values.length; i++) {
       if (values[i] == null || values[i - 1] == null) continue;
       ctx.beginPath();
-      ctx.strokeStyle = css(tone((values[i - 1] + values[i]) / 2, 0.14, 0.36));
+      ctx.strokeStyle = css(tone((values[i - 1] + values[i]) / 2, 0.3));
       ctx.moveTo(xOf(i - 1), yOf(values[i - 1]));
       ctx.lineTo(xOf(i), yOf(values[i]));
       ctx.stroke();
@@ -657,7 +654,7 @@
       const lastX = xOf(lastIndex);
       const lastY = yOf(values[lastIndex]);
       ctx.beginPath();
-      ctx.fillStyle = css(tone(values[lastIndex], 0.05, 0.22));
+      ctx.fillStyle = css(tone(values[lastIndex], 0.12));
       ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
       ctx.fill();
       ctx.lineWidth = 2;
