@@ -1564,6 +1564,7 @@ def category_polygons(
 
 
 def write_upper_decile_exports(times, lats, lons, mask, pct, target, out_dir: Path, simplify_tol: float, min_area: float) -> tuple[Path, Path]:
+    # The moisture-tracking page draws upper_decile_precip_coverage.csv.
     out_dir.mkdir(parents=True, exist_ok=True)
 
     csv_path = out_dir / "upper_decile_precip_coverage.csv"

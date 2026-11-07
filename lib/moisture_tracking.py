@@ -227,7 +227,7 @@ def build_payload(perc: xr.DataArray, month_ds: xr.Dataset, monthly_ds: xr.Datas
         "rank": f"Rank {place} of {len(finite)} in {int(target.year)}",
         "inchesText": inches_text(latest),
         "dipYear": dip_year,
-        "range": "Moistening stripes",
+        "range": f"{month_name} moistening stripes",
         "monthYear": f"{month_name} {int(target.year)}",
         "mapTitle": "Precipitable water percentage of average",
         "monthTitle": month_title,

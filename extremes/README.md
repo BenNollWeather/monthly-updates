@@ -43,7 +43,8 @@ imagery; skip with `--skip-datawrapper`):
 - `upper_decile_precip_coverage.csv` — `date,pct_of_planet`, one row per year
   for the target calendar month (1940–present). Percent of the planet's surface
   (cos-latitude area weighted) where precipitation exceeded that grid cell's
-  90th percentile for the month, the same threshold the maps use.
+  90th percentile for the month, the same threshold the maps use. The
+  moisture-tracking page reads this file and draws it below the moistening stripes.
 - `upper_decile_precip_areas.geojson` — upper-decile areas for the target month
   as one MultiPolygon feature (RFC 7946, lon −180..180) with `pct_of_planet`
   and simplestyle fill properties. Tune with `--geojson-simplify` (degrees,

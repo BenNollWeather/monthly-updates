@@ -207,6 +207,7 @@ class GlobeVoteTests(unittest.TestCase):
         self.assertIn("pointIndex(field, place.lat, place.lon)", html)
         self.assertIn("pointIndex(field, state.place.lat, state.place.lon)", html)
         self.assertIn('if (field.id === "sst") coverLand(ctx, layout.width, layout.mapHeight);', html)
+        self.assertIn('if (field.id !== "sst")', html)
         self.assertNotIn("GeoNames", html)
         self.assertNotIn("Place names beyond the curated list", html)
         self.assertIn("Anomalies use each model's hindcast for 1993-2016. Data is sourced from the Copernicus Climate Change Service.", html)

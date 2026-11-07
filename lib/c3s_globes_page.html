@@ -717,25 +717,27 @@
     ctx.drawImage(src, 0, 0, layout.width, layout.mapHeight);
     ctx.imageSmoothingEnabled = true;
     if (field.id === "sst") coverLand(ctx, layout.width, layout.mapHeight);
-    ctx.save();
-    ctx.lineJoin = "round";
-    ctx.lineCap = "round";
-    traceCoast(ctx, layout.width, layout.mapHeight);
-    ctx.strokeStyle = "rgba(255, 252, 247, 0.9)";
-    ctx.lineWidth = Math.max(2.5, layout.width / 280);
-    ctx.stroke();
-    ctx.strokeStyle = "rgba(18, 28, 40, 0.92)";
-    ctx.lineWidth = Math.max(1.25, layout.width / 620);
-    ctx.stroke();
-    ctx.restore();
-    if (BORDERS) {
+    if (field.id !== "sst") {
       ctx.save();
-      ctx.beginPath();
-      ctx.rect(0, 0, layout.width, layout.mapHeight);
-      ctx.clip();
-      strokeBorderLayer(ctx, BORDERS.countries, layout.width, layout.mapHeight, 1);
-      strokeBorderLayer(ctx, BORDERS.states, layout.width, layout.mapHeight, 0.7);
+      ctx.lineJoin = "round";
+      ctx.lineCap = "round";
+      traceCoast(ctx, layout.width, layout.mapHeight);
+      ctx.strokeStyle = "rgba(255, 252, 247, 0.9)";
+      ctx.lineWidth = Math.max(2.5, layout.width / 280);
+      ctx.stroke();
+      ctx.strokeStyle = "rgba(18, 28, 40, 0.92)";
+      ctx.lineWidth = Math.max(1.25, layout.width / 620);
+      ctx.stroke();
       ctx.restore();
+      if (BORDERS) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.rect(0, 0, layout.width, layout.mapHeight);
+        ctx.clip();
+        strokeBorderLayer(ctx, BORDERS.countries, layout.width, layout.mapHeight, 1);
+        strokeBorderLayer(ctx, BORDERS.states, layout.width, layout.mapHeight, 0.7);
+        ctx.restore();
+      }
     }
     if (marker) {
       const shifted = (lonIndex(marker.lon) - payload.grid.nlon / 2 + payload.grid.nlon) % payload.grid.nlon;

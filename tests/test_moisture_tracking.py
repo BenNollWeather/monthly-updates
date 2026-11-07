@@ -48,7 +48,7 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertEqual(payload["monthYear"], "September 2026")
         self.assertEqual(payload["mapTitle"], "Precipitable water percentage of average")
         self.assertEqual(payload["monthTitle"], "Precipitable water in September")
-        self.assertEqual(payload["range"], "Moistening stripes")
+        self.assertEqual(payload["range"], "September moistening stripes")
         self.assertEqual(
             payload["yearTitle"],
             "Precipitable water in September 2026 compared to historical levels",
@@ -147,8 +147,9 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertIn("const monthCount = 4", html)
         self.assertIn("Math.round((i * 11) / (monthCount - 1))", html)
         self.assertIn("free / gaps", html)
-        stripes = html[html.index('id="stripes"'):html.index('class="notes"')]
-        self.assertIn(">Moistening stripes<", stripes)
+        stripes = html[html.index('id="stripes"'):html.index('id="decile"')]
+        self.assertIn(">September moistening stripes<", stripes)
+        self.assertIn('<h3 class="plot-title">September moistening stripes</h3>', stripes)
         self.assertNotIn("Moistening stripes,", html)
         self.assertIn("yearTicks(DATA.start, DATA.year, 40)", html)
         self.assertIn("yearTicks(DATA.start, DATA.year, 20)", html)
@@ -171,7 +172,8 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertIn("moisture-tracking-month.png", html)
         self.assertIn("moisture-tracking-year.png", html)
         self.assertIn("moisture-tracking-stripes.png", html)
-        self.assertEqual(html.count(">Download<"), 4)
+        self.assertIn("moisture-tracking-upper-decile.png", html)
+        self.assertEqual(html.count(">Download<"), 5)
         self.assertEqual(html.count(">Data<"), 2)
         self.assertNotIn(">Save<", html)
         self.assertIn('data-csv="year"', html)
@@ -208,6 +210,14 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertIn("month: [1400, 860]", html)
         self.assertIn("year: [1400, 920]", html)
         self.assertIn("stripes: [1400, 500]", html)
+        self.assertIn("decile: [1400, 820]", html)
+        self.assertIn("xOf(end), yOf(latest.values[end])", html)
+        self.assertIn("fitSize(ctx, DATA.range, textW, 48, 28, 700)", html)
+        self.assertIn('["decile-canvas", "decile", drawDecile]', html)
+        self.assertIn("/atmospheric_moisture/datawrapper/upper_decile_precip_coverage.csv", html)
+        self.assertIn("Upper-decile precipitation is the share of the planet where rainfall exceeded that location's 90th percentile for the month.", html)
+        self.assertIn("The series could not be loaded.", html)
+        self.assertIn('cache: "no-store"', html)
         self.assertNotIn("const size = 1200", html)
         self.assertNotIn("cycle.lo[1] + cycle.hi[1]", html)
         self.assertIn("Drier", html)
