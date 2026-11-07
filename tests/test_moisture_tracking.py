@@ -181,6 +181,10 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertIn("moisture-tracking-year.csv", html)
         self.assertIn("precipitable_water_inches", html)
         self.assertIn("DATA.history", html)
+        year_csv = html[html.index("function yearCsv()"):html.index("document.body.addEventListener")]
+        self.assertIn('const rows = [["", ...years]]', year_csv)
+        self.assertIn("CSV_MONTHS.forEach", year_csv)
+        self.assertNotIn("precipitable_water_inches", year_csv)
         self.assertNotIn("lowest_inches", html)
         self.assertNotIn("highest_inches", html)
         self.assertNotIn("average_inches", html)

@@ -1084,9 +1084,19 @@
     downloadText("moisture-tracking-month.csv", rows.map((row) => row.join(",")).join("\n") + "\n");
   }
   function yearCsv() {
-    const rows = [["year", "month", "precipitable_water_inches"]];
+    const byYear = new Map();
     (DATA.history || []).forEach((item) => {
-      rows.push([String(item[0]), CSV_MONTHS[item[1] - 1] || "", csvNumber(item[2])]);
+      const year = String(item[0]);
+      if (!byYear.has(year)) byYear.set(year, []);
+      byYear.get(year)[item[1] - 1] = csvNumber(item[2]);
+    });
+    const years = [...byYear.keys()];
+    const rows = [["", ...years]];
+    CSV_MONTHS.forEach((month, index) => {
+      rows.push([month, ...years.map((year) => {
+        const values = byYear.get(year);
+        return values && values[index] != null ? values[index] : "";
+      })]);
     });
     downloadText("moisture-tracking-year.csv", rows.map((row) => row.join(",")).join("\n") + "\n");
   }
