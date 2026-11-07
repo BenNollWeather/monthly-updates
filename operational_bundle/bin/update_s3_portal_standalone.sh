@@ -131,7 +131,7 @@ with open(inventory_path, "r", encoding="utf-8") as handle:
         # - omit the entire coolwx/ directory tree
         # - omit the WeatherNext 3 storm cards (they have their own page)
         # - omit the strat-troposphere coupling stills (they have their own tab)
-        # - omit leftover photos, and the snow-page terrain and county images
+        # - omit leftover photos, the old snowfall map, and the snow-page images
         if source_prefix == "climate_imagery/":
             if relative_name.startswith(("coolwx/", "weathernext3/", "strat_coupling/")):
                 continue
@@ -139,6 +139,7 @@ with open(inventory_path, "r", encoding="utf-8") as handle:
                 "storm_tracks.png",
                 "storm_tracks2.png",
                 "DJI_0367.jpg",
+                "snow_anomaly.png",
                 "snow_counties.png",
                 "snow_terrain.jpg",
             }:

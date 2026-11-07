@@ -387,6 +387,7 @@ class PageTests(unittest.TestCase):
         self.assertIn("s3://bennollweather/snow-forecast", workflow)
         self.assertIn("s3://bennollweather/snow", workflow)
         self.assertIn("climate_imagery/snow_basemap.js", workflow)
+        self.assertIn('"snow_anomaly.png"', portal)
         self.assertIn('"snow_counties.png"', portal)
         self.assertIn('"snow_terrain.jpg"', portal)
         self.assertNotIn("snow_anomaly.png", workflow)
