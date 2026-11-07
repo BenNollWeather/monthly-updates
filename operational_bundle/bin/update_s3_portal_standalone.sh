@@ -131,11 +131,17 @@ with open(inventory_path, "r", encoding="utf-8") as handle:
         # - omit the entire coolwx/ directory tree
         # - omit the WeatherNext 3 storm cards (they have their own page)
         # - omit the strat-troposphere coupling stills (they have their own tab)
-        # - omit these three top-level image files only
+        # - omit leftover photos, and the snow-page terrain and county images
         if source_prefix == "climate_imagery/":
             if relative_name.startswith(("coolwx/", "weathernext3/", "strat_coupling/")):
                 continue
-            if relative_name in {"storm_tracks.png", "storm_tracks2.png", "DJI_0367.jpg"}:
+            if relative_name in {
+                "storm_tracks.png",
+                "storm_tracks2.png",
+                "DJI_0367.jpg",
+                "snow_counties.png",
+                "snow_terrain.jpg",
+            }:
                 continue
 
         encoded_key = "/".join(quote(part) for part in key.split("/"))
