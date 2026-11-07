@@ -65,7 +65,7 @@ MARBLE_PATH = ROOT / "assets" / "land" / "blue_marble.jpg"
 POLAR_LAND_PATH = ROOT / "assets" / "land" / "polar_land.png"
 # Bump when a map is republished for the same analysis day. The date query
 # alone stays cached by browsers until the next UTC day.
-MAP_REV = 6
+MAP_REV = 7
 # NASA SVS 5688, sampled from the -5 to +5 anomaly bar. The displayed bar is
 # -3 to +5, and each temperature keeps that NASA color. Zero stays neutral.
 ANOMALY_STOPS = (
@@ -199,24 +199,20 @@ def layer_text(kind: str, day: date) -> dict[str, str]:
     if kind == "anomaly":
         source = (
             f"NASA MUR sea surface temperature anomaly for {when}. "
-            "The average is the 2003–2014 day-of-year climatology. "
-            "Ice is gray."
+            "The average is the 2003–2014 day-of-year climatology."
         )
         alt = (
             f"Global sea surface temperature anomaly for {when}. "
-            "Blue is cooler than the 2003–2014 average and red is warmer. Ice is gray."
+            "Blue is cooler than the 2003–2014 average and red is warmer."
         )
     elif kind == "sst":
-        source = f"NASA MUR sea surface temperatures for {when}. Ice is gray."
+        source = f"NASA MUR sea surface temperatures for {when}."
         alt = (
             f"Global sea surface temperatures for {when}. "
-            "Blue is cold and red is warm. Ice is gray."
+            "Blue is cold and red is warm."
         )
     elif kind == "heatwaves":
-        source = (
-            f"NOAA Coral Reef Watch marine heatwaves for {when}. "
-            "Categories are moderate, strong, severe, extreme, and beyond extreme."
-        )
+        source = f"NOAA Coral Reef Watch marine heatwaves for {when}."
         alt = (
             f"Global marine heatwaves for {when}. "
             "NOAA Coral Reef Watch categories run from moderate through beyond extreme."
