@@ -155,6 +155,10 @@ jobs:
             --content-type "application/json" \
             --cache-control "public, max-age=86400" \
             --only-show-errors
+          aws s3 cp lib/c3s_borders.json s3://bennollweather/climate/borders.json \
+            --content-type "application/json" \
+            --cache-control "public, max-age=86400" \
+            --only-show-errors
           USE_SYSTEM_PYTHON=1 bash operational_bundle/bin/update_s3_index.sh
       - name: Publish heartbeat and queue the next check
         id: release
