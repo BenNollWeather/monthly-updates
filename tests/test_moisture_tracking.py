@@ -121,6 +121,8 @@ class MoistureTrackingTests(unittest.TestCase):
         self.assertIn("TEAL_CAP", html)
         self.assertIn("const TEAL = [48, 136, 166]", html)
         self.assertIn("const TEAL_DEEP = [40, 90, 107]", html)
+        self.assertIn("const TEAL_CAP = [12, 74, 95]", html)
+        self.assertNotIn("const TEAL_CAP = [26, 47, 54]", html)
         self.assertIn("amount / 0.62", html)
         self.assertIn("const delta = value - median", html)
         self.assertIn("reach * 0.1", html)
