@@ -365,7 +365,7 @@ class PageTests(unittest.TestCase):
         self.assertIn("in.", view["rank"])
 
     def test_temperature_pages_share_ten_degree_bins(self):
-        _loaded_models, pages = self._pages()
+        loaded, pages = self._pages()
         maximum = json.loads(pages["max"].split("const DATA = ", 1)[1].split(";", 1)[0])
         minimum = json.loads(pages["min"].split("const DATA = ", 1)[1].split(";", 1)[0])
         self.assertEqual(maximum["views"]["ecmwf"]["ticks"], TEMP_LABELS)
@@ -421,6 +421,27 @@ class PageTests(unittest.TestCase):
         self.assertIn("°F", minimum["views"]["ecmwf"]["rank"])
         self.assertTrue(maximum["views"]["ecmwf"]["rank"].startswith("Maximum"))
         self.assertTrue(minimum["views"]["ecmwf"]["rank"].startswith("Minimum"))
+        note = minimum["views"]["ecmwf"]["cardNote"]
+        self.assertRegex(note, r"^Population forecast to experience freezing temperatures: \d+\.\d million$")
+        self.assertEqual(minimum["views"]["aifs"]["cardNote"], note)
+        from lib.population import freezing_population_note
+
+        self.assertEqual(
+            note,
+            freezing_population_note(loaded["ecmwf"]["tmin"], loaded["ecmwf"]["lat"], loaded["ecmwf"]["lon"]),
+        )
+        self.assertNotIn("Population forecast", minimum["views"]["ecmwf"]["source"])
+        self.assertNotIn("cardNote", maximum["views"]["ecmwf"])
+        self.assertNotIn("cardNote", maximum["views"]["aifs"])
+        self.assertNotIn("cardNote", rain["views"]["ecmwf"])
+        self.assertNotIn("cardNote", rain["views"]["aifs"])
+        self.assertNotIn("Population forecast to experience freezing temperatures:", pages["max"])
+        self.assertNotIn("Population forecast to experience freezing temperatures:", pages["rain"])
+        visible = pages["min"].split('id="snow-source">', 1)[1].split("</p>", 1)[0]
+        self.assertNotIn("Population forecast", visible)
+        self.assertIn("const cardLines = spec.cardNote ? wrapLines(spec.cardNote, measure, sourceMax) : [];", pages["min"])
+        self.assertIn("(sourceLines.length + cardLines.length) * sourceLineH", pages["min"])
+        self.assertIn('document.getElementById("snow-source").textContent = spec.source;', pages["min"])
 
     def test_workflow_is_separate_from_snow(self):
         workflow = (ROOT / ".github/workflows/weather-forecast.yml").read_text(encoding="utf-8")
@@ -466,6 +487,82 @@ class PageTests(unittest.TestCase):
                 text.index('link("/weather/temperature-maximum", "Maximum")'),
                 text.index('link("/weather/temperature-minimum", "Minimum")'),
             )
+
+
+class PopulationTests(unittest.TestCase):
+    def test_freezing_count_includes_32_and_skips_warmer_nan_and_off_grid(self):
+        from lib.population import freezing_population, freezing_population_note
+
+        grid = (
+            np.array([0.0, 1.0, 5.0]),
+            np.array([0.0, 1.0]),
+            np.array(
+                [
+                    [1_500_000.0, 2_000_000.0],
+                    [3_000_000.0, 4_000_000.0],
+                    [9_000_000.0, 8_000_000.0],
+                ]
+            ),
+        )
+        # 32.0 and 10.0 count. 32.01, NaN, and the row outside the field do not.
+        temp = np.array([[32.0, 32.01], [10.0, np.nan]])
+        self.assertEqual(freezing_population(temp, np.array([0.0, 1.0]), np.array([0.0, 1.0]), grid=grid), 4_500_000.0)
+        flipped = np.array([[10.0, np.nan], [32.0, 32.01]])
+        self.assertEqual(
+            freezing_population(flipped, np.array([1.0, 0.0]), np.array([0.0, 1.0]), grid=grid),
+            4_500_000.0,
+        )
+        shifted = np.array([[32.0, 32.01], [10.0, np.nan]])
+        self.assertEqual(
+            freezing_population(shifted, np.array([0.0, 1.0]), np.array([360.0, 1.0]), grid=grid),
+            4_500_000.0,
+        )
+        self.assertEqual(
+            freezing_population_note(temp, np.array([0.0, 1.0]), np.array([0.0, 1.0]), grid=grid),
+            "Population forecast to experience freezing temperatures: 4.5 million",
+        )
+        millions = (
+            np.array([0.0, 1.0]),
+            np.array([0.0, 1.0]),
+            np.array([[12_340_000.0, 0.0], [0.0, 0.0]]),
+        )
+        cold = np.array([[0.0, 0.0], [0.0, 0.0]])
+        self.assertEqual(
+            freezing_population_note(cold, np.array([0.0, 1.0]), np.array([0.0, 1.0]), grid=millions),
+            "Population forecast to experience freezing temperatures: 12.3 million",
+        )
+
+    def test_committed_grid_is_the_drawn_lower_48(self):
+        from lib.population import population_grid
+
+        lat, lon, people = population_grid()
+        self.assertEqual(people.shape, (lat.size, lon.size))
+        self.assertEqual(lat.size, 516)
+        self.assertEqual(lon.size, 1182)
+        self.assertAlmostEqual(lat[1] - lat[0], 0.05)
+        self.assertAlmostEqual(lon[1] - lon[0], 0.05)
+        self.assertAlmostEqual(lat[0], 24.025)
+        self.assertAlmostEqual(lon[0], -125.575)
+        total = float(people.sum())
+        self.assertGreater(total, 300e6)
+        self.assertLess(total, 345e6)
+        lake = people[np.argmin(np.abs(lat - 43.0)), np.argmin(np.abs(lon - (-87.0)))]
+        gulf = people[np.argmin(np.abs(lat - 26.0)), np.argmin(np.abs(lon - (-90.0)))]
+        city = people[np.argmin(np.abs(lat - 40.76)), np.argmin(np.abs(lon - (-73.98)))]
+        self.assertEqual(lake, 0.0)
+        self.assertEqual(gulf, 0.0)
+        self.assertGreater(city, 1000.0)
+        cover_lat = np.array([lat[0] - 1.0, lat[-1] + 1.0])
+        cover_lon = np.array([lon[0] - 1.0, lon[-1] + 1.0])
+        from lib.population import freezing_population_note
+
+        cold = freezing_population_note(np.zeros((2, 2)), cover_lat, cover_lon)
+        warm = freezing_population_note(np.full((2, 2), 40.0), cover_lat, cover_lon)
+        self.assertEqual(
+            cold,
+            f"Population forecast to experience freezing temperatures: {total / 1e6:.1f} million",
+        )
+        self.assertEqual(warm, "Population forecast to experience freezing temperatures: 0.0 million")
 
 
 if __name__ == "__main__":

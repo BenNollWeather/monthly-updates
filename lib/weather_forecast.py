@@ -35,6 +35,7 @@ from lib.snow_anomaly import (  # noqa: E402
     land_bounds,
     scale_html,
 )
+from lib.population import freezing_population_note  # noqa: E402
 from lib.snow_forecast import (  # noqa: E402
     HOURS,
     SOURCES,
@@ -537,6 +538,8 @@ def _view_record(
     }
     if contour is not None:
         record["freeze"] = meta["contour"]
+    if product == "min":
+        record["cardNote"] = freezing_population_note(values, loaded["lat"], loaded["lon"])
     return record
 
 

@@ -981,7 +981,8 @@
     measure.font = "400 " + sourceSize + "px \"Libre Franklin\", sans-serif";
     const sourceMax = mapW - 580;
     const sourceLines = wrapLines(spec.source, measure, sourceMax);
-    const sourceH = Math.max(sourceLines.length * sourceLineH, logoH);
+    const cardLines = spec.cardNote ? wrapLines(spec.cardNote, measure, sourceMax) : [];
+    const sourceH = Math.max((sourceLines.length + cardLines.length) * sourceLineH, logoH);
     const scaleH = discrete
       ? snowLegendHeight(scaleFonts)
       : scaleFonts.title + 16 + scaleFonts.bar + 14 + scaleFonts.tick + 8;
@@ -1014,6 +1015,7 @@
     ctx.textAlign = "left";
     ctx.textBaseline = "top";
     sourceLines.forEach((item, index) => ctx.fillText(item, pad, y + index * sourceLineH));
+    cardLines.forEach((item, index) => ctx.fillText(item, pad, y + (sourceLines.length + index) * sourceLineH));
     const logo = document.getElementById("logo");
     if (logo && logo.complete && logo.naturalWidth) {
       const logoW = logoH * logo.naturalWidth / logo.naturalHeight;
