@@ -247,6 +247,196 @@ def _drawn_land_mask(lat_values: np.ndarray, lon_values: np.ndarray) -> np.ndarr
     return on_land
 
 
+def _simplify_line(points: list[tuple[float, float]], tolerance: float) -> list[tuple[float, float]]:
+    """Douglas-Peucker. Distance is in degrees, which matches the map's linear projection."""
+    count = len(points)
+    if count <= 2:
+        return points
+    keep = [False] * count
+    keep[0] = True
+    keep[-1] = True
+    stack = [(0, count - 1)]
+    while stack:
+        start, end = stack.pop()
+        if end <= start + 1:
+            continue
+        x1, y1 = points[start]
+        x2, y2 = points[end]
+        dx = x2 - x1
+        dy = y2 - y1
+        span = (dx * dx + dy * dy) ** 0.5
+        farthest = 0.0
+        index = -1
+        for at in range(start + 1, end):
+            x_value, y_value = points[at]
+            if span == 0.0:
+                distance = ((x_value - x1) ** 2 + (y_value - y1) ** 2) ** 0.5
+            else:
+                distance = abs(dy * x_value - dx * y_value + x2 * y1 - y2 * x1) / span
+            if distance > farthest:
+                farthest = distance
+                index = at
+        if farthest > tolerance and index >= 0:
+            keep[index] = True
+            stack.append((start, index))
+            stack.append((index, end))
+    return [points[at] for at in range(count) if keep[at]]
+
+
+def _stitch_segments(segments: list[tuple]) -> list[list[tuple[float, float]]]:
+    """Join marching-squares segments that share an edge. Edge identity, not coordinates."""
+    adjacency: dict[tuple, list[tuple[int, tuple[float, float]]]] = {}
+    for index, (edge_a, point_a, edge_b, point_b) in enumerate(segments):
+        adjacency.setdefault(edge_a, []).append((index, point_a))
+        adjacency.setdefault(edge_b, []).append((index, point_b))
+    unused = set(range(len(segments)))
+
+    def follow(start_edge: tuple, start_index: int) -> list[tuple[float, float]]:
+        points: list[tuple[float, float]] = []
+        edge = start_edge
+        index = start_index
+        first = True
+        while index in unused:
+            unused.discard(index)
+            edge_a, point_a, edge_b, point_b = segments[index]
+            if edge == edge_a:
+                near, far, nxt = point_a, point_b, edge_b
+            else:
+                near, far, nxt = point_b, point_a, edge_a
+            if first:
+                points.append(near)
+                first = False
+            points.append(far)
+            edge = nxt
+            index = -1
+            for candidate, _point in adjacency[edge]:
+                if candidate in unused:
+                    index = candidate
+                    break
+            if index < 0:
+                break
+        return points
+
+    lines: list[list[tuple[float, float]]] = []
+    for edge, links in list(adjacency.items()):
+        if sum(1 for index, _point in links if index in unused) != 1:
+            continue
+        index = next(index for index, _point in links if index in unused)
+        lines.append(follow(edge, index))
+    while unused:
+        index = next(iter(unused))
+        lines.append(follow(segments[index][0], index))
+    return lines
+
+
+def contour_lines(values, lat, lon, level: float, on_land=None) -> list[list[float]]:
+    """Lon/lat polylines where the refined field crosses level.
+
+    lat is north-to-south and lon is west-to-east, matching the packed grid.
+    An edge is kept only when both ends are finite and on land, so the line
+    stops at the drawn shore and at lake holes. A node that sits on the level
+    is nudged just above it, and a four-crossing cell uses the center average.
+    Each line is [lon, lat, lon, lat, ...], simplified to about 0.02°.
+    """
+    grid = np.asarray(values, dtype=np.float64)
+    lat_values = np.asarray(lat, dtype=np.float64)
+    lon_values = np.asarray(lon, dtype=np.float64)
+    if grid.ndim != 2 or grid.shape != (lat_values.size, lon_values.size):
+        raise ValueError("contour grid does not match lat and lon")
+    if grid.shape[0] < 2 or grid.shape[1] < 2:
+        return []
+    nudged = grid.copy()
+    hit = np.isfinite(nudged) & (nudged == level)
+    nudged[hit] += max(abs(float(level)), 1.0) * 1e-8
+    finite = np.isfinite(nudged)
+    below = nudged < level
+    h_cross = finite[:, :-1] & finite[:, 1:] & (below[:, :-1] != below[:, 1:])
+    v_cross = finite[:-1, :] & finite[1:, :] & (below[:-1, :] != below[1:, :])
+    if on_land is None:
+        h_ok = h_cross
+        v_ok = v_cross
+    else:
+        land = np.asarray(on_land, dtype=bool)
+        if land.shape != grid.shape:
+            raise ValueError("land mask does not match the contour grid")
+        h_ok = h_cross & land[:, :-1] & land[:, 1:]
+        v_ok = v_cross & land[:-1, :] & land[1:, :]
+
+    def edge_points(mask: np.ndarray, horizontal: bool) -> dict[tuple, tuple[float, float]]:
+        rows, cols = np.nonzero(mask)
+        if rows.size == 0:
+            return {}
+        if horizontal:
+            v0 = nudged[rows, cols]
+            v1 = nudged[rows, cols + 1]
+            fraction = np.clip((level - v0) / (v1 - v0), 0.0, 1.0)
+            point_lon = lon_values[cols] + fraction * (lon_values[cols + 1] - lon_values[cols])
+            point_lat = lat_values[rows]
+            kind = "h"
+        else:
+            v0 = nudged[rows, cols]
+            v1 = nudged[rows + 1, cols]
+            fraction = np.clip((level - v0) / (v1 - v0), 0.0, 1.0)
+            point_lon = lon_values[cols]
+            point_lat = lat_values[rows] + fraction * (lat_values[rows + 1] - lat_values[rows])
+            kind = "v"
+        return {
+            (kind, int(row), int(col)): (float(lon_p), float(lat_p))
+            for row, col, lon_p, lat_p in zip(
+                rows.tolist(), cols.tolist(), point_lon.tolist(), point_lat.tolist()
+            )
+        }
+
+    def edge_keys(mask: np.ndarray, kind: str) -> set[tuple]:
+        found_rows, found_cols = np.nonzero(mask)
+        return {(kind, int(row), int(col)) for row, col in zip(found_rows.tolist(), found_cols.tolist())}
+
+    points = edge_points(h_cross, True)
+    points.update(edge_points(v_cross, False))
+    valid = edge_keys(h_ok, "h") | edge_keys(v_ok, "v")
+    rows, cols = np.nonzero(
+        h_cross[:-1, :] | h_cross[1:, :] | v_cross[:, :-1] | v_cross[:, 1:]
+    )
+    segments = []
+    for row, col in zip(rows.tolist(), cols.tolist()):
+        names = {
+            "top": ("h", row, col),
+            "right": ("v", row, col + 1),
+            "bottom": ("h", row + 1, col),
+            "left": ("v", row, col),
+        }
+        crossed = [name for name in ("top", "right", "bottom", "left") if names[name] in points]
+        if len(crossed) == 2:
+            pairs = ((crossed[0], crossed[1]),)
+        elif len(crossed) == 4:
+            center = float(nudged[row : row + 2, col : col + 2].mean())
+            # The center joins one diagonal. Pair the edges so that diagonal stays connected.
+            if bool(below[row, col]) == (center < level):
+                pairs = (("top", "right"), ("left", "bottom"))
+            else:
+                pairs = (("top", "left"), ("right", "bottom"))
+        else:
+            continue
+        for first_name, second_name in pairs:
+            key_a = names[first_name]
+            key_b = names[second_name]
+            if key_a in valid and key_b in valid:
+                segments.append((key_a, points[key_a], key_b, points[key_b]))
+    lines = []
+    for line in _stitch_segments(segments):
+        flat: list[float] = []
+        previous = None
+        for lon_p, lat_p in _simplify_line(line, 0.02):
+            point = (round(float(lon_p), 3), round(float(lat_p), 3))
+            if point == previous:
+                continue
+            flat.extend(point)
+            previous = point
+        if len(flat) >= 4:
+            lines.append(flat)
+    return lines
+
+
 def pack_snow(
     inches,
     lat,
@@ -256,6 +446,7 @@ def pack_snow(
     classify=None,
     empty=0.0,
     vector_land: bool = False,
+    contour: float | None = None,
 ) -> tuple[dict, str]:
     """North-to-south category PNG. 0 is uncolored, including water and totals under 0.5 inch.
 
@@ -263,6 +454,7 @@ def pack_snow(
     so a boundary can curve through a model cell instead of filling the whole cell.
     The model land mask is the default. Temperature passes vector_land so a cell
     on the drawn shore stays colored when the coarser mask calls it water.
+    A contour level is traced on that same refined field after the land mask.
     """
     import base64
     from io import BytesIO
@@ -311,6 +503,10 @@ def pack_snow(
         "lonWest": float(lon_values[0]),
         "lonEast": float(lon_values[-1]),
     }
+    if contour is not None:
+        meta["contour"] = contour_lines(
+            snow, lat_values, lon_values, float(contour), on_land=bins > 0
+        )
     return meta, payload
 
 

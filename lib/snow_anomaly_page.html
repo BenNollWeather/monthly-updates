@@ -626,6 +626,38 @@
     strokeChains(ctx, lines.coasts, project);
     ctx.restore();
 
+    // The minimum map sends the 32°F contour. It crosses navy and pale bins,
+    // so the dash is dark ink on a white casing. Other maps have no freeze line.
+    const freeze = activeSpec().freeze;
+    if (freeze && freeze.length) {
+      const paintFreeze = () => {
+        freeze.forEach((chain) => {
+          if (!chain || chain.length < 4) return;
+          ctx.beginPath();
+          const start = project(chain[0], chain[1]);
+          ctx.moveTo(start.x, start.y);
+          for (let i = 2; i < chain.length; i += 2) {
+            const point = project(chain[i], chain[i + 1]);
+            ctx.lineTo(point.x, point.y);
+          }
+          ctx.stroke();
+        });
+      };
+      ctx.save();
+      trace(ctx, SNOW_BASE.land, project);
+      ctx.clip("evenodd");
+      ctx.lineJoin = "round";
+      ctx.lineCap = "butt";
+      ctx.setLineDash([Math.max(5, box.w / 140), Math.max(4, box.w / 180)]);
+      ctx.strokeStyle = "rgba(255,255,255,0.95)";
+      ctx.lineWidth = Math.max(3.2, box.w / 380);
+      paintFreeze();
+      ctx.strokeStyle = "#1c2430";
+      ctx.lineWidth = Math.max(1.5, box.w / 780);
+      paintFreeze();
+      ctx.restore();
+    }
+
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.lineJoin = "round";

@@ -228,6 +228,58 @@ class ShoreTests(unittest.TestCase):
         self.assertTrue(np.all(masked == 0))
 
 
+class FreezeTests(unittest.TestCase):
+    def test_contour_crosses_the_top_edge_at_two_fifths(self):
+        from lib.snow_forecast import contour_lines
+
+        lines = contour_lines(
+            np.array([[20.0, 50.0], [10.0, 40.0]]),
+            np.array([1.0, 0.0]),
+            np.array([0.0, 1.0]),
+            32.0,
+        )
+        self.assertEqual(len(lines), 1)
+        flat = lines[0]
+        self.assertEqual(len(flat), 4)
+        ends = sorted([(flat[0], flat[1]), (flat[2], flat[3])])
+        # Top edge t = (32-20)/(50-20) = 0.4. Bottom edge t = (32-10)/(40-10).
+        self.assertEqual(ends, [(0.4, 1.0), (round((32.0 - 10.0) / (40.0 - 10.0), 3), 0.0)])
+
+    def test_saddle_follows_the_cell_center(self):
+        from lib.snow_forecast import contour_lines
+
+        lines = contour_lines(
+            np.array([[10.0, 50.0], [50.0, 10.0]]),
+            np.array([1.0, 0.0]),
+            np.array([0.0, 1.0]),
+            32.0,
+        )
+        ends = []
+        for flat in lines:
+            self.assertEqual(len(flat), 4)
+            ends.append(tuple(sorted([(flat[0], flat[1]), (flat[2], flat[3])])))
+        # Center is 30, on the same side as the 10s, so the segments are top–right and left–bottom.
+        self.assertCountEqual(
+            ends,
+            [
+                ((0.55, 1.0), (1.0, 0.55)),
+                ((0.0, 0.45), (0.45, 0.0)),
+            ],
+        )
+
+    def test_contour_stops_when_an_endpoint_is_off_land(self):
+        from lib.snow_forecast import contour_lines
+
+        lines = contour_lines(
+            np.array([[20.0, 50.0], [10.0, 40.0]]),
+            np.array([1.0, 0.0]),
+            np.array([0.0, 1.0]),
+            32.0,
+            on_land=np.array([[True, False], [True, True]]),
+        )
+        self.assertEqual(lines, [])
+
+
 class PageTests(unittest.TestCase):
     def _pages(self):
         loaded = _loaded(
@@ -330,6 +382,22 @@ class PageTests(unittest.TestCase):
         self.assertEqual(minimum.get("line"), "#e7eef6")
         self.assertNotIn("line", maximum)
         self.assertIn('ctx.strokeStyle = DATA.line || "#4a4a4a";', pages["min"])
+        rain = json.loads(pages["rain"].split("const DATA = ", 1)[1].split(";", 1)[0])
+        for key in ("ecmwf", "aifs"):
+            freeze = minimum["views"][key]["freeze"]
+            self.assertGreaterEqual(len(freeze), 1)
+            self.assertGreaterEqual(len(freeze[0]), 4)
+            self.assertEqual(len(freeze[0]) % 2, 0)
+            flat = [value for line in freeze for value in line]
+            self.assertTrue(all(-110 < lon < -80 for lon in flat[0::2]))
+            self.assertTrue(all(30 < lat < 50 for lat in flat[1::2]))
+            self.assertNotIn("freeze", maximum["views"][key])
+            self.assertNotIn("freeze", rain["views"][key])
+        self.assertIn("activeSpec().freeze", pages["min"])
+        self.assertIn(
+            "setLineDash([Math.max(5, box.w / 140), Math.max(4, box.w / 180)])",
+            pages["min"],
+        )
         self.assertNotIn('id="snow-scale" hidden', pages["max"])
         self.assertIn('id="anomaly-ranks" hidden', pages["max"])
         self.assertIn("°F", maximum["views"]["ecmwf"]["rank"])

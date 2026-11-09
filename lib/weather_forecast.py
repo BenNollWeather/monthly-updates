@@ -484,6 +484,7 @@ def _view_record(
     filename: str,
     empty,
     vector_land: bool = False,
+    contour: float | None = None,
 ) -> dict:
     spec = loaded["spec"]
     highest = rank_word == "Maximum"
@@ -498,10 +499,11 @@ def _view_record(
         classify=classify,
         empty=empty,
         vector_land=vector_land,
+        contour=contour,
     )
     window = _window_phrase(loaded["cycle"])
     place = "most" if highest else "lowest"
-    return {
+    record = {
         "key": spec["key"],
         "button": spec["button"],
         "title": title,
@@ -531,6 +533,9 @@ def _view_record(
         "lonWest": round(meta["lonWest"], 5),
         "lonEast": round(meta["lonEast"], 5),
     }
+    if contour is not None:
+        record["freeze"] = meta["contour"]
+    return record
 
 
 def product_views(loaded: dict[str, dict], product: str) -> dict[str, dict]:
@@ -584,6 +589,9 @@ def product_views(loaded: dict[str, dict], product: str) -> dict[str, dict]:
                 filename=f"{key}-weekly-minimum-temperature.png",
                 empty=None,
                 vector_land=True,
+                # 32°F is inside the navy 30°F bin. This is the contour of the
+                # continuous field, not the edge between the 30 and 40 colors.
+                contour=32.0,
             )
             for key, item in loaded.items()
         }
