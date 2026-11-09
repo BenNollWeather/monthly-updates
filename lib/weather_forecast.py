@@ -95,26 +95,19 @@ TEMP_COLORS = [
 ]
 TEMP_LABELS = [
     "−10°F",
-    "0",
-    "10",
-    "20",
-    "30",
-    "40",
-    "50",
-    "60",
-    "70",
-    "80",
-    "90",
-    "100",
-    "110",
+    "0s",
+    "10s",
+    "20s",
+    "30s",
+    "40s",
+    "50s",
+    "60s",
+    "70s",
+    "80s",
+    "90s",
+    "100s",
+    "110s",
 ]
-# The 32°F line is smoothed in degrees so both models lose the same small wiggles.
-# Yellow is outside the temperature ramp, and the dark casing keeps it visible on the pale bins.
-FREEZE_F = 32.0
-FREEZE_SIGMA_DEG = 0.75
-FREEZE_COLOR = "#FFE500"
-FREEZE_CASING = "#161616"
-FREEZE_LABEL = "32°F"
 MODELS = (
     {"key": "ecmwf", "model": "ifs", "name": "IFS", "button": "ECMWF"},
     {"key": "aifs", "model": "aifs-single", "name": "AIFS", "button": "ECMWF-AIFS"},
@@ -598,10 +591,6 @@ def product_views(loaded: dict[str, dict], product: str) -> dict[str, dict]:
                 filename=f"{key}-weekly-minimum-temperature.png",
                 empty=None,
                 vector_land=True,
-                # 32°F is inside the navy 30°F bin. This is the contour of the
-                # smoothed field, not the edge between the 30 and 40 colors.
-                contour=FREEZE_F,
-                contour_sigma=FREEZE_SIGMA_DEG,
             )
             for key, item in loaded.items()
         }
@@ -636,16 +625,7 @@ def render_forecast_page(views: dict[str, dict], path: str, title: str) -> str:
         # The weekly minimum is mostly the 20°F to 40°F blues. The shared
         # #4a4a4a state line has almost no contrast there. The shore uses the
         # same ink, so it stays visible with the state lines.
-        **(
-            {
-                "line": "#e7eef6",
-                "freezeColor": FREEZE_COLOR,
-                "freezeCasing": FREEZE_CASING,
-                "freezeLabel": FREEZE_LABEL,
-            }
-            if path == MIN_PATH
-            else {}
-        ),
+        **({"line": "#e7eef6"} if path == MIN_PATH else {}),
         "views": {
             "ecmwf": {key: value for key, value in views["ecmwf"].items() if key != "field"},
             "aifs": {key: value for key, value in views["aifs"].items() if key != "field"},
@@ -664,19 +644,7 @@ def render_forecast_page(views: dict[str, dict], path: str, title: str) -> str:
         .replace("__FORECAST_FIELDS__", _forecast_images(views))
         .replace("__FIELD__", BLANK_PNG)
         .replace("__DATA__", data)
-        .replace(
-            "__SNOW_SCALE__",
-            snow_scale_html(
-                hidden=False,
-                colors=shown["colors"],
-                labels=shown["ticks"],
-                freeze=(
-                    {"label": FREEZE_LABEL, "color": FREEZE_COLOR, "casing": FREEZE_CASING}
-                    if path == MIN_PATH
-                    else None
-                ),
-            ),
-        )
+        .replace("__SNOW_SCALE__", snow_scale_html(hidden=False, colors=shown["colors"], labels=shown["ticks"]))
         .replace("__SCALE__", scale_html(hidden=True))
         .replace("__RANKS_HIDDEN__", " hidden")
         .replace("__RANKS__", "")
