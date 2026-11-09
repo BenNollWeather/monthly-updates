@@ -108,6 +108,13 @@ TEMP_LABELS = [
     "100",
     "110",
 ]
+# The 32°F line is smoothed in degrees so both models lose the same small wiggles.
+# Yellow is outside the temperature ramp, and the dark casing keeps it visible on the pale bins.
+FREEZE_F = 32.0
+FREEZE_SIGMA_DEG = 0.75
+FREEZE_COLOR = "#FFE500"
+FREEZE_CASING = "#161616"
+FREEZE_LABEL = "32°F"
 MODELS = (
     {"key": "ecmwf", "model": "ifs", "name": "IFS", "button": "ECMWF"},
     {"key": "aifs", "model": "aifs-single", "name": "AIFS", "button": "ECMWF-AIFS"},
@@ -485,6 +492,7 @@ def _view_record(
     empty,
     vector_land: bool = False,
     contour: float | None = None,
+    contour_sigma: float = 0.0,
 ) -> dict:
     spec = loaded["spec"]
     highest = rank_word == "Maximum"
@@ -500,6 +508,7 @@ def _view_record(
         empty=empty,
         vector_land=vector_land,
         contour=contour,
+        contour_sigma=contour_sigma,
     )
     window = _window_phrase(loaded["cycle"])
     place = "most" if highest else "lowest"
@@ -590,8 +599,9 @@ def product_views(loaded: dict[str, dict], product: str) -> dict[str, dict]:
                 empty=None,
                 vector_land=True,
                 # 32°F is inside the navy 30°F bin. This is the contour of the
-                # continuous field, not the edge between the 30 and 40 colors.
-                contour=32.0,
+                # smoothed field, not the edge between the 30 and 40 colors.
+                contour=FREEZE_F,
+                contour_sigma=FREEZE_SIGMA_DEG,
             )
             for key, item in loaded.items()
         }
@@ -626,7 +636,16 @@ def render_forecast_page(views: dict[str, dict], path: str, title: str) -> str:
         # The weekly minimum is mostly the 20°F to 40°F blues. The shared
         # #4a4a4a state line has almost no contrast there. The shore uses the
         # same ink, so it stays visible with the state lines.
-        **({"line": "#e7eef6"} if path == MIN_PATH else {}),
+        **(
+            {
+                "line": "#e7eef6",
+                "freezeColor": FREEZE_COLOR,
+                "freezeCasing": FREEZE_CASING,
+                "freezeLabel": FREEZE_LABEL,
+            }
+            if path == MIN_PATH
+            else {}
+        ),
         "views": {
             "ecmwf": {key: value for key, value in views["ecmwf"].items() if key != "field"},
             "aifs": {key: value for key, value in views["aifs"].items() if key != "field"},
@@ -645,7 +664,19 @@ def render_forecast_page(views: dict[str, dict], path: str, title: str) -> str:
         .replace("__FORECAST_FIELDS__", _forecast_images(views))
         .replace("__FIELD__", BLANK_PNG)
         .replace("__DATA__", data)
-        .replace("__SNOW_SCALE__", snow_scale_html(hidden=False, colors=shown["colors"], labels=shown["ticks"]))
+        .replace(
+            "__SNOW_SCALE__",
+            snow_scale_html(
+                hidden=False,
+                colors=shown["colors"],
+                labels=shown["ticks"],
+                freeze=(
+                    {"label": FREEZE_LABEL, "color": FREEZE_COLOR, "casing": FREEZE_CASING}
+                    if path == MIN_PATH
+                    else None
+                ),
+            ),
+        )
         .replace("__SCALE__", scale_html(hidden=True))
         .replace("__RANKS_HIDDEN__", " hidden")
         .replace("__RANKS__", "")

@@ -329,6 +329,36 @@ def _stitch_segments(segments: list[tuple]) -> list[list[tuple[float, float]]]:
     return lines
 
 
+def smooth_contour_field(values, lat, lon, on_land, sigma_deg: float) -> np.ndarray:
+    """Gaussian smooth in degrees. Off-land cells do not pull the line.
+
+    The kernel is normalized by the land weight, so a lake or a coast
+    contributes no temperature. sigma_deg is the same distance on every model.
+    """
+    grid = np.asarray(values, dtype=np.float64)
+    if sigma_deg <= 0:
+        return grid.copy()
+    lat_values = np.asarray(lat, dtype=np.float64)
+    lon_values = np.asarray(lon, dtype=np.float64)
+    dlat = abs(float(np.median(np.diff(lat_values)))) if lat_values.size > 1 else float(sigma_deg)
+    dlon = abs(float(np.median(np.diff(lon_values)))) if lon_values.size > 1 else float(sigma_deg)
+    sigma_y = float(sigma_deg) / dlat if dlat else 0.0
+    sigma_x = float(sigma_deg) / dlon if dlon else 0.0
+    land = np.asarray(on_land, dtype=bool) & np.isfinite(grid)
+    if not land.any() or (sigma_y < 0.35 and sigma_x < 0.35):
+        return grid.copy()
+    from scipy.ndimage import gaussian_filter
+
+    weight = land.astype(np.float64)
+    filled = np.where(land, grid, 0.0)
+    number = gaussian_filter(filled, sigma=(sigma_y, sigma_x), mode="constant", cval=0.0)
+    denom = gaussian_filter(weight, sigma=(sigma_y, sigma_x), mode="constant", cval=0.0)
+    smoothed = grid.copy()
+    good = land & (denom > 1e-3)
+    smoothed[good] = number[good] / denom[good]
+    return smoothed
+
+
 def contour_lines(values, lat, lon, level: float, on_land=None) -> list[list[float]]:
     """Lon/lat polylines where the refined field crosses level.
 
@@ -447,6 +477,7 @@ def pack_snow(
     empty=0.0,
     vector_land: bool = False,
     contour: float | None = None,
+    contour_sigma: float = 0.0,
 ) -> tuple[dict, str]:
     """North-to-south category PNG. 0 is uncolored, including water and totals under 0.5 inch.
 
@@ -455,6 +486,7 @@ def pack_snow(
     The model land mask is the default. Temperature passes vector_land so a cell
     on the drawn shore stays colored when the coarser mask calls it water.
     A contour level is traced on that same refined field after the land mask.
+    contour_sigma, in degrees, smooths the field before the line is traced.
     """
     import base64
     from io import BytesIO
@@ -504,13 +536,18 @@ def pack_snow(
         "lonEast": float(lon_values[-1]),
     }
     if contour is not None:
+        field = snow
+        if contour_sigma:
+            field = smooth_contour_field(
+                snow, lat_values, lon_values, bins > 0, float(contour_sigma)
+            )
         meta["contour"] = contour_lines(
-            snow, lat_values, lon_values, float(contour), on_land=bins > 0
+            field, lat_values, lon_values, float(contour), on_land=bins > 0
         )
     return meta, payload
 
 
-def snow_scale_html(hidden: bool = True, colors=None, labels=None) -> str:
+def snow_scale_html(hidden: bool = True, colors=None, labels=None, freeze: dict | None = None) -> str:
     """Equal-width category blocks. Each label is centered, and the last block has no arrow."""
     palette = list(SNOW_COLORS if colors is None else colors)
     names = list(SNOW_LABELS if labels is None else labels)
@@ -534,12 +571,23 @@ def snow_scale_html(hidden: bool = True, colors=None, labels=None) -> str:
         label = names[index].replace("&", "&amp;").replace("<", "&lt;")
         ticks.append(f'<span style="left:{center:.4f}%">{label}</span>')
     hidden_attr = " hidden" if hidden else ""
+    key = ""
+    if freeze:
+        label = str(freeze["label"]).replace("&", "&amp;").replace("<", "&lt;")
+        casing = freeze["casing"]
+        color = freeze["color"]
+        key = (
+            f'<div class="freeze-key"><svg width="64" height="14" viewBox="0 0 64 14" aria-hidden="true">'
+            f'<line x1="2" y1="7" x2="62" y2="7" stroke="{casing}" stroke-width="9" stroke-dasharray="16 11"/>'
+            f'<line x1="2" y1="7" x2="62" y2="7" stroke="{color}" stroke-width="5" stroke-dasharray="16 11"/>'
+            f"</svg><span>{label}</span></div>"
+        )
     return (
         f'<div class="scale snow-scale{wide}" style="--legend-min:{track:.1f}ch" id="snow-scale"{hidden_attr}>'
         f'<div class="legend-track">'
         f'<div class="swatches">{"".join(cells)}</div>'
         f'<div class="ticks">{"".join(ticks)}</div>'
-        "</div></div>"
+        f"</div>{key}</div>"
     )
 
 

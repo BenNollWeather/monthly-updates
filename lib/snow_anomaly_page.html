@@ -92,6 +92,8 @@
     .snow-scale .ticks { margin-right: 0; font-size: 14px; }
     .snow-scale .ticks span, .snow-scale .ticks span:first-child, .snow-scale .ticks span:last-child { transform: translateX(-50%); }
     .snow-scale.wide { width: 100%; }
+    .freeze-key { display: flex; align-items: center; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 14px; font-weight: 700; }
+    .freeze-key svg { display: block; flex: none; }
     .map-scroll { overflow: visible; }
     #snow-map { display: block; width: 100%; height: auto; }
     .rank-list { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; }
@@ -626,10 +628,10 @@
     strokeChains(ctx, lines.coasts, project);
     ctx.restore();
 
-    // The minimum map sends the 32°F contour. It crosses navy and pale bins,
-    // so the dash is dark ink on a white casing. Other maps have no freeze line.
+    // The minimum map sends a smoothed 32°F contour. Yellow sits outside the
+    // temperature ramp, and the dark casing keeps the dash readable on pale bins.
     const freeze = activeSpec().freeze;
-    if (freeze && freeze.length) {
+    if (freeze && freeze.length && DATA.freezeColor) {
       const paintFreeze = () => {
         freeze.forEach((chain) => {
           if (!chain || chain.length < 4) return;
@@ -648,12 +650,12 @@
       ctx.clip("evenodd");
       ctx.lineJoin = "round";
       ctx.lineCap = "butt";
-      ctx.setLineDash([Math.max(5, box.w / 140), Math.max(4, box.w / 180)]);
-      ctx.strokeStyle = "rgba(255,255,255,0.95)";
-      ctx.lineWidth = Math.max(3.2, box.w / 380);
+      ctx.setLineDash([Math.max(14, box.w / 70), Math.max(10, box.w / 100)]);
+      ctx.strokeStyle = DATA.freezeCasing || "#161616";
+      ctx.lineWidth = Math.max(8, box.w / 140);
       paintFreeze();
-      ctx.strokeStyle = "#1c2430";
-      ctx.lineWidth = Math.max(1.5, box.w / 780);
+      ctx.strokeStyle = DATA.freezeColor;
+      ctx.lineWidth = Math.max(4.5, box.w / 240);
       paintFreeze();
       ctx.restore();
     }
@@ -867,6 +869,11 @@
     return !!spec && (spec.kind === "snow" || spec.kind === "rain" || spec.kind === "temp");
   }
 
+  function snowLegendHeight(fonts) {
+    const row = fonts.bar + 14 + fonts.tick + 8;
+    return DATA.freezeColor ? row + fonts.tick + 16 : row;
+  }
+
   function drawSnowScale(ctx, x, y, width, fonts) {
     const colors = activeSpec().colors.map(hexToRgb);
     const ticks = legendTicks();
@@ -887,7 +894,34 @@
     ticks.forEach((label, index) => {
       ctx.fillText(label, x + slot * (index + 0.5), tickY);
     });
-    return tickY + tickSize - y + 8;
+    if (DATA.freezeColor) {
+      const label = DATA.freezeLabel || "32°F";
+      const keyTop = tickY + tickSize + 16;
+      const mid = keyTop + tickSize * 0.55;
+      const sampleW = Math.round(tickSize * 2.6);
+      ctx.save();
+      ctx.lineCap = "butt";
+      ctx.setLineDash([Math.round(tickSize * 0.72), Math.round(tickSize * 0.48)]);
+      ctx.strokeStyle = DATA.freezeCasing || "#161616";
+      ctx.lineWidth = Math.max(8, tickSize * 0.34);
+      ctx.beginPath();
+      ctx.moveTo(x, mid);
+      ctx.lineTo(x + sampleW, mid);
+      ctx.stroke();
+      ctx.strokeStyle = DATA.freezeColor;
+      ctx.lineWidth = Math.max(4.5, tickSize * 0.18);
+      ctx.beginPath();
+      ctx.moveTo(x, mid);
+      ctx.lineTo(x + sampleW, mid);
+      ctx.stroke();
+      ctx.restore();
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillStyle = "#5c656e";
+      ctx.font = "700 " + tickSize + "px \"Libre Franklin\", sans-serif";
+      ctx.fillText(label, x + sampleW + Math.round(tickSize * 0.35), keyTop);
+    }
+    return snowLegendHeight(fonts);
   }
 
   function wrapLines(text, ctx, maxWidth) {
@@ -949,7 +983,7 @@
     const sourceLines = wrapLines(spec.source, measure, sourceMax);
     const sourceH = Math.max(sourceLines.length * sourceLineH, logoH);
     const scaleH = discrete
-      ? scaleFonts.bar + 14 + scaleFonts.tick + 8
+      ? snowLegendHeight(scaleFonts)
       : scaleFonts.title + 16 + scaleFonts.bar + 14 + scaleFonts.tick + 8;
     const head = titleSize + 22 + dekSize + 10 + dekSize + 34;
     const height = pad + head + scaleH + 20 + mapH + 44 + sourceH + pad;

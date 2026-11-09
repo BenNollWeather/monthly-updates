@@ -279,6 +279,23 @@ class FreezeTests(unittest.TestCase):
         )
         self.assertEqual(lines, [])
 
+    def test_sigma_pulls_a_spike_toward_its_neighbors(self):
+        from lib.snow_forecast import smooth_contour_field
+
+        values = np.full((9, 9), 20.0)
+        values[4, 4] = 80.0
+        smoothed = smooth_contour_field(
+            values,
+            np.linspace(4.0, 0.0, 9),
+            np.linspace(0.0, 4.0, 9),
+            np.ones((9, 9), dtype=bool),
+            1.0,
+        )
+        self.assertLess(smoothed[4, 4], 55.0)
+        self.assertGreater(smoothed[4, 4], 20.0)
+        self.assertGreater(smoothed[4, 3], 20.0)
+        self.assertLess(smoothed[0, 0], 25.0)
+
 
 class PageTests(unittest.TestCase):
     def _pages(self):
@@ -395,9 +412,20 @@ class PageTests(unittest.TestCase):
             self.assertNotIn("freeze", rain["views"][key])
         self.assertIn("activeSpec().freeze", pages["min"])
         self.assertIn(
-            "setLineDash([Math.max(5, box.w / 140), Math.max(4, box.w / 180)])",
+            "setLineDash([Math.max(14, box.w / 70), Math.max(10, box.w / 100)])",
             pages["min"],
         )
+        self.assertEqual(minimum.get("freezeColor"), "#FFE500")
+        self.assertEqual(minimum.get("freezeCasing"), "#161616")
+        self.assertEqual(minimum.get("freezeLabel"), "32°F")
+        self.assertNotIn("freezeColor", maximum)
+        self.assertNotIn("freezeColor", rain)
+        self.assertIn('class="freeze-key"', pages["min"])
+        self.assertIn('stroke="#FFE500"', pages["min"])
+        self.assertIn(">32°F</span>", pages["min"])
+        self.assertNotIn('class="freeze-key"', pages["max"])
+        self.assertNotIn('class="freeze-key"', pages["rain"])
+        self.assertIn("function snowLegendHeight", pages["min"])
         self.assertNotIn('id="snow-scale" hidden', pages["max"])
         self.assertIn('id="anomaly-ranks" hidden', pages["max"])
         self.assertIn("°F", maximum["views"]["ecmwf"]["rank"])
