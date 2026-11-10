@@ -599,12 +599,13 @@ def charts_html(
     window = _from_to(span)
     parts = [
         _chart_section(
-            f"Percentage of average snowfall from {window}",
+            "Percentage of average snowfall",
             "snowfall-percent-of-average-by-season.png",
             "Download the percentage of average snowfall chart",
             rows,
             on,
             scale_to_max=True,
+            dek=f"From {window}",
             credit="Data: NOAA/NOHRSC",
         )
     ]
