@@ -553,29 +553,37 @@ def _rank_list(rows: list[SeasonRank], on: date, *, scale_to_max: bool, color: s
     return '<ol class="rank-list">' + "".join(items) + "</ol>"
 
 
+def _from_to(span: str) -> str:
+    """The en-dash window as words, such as 'Sept. 30 to Nov. 4, 2026'."""
+    return span.replace("–", " to ")
+
+
 def _chart_section(
     title: str,
     filename: str,
     download_label: str,
-    data_dek: str,
     rows: list[SeasonRank],
     on: date,
     *,
     scale_to_max: bool,
-    note: str = "",
+    dek: str = "",
+    credit: str = "",
     color: str | None = None,
 ) -> str:
-    note_html = f'<p class="chart-dek">{html.escape(note)}</p>' if note else ""
+    dek_html = f'<p class="chart-dek">{html.escape(dek)}</p>' if dek else ""
+    credit_html = f'<p class="chart-credit">{html.escape(credit)}</p>' if credit else ""
     return (
         '<section class="rank-chart" '
         f'data-file="{html.escape(filename, quote=True)}" '
-        f'data-dek="{html.escape(data_dek, quote=True)}">'
+        f'data-dek="{html.escape(dek, quote=True)}" '
+        f'data-credit="{html.escape(credit, quote=True)}">'
         '<div class="chart-head">'
         f'<h2 class="compare">{html.escape(title)}</h2>'
         f'<button class="download" type="button" aria-label="{html.escape(download_label, quote=True)}">Download</button>'
         "</div>"
-        f"{note_html}"
+        f"{dek_html}"
         f"{_rank_list(rows, on, scale_to_max=scale_to_max, color=color)}"
+        f"{credit_html}"
         "</section>"
     )
 
@@ -588,44 +596,43 @@ def charts_html(
     land_rows: list[SeasonRank] | None = None,
 ) -> str:
     """The season chart, plus population and land-area coverage when those rows exist."""
+    window = _from_to(span)
     parts = [
         _chart_section(
-            "Percent of average by season",
+            f"Percentage of average snowfall from {window}",
             "snowfall-percent-of-average-by-season.png",
-            "Download the percent of average by season chart",
-            span,
+            "Download the percentage of average snowfall chart",
             rows,
             on,
             scale_to_max=True,
+            credit="Data: NOAA/NOHRSC",
         )
     ]
     if pop_rows:
-        note = "2020 population where the average is at least 1 inch. Above average is 100% or more."
         parts.append(
             _chart_section(
                 "Percentage of population with above-average snowfall",
                 "snowfall-population-above-average.png",
                 "Download the population chart",
-                f"{span}. {note}",
                 pop_rows,
                 on,
                 scale_to_max=False,
-                note=note,
+                dek=f"From {window}",
+                credit="Population where the average is at least 1 inch. Above average is 100% or more.",
                 color=ABOVE_LABEL,
             )
         )
     if land_rows:
-        note = "Land area where the average is at least 1 inch. Above average is 100% or more."
         parts.append(
             _chart_section(
                 "Percentage of land area with above-average snowfall",
                 "snowfall-land-area-above-average.png",
                 "Download the land area chart",
-                f"{span}. {note}",
                 land_rows,
                 on,
                 scale_to_max=False,
-                note=note,
+                dek=f"From {window}",
+                credit="Land area where the average is at least 1 inch. Above average is 100% or more.",
                 color=ABOVE_LABEL,
             )
         )

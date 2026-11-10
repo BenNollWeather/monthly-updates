@@ -56,6 +56,7 @@
     .chart-head h2.compare { margin: 0; flex: 1 1 280px; }
     .chart-head .download { margin-bottom: 0; }
     .chart-dek { margin: 8px 0 0; max-width: 820px; color: var(--muted); font-size: 18px; font-weight: 600; line-height: 1.35; }
+    .chart-credit { margin: 14px 0 0; max-width: 720px; color: var(--muted); font-size: 15px; font-weight: 600; line-height: 1.35; }
     .dek { margin: 8px 0 0; color: var(--muted); font-size: 24px; font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; }
     .map-card { background: transparent; color: inherit; margin-top: 22px; }
     .scale-row { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; flex-wrap: wrap; }
@@ -101,13 +102,16 @@
     .map-scroll { overflow: visible; }
     #snow-map { display: block; width: 100%; height: auto; }
     .rank-list { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; }
-    .rank-list li { display: grid; grid-template-columns: 32px 88px minmax(0, 1fr) 72px; gap: 12px; align-items: center; font-size: 18px; font-weight: 600; }
+    .rank-list li { display: grid; grid-template-columns: 32px 88px minmax(0, 1fr) 72px; gap: 12px; align-items: center; font-size: 18px; font-weight: 600; padding: 4px 8px 4px 12px; border-radius: 12px; }
     .rank-list .n { color: var(--muted); font-variant-numeric: tabular-nums; }
     .rank-list .year, .rank-list .pct { font-variant-numeric: tabular-nums; }
+    .rank-list .year { color: var(--muted); }
     .rank-list .pct { text-align: right; }
     .rank-list .track { height: 16px; background: var(--track); border-radius: 999px; overflow: hidden; }
     .rank-list .bar { display: block; height: 100%; border-radius: 999px; }
-    .rank-list li.now .year, .rank-list li.now .pct, .rank-list li.now .n { font-weight: 700; color: var(--ink); }
+    .rank-list li.now { background: #e7f1fa; box-shadow: inset 4px 0 0 #1A548E; }
+    .rank-list li.now .n, .rank-list li.now .pct { font-weight: 700; color: var(--ink); }
+    .rank-list li.now .year { color: #1A548E; font-weight: 700; }
     .notes { margin: 22px 0 8px; max-width: 820px; color: var(--muted); font-size: 18px; }
     .notes p { margin: 0; }
     .site-foot { display: flex; justify-content: flex-end; align-items: center; gap: 12px; margin: 0; padding: 8px 24px 32px; line-height: 0; }
@@ -137,6 +141,7 @@
       .rank-list li { grid-template-columns: 26px 76px minmax(0, 1fr) 58px; gap: 8px; font-size: 16px; }
       .chart-head { align-items: flex-start; }
       .chart-dek { font-size: 16px; }
+      .chart-credit { font-size: 14px; }
     }
     @media (max-width: 420px) {
       .snow-scale .legend-track, .snow-scale .swatches, .snow-scale .ticks { font-size: 13px; letter-spacing: 0; }
@@ -161,6 +166,8 @@
       }
       .scale .below { color: #e0b56a; }
       .scale .above { color: #9ec3ea; }
+      .rank-list li.now { background: #1a2c3d; box-shadow: inset 4px 0 0 #9ec3ea; }
+      .rank-list li.now .year { color: #9ec3ea; }
     }
   </style>
 </head>
@@ -1170,6 +1177,7 @@
   function paintRankCard(canvas, section) {
     const title = section.querySelector("h2").textContent;
     const dek = section.dataset.dek || "";
+    const credit = section.dataset.credit || "";
     const rows = [...section.querySelectorAll(".rank-list li")].map((li) => {
       const bar = li.querySelector(".bar");
       return {
@@ -1186,15 +1194,22 @@
     const textW = width - pad * 2;
     const titleSize = 56;
     const dekSize = 32;
-    const rowH = 54;
+    const rowH = 62;
     const logoH = 84;
+    const creditSize = 28;
     const measure = document.createElement("canvas").getContext("2d");
     measure.font = "700 " + titleSize + "px \"Libre Franklin\", sans-serif";
     const titleLines = wrapLines(title, measure, textW);
     measure.font = "600 " + dekSize + "px \"Libre Franklin\", sans-serif";
     const dekLines = dek ? wrapLines(dek, measure, textW) : [];
-    const head = titleLines.length * (titleSize + 8) + 12 + dekLines.length * (dekSize + 8) + 20;
-    const height = pad + head + rows.length * rowH + 28 + logoH + pad;
+    measure.font = "600 " + creditSize + "px \"Libre Franklin\", sans-serif";
+    const creditLines = credit ? wrapLines(credit, measure, textW - 480) : [];
+    const creditBlock = creditLines.length * (creditSize + 10);
+    const foot = Math.max(logoH, creditBlock);
+    let head = titleLines.length * (titleSize + 8);
+    if (dekLines.length) head += 16 + dekLines.length * (dekSize + 8) + 16;
+    else head += 20;
+    const height = pad + head + rows.length * rowH + 32 + foot + pad;
     canvas.width = width;
     canvas.height = height;
     const ctx = canvas.getContext("2d", { alpha: false });
@@ -1209,51 +1224,71 @@
       ctx.fillText(line, pad, y);
       y += titleSize + 8;
     });
-    y += 12;
     if (dekLines.length) {
+      y += 16;
       ctx.fillStyle = "#5c656e";
       ctx.font = "600 " + dekSize + "px \"Libre Franklin\", sans-serif";
       dekLines.forEach((line) => {
         ctx.fillText(line, pad, y);
         y += dekSize + 8;
       });
+      y += 16;
+    } else {
       y += 20;
     }
-    const rankW = 88;
-    const yearW = 250;
+    const rankW = 100;
+    const yearW = 280;
     const pctW = 170;
     const trackX = pad + rankW + yearW;
     const trackW = width - pad - pctW - trackX;
     const barH = 22;
     rows.forEach((row) => {
+      if (row.current) {
+        ctx.fillStyle = "#e7f1fa";
+        ctx.beginPath();
+        ctx.roundRect(pad - 24, y - 2, width - (pad - 24) * 2, rowH - 12, 14);
+        ctx.fill();
+        ctx.fillStyle = "#1A548E";
+        ctx.fillRect(pad - 24, y - 2, 8, rowH - 12);
+      }
       const weight = row.current ? "700" : "600";
       ctx.fillStyle = row.current ? "#171717" : "#5c656e";
       ctx.font = weight + " 36px \"Libre Franklin\", sans-serif";
-      ctx.fillText(row.rank, pad, y + 4);
-      ctx.fillStyle = "#171717";
-      ctx.fillText(row.year, pad + rankW, y + 4);
+      ctx.fillText(row.rank, pad, y + 6);
+      ctx.fillStyle = row.current ? "#1A548E" : "#5c656e";
+      ctx.fillText(row.year, pad + rankW, y + 6);
       ctx.fillStyle = "#e7eaee";
       ctx.beginPath();
-      ctx.roundRect(trackX, y + 8, trackW, barH, barH / 2);
+      ctx.roundRect(trackX, y + 12, trackW, barH, barH / 2);
       ctx.fill();
       const barW = Math.max(0, Math.min(trackW, trackW * row.width / 100));
       if (barW > 0) {
         ctx.fillStyle = row.color;
         ctx.beginPath();
-        ctx.roundRect(trackX, y + 8, Math.max(barW, barH), barH, barH / 2);
+        ctx.roundRect(trackX, y + 12, Math.max(barW, barH), barH, barH / 2);
         ctx.fill();
       }
-      ctx.fillStyle = "#171717";
+      ctx.fillStyle = row.current ? "#171717" : "#5c656e";
+      ctx.font = weight + " 36px \"Libre Franklin\", sans-serif";
       ctx.textAlign = "right";
-      ctx.fillText(row.pct, width - pad, y + 4);
+      ctx.fillText(row.pct, width - pad, y + 6);
       ctx.textAlign = "left";
       y += rowH;
     });
+    y += 32;
+    if (creditLines.length) {
+      const creditTop = y + Math.max(0, (foot - creditBlock) / 2);
+      ctx.fillStyle = "#5c656e";
+      ctx.font = "600 " + creditSize + "px \"Libre Franklin\", sans-serif";
+      creditLines.forEach((line, index) => {
+        ctx.fillText(line, pad, creditTop + index * (creditSize + 10));
+      });
+    }
     const logo = document.getElementById("logo");
     if (logo && logo.complete && logo.naturalWidth) {
       const logoW = logoH * logo.naturalWidth / logo.naturalHeight;
       ctx.globalAlpha = 0.72;
-      ctx.drawImage(logo, width - pad - logoW, height - pad - logoH, logoW, logoH);
+      ctx.drawImage(logo, width - pad - logoW, y + Math.max(0, (foot - logoH) / 2), logoW, logoH);
       ctx.globalAlpha = 1;
     }
   }
