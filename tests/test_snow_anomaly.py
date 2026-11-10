@@ -26,8 +26,10 @@ from lib.snow_anomaly import (
     ChosenDay,
     SeasonRank,
     choose_target,
+    ABOVE_LABEL,
     color_for,
     color_index,
+    coverage_shares,
     domain_percent,
     format_span,
     nohrsc_url,
@@ -48,6 +50,14 @@ def _grid(values) -> xr.DataArray:
         array,
         dims=("lat", "lon"),
         coords={"lat": np.linspace(40, 35, array.shape[0]), "lon": np.linspace(-100, -90, array.shape[1])},
+    )
+
+
+def _field(values, lat, lon) -> xr.DataArray:
+    return xr.DataArray(
+        np.asarray(values, dtype=float),
+        dims=("lat", "lon"),
+        coords={"lat": np.asarray(lat, dtype=float), "lon": np.asarray(lon, dtype=float)},
     )
 
 
@@ -117,6 +127,35 @@ class FieldTests(unittest.TestCase):
         self.assertEqual(rows[0].percent, 120)
         self.assertEqual(rows[-1].rank, 3)
 
+    def test_coverage_counts_one_hundred_percent_and_weights_area(self):
+        lat = np.array([30.0, 50.0])
+        lon = np.array([-100.0, -90.0])
+        clim = _field([[2.0, 2.0], [2.0, 2.0]], lat, lon)
+        current = _field([[3.0, 3.0], [1.0, 2.0]], lat, lon)
+        grid = (lat, lon, np.array([[100.0, 50.0], [10.0, 40.0]]))
+        land = np.array([[True, False], [True, True]])
+        population, area = coverage_shares(current, clim, grid=grid, land=land)
+        self.assertEqual(population, int(np.round(140 / 150 * 100)))
+        south = np.cos(np.deg2rad(30.0))
+        north = np.cos(np.deg2rad(50.0))
+        self.assertEqual(area, int(np.round((south + north) / (south + 2 * north) * 100)))
+        self.assertGreater(area, 50)
+
+    def test_just_under_one_hundred_percent_is_not_above_average(self):
+        lat = np.array([35.0, 40.0])
+        lon = np.array([-100.0, -90.0])
+        clim = _field([[2.0, 2.0], [2.0, 2.0]], lat, lon)
+        current = _field([[1.998, 2.0], [2.0, 2.0]], lat, lon)
+        grid = (lat, lon, np.ones((2, 2)))
+        land = np.ones((2, 2), dtype=bool)
+        population, area = coverage_shares(current, clim, grid=grid, land=land)
+        self.assertEqual(population, 75)
+        self.assertEqual(area, int(np.round(
+            (np.cos(np.deg2rad(40.0)) * 2 + np.cos(np.deg2rad(35.0)))
+            / (np.cos(np.deg2rad(35.0)) * 2 + np.cos(np.deg2rad(40.0)) * 2)
+            * 100
+        )))
+
     def test_scale_runs_from_brown_to_blue(self):
         def rgb(value: str) -> tuple[int, int, int]:
             return tuple(int(value[index : index + 2], 16) for index in (1, 3, 5))
@@ -168,6 +207,8 @@ class PageTests(unittest.TestCase):
         rows = rank_seasons([(2008, 70), (2025, 110), (2026, 90)], 2026)
         field = percent_field(_grid([[1.0, 4.0]]), _grid([[2.0, 2.0]]))
         meta, encoded = pack_field(field)
+        pop_rows = rank_seasons([(2008, 20), (2025, 40), (2026, 30)], 2026)
+        land_rows = rank_seasons([(2008, 10), (2025, 55), (2026, 25)], 2026)
         html = render_page(
             span="Sept. 30–Nov. 4, 2026",
             rank_label="Rank 2 of 3 · 90% of average",
@@ -177,6 +218,8 @@ class PageTests(unittest.TestCase):
             alt="Snowfall percentage of average from Sept. 30–Nov. 4, 2026.",
             source=source_line(tuple(range(2008, 2026))),
             on=date(2026, 11, 4),
+            pop_rows=pop_rows,
+            land_rows=land_rows,
         )
         nav = html.split('<nav aria-label="Sections">', 1)[1].split("</nav>", 1)[0]
         long_range = nav.split("<summary>Long range</summary>", 1)[1].split("</details>", 1)[0]
@@ -185,6 +228,19 @@ class PageTests(unittest.TestCase):
         self.assertIn("Sept. 30–Nov. 4, 2026", html)
         self.assertIn('id="snow-map"', html)
         self.assertIn(">Download<", html)
+        self.assertIn("Percent of average by season", html)
+        self.assertIn("Percentage of population with above-average snowfall", html)
+        self.assertIn("Percentage of land area with above-average snowfall", html)
+        self.assertIn('data-file="snowfall-percent-of-average-by-season.png"', html)
+        self.assertIn('data-file="snowfall-population-above-average.png"', html)
+        self.assertIn('data-file="snowfall-land-area-above-average.png"', html)
+        self.assertIn("2020 population where the average is at least 1 inch.", html)
+        self.assertIn("Land area where the average is at least 1 inch.", html)
+        self.assertIn('data-width="82"', html)
+        self.assertIn('data-width="30"', html)
+        self.assertIn('data-width="55"', html)
+        self.assertIn(f'data-color="{ABOVE_LABEL}"', html)
+        self.assertIn("function paintRankCard", html)
         self.assertIn(encoded[:40], html)
         self.assertNotIn("snow_anomaly.png", html)
         latest = nav.split("<summary>Latest posts</summary>", 1)[1].split("</details>", 1)[0]
@@ -318,6 +374,8 @@ class PageTests(unittest.TestCase):
             on=date(2026, 11, 4),
             forecasts=forecasts,
             kind="forecast",
+            pop_rows=rank_seasons([(2008, 20), (2026, 30)], 2026),
+            land_rows=rank_seasons([(2008, 10), (2026, 25)], 2026),
         )
         self.assertIn('<link rel="canonical" href="https://benweather.com/weather/snow-forecast">', forecast_html)
         self.assertIn("<title>Weekly snowfall forecast</title>", forecast_html)
@@ -334,6 +392,9 @@ class PageTests(unittest.TestCase):
         self.assertIn("Maximum 12.4 in.", rank_line)
         self.assertNotIn("through", rank_line)
         self.assertIn('id="anomaly-ranks" hidden', forecast_html)
+        self.assertNotIn("Percent of average by season", forecast_html)
+        self.assertNotIn("Percentage of population with above-average snowfall", forecast_html)
+        self.assertNotIn("snowfall-population-above-average.png", forecast_html)
         self.assertIn('id="anomaly-scale" hidden', forecast_html)
         self.assertIn('id="snow-scale">', forecast_html)
         self.assertIn('<div class="legend-track"><div class="swatches">', forecast_html)

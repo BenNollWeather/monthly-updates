@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import html
 import json
 import sys
 import time
@@ -42,6 +43,8 @@ CLIMATOLOGY_FIRST_YEAR = 2008
 MAX_MISSING_YEARS = 3
 LOOKBACK_DAYS = 45
 MIN_CLIM_INCHES = 1.0
+# 100% opens the first blue band, so a cell at 100% is above average.
+ABOVE_PERCENT = 100.0
 METERS_TO_INCHES = 39.3701
 PAGE_PATH = "/weather/snow-anomaly"
 FORECAST_PATH = "/weather/snow-forecast"
@@ -454,21 +457,179 @@ def scale_html(hidden: bool = False) -> str:
     )
 
 
-def ranks_html(rows: list[SeasonRank], on: date) -> str:
-    top = max(max(row.percent for row in rows), 100)
+def _sample_nearest(values, src_lat, src_lon, dst_lat, dst_lon) -> np.ndarray:
+    """Sample cell centers onto destination centers. Off-grid centers are NaN."""
+    from lib.snow_forecast import _shift_lon
+
+    src_lat = np.asarray(src_lat, dtype=np.float64)
+    src_lon = _shift_lon(src_lon)
+    dst_lat = np.asarray(dst_lat, dtype=np.float64)
+    dst_lon = _shift_lon(dst_lon)
+    field = np.asarray(values, dtype=np.float64)
+    if field.shape != (src_lat.size, src_lon.size):
+        raise ValueError(f"Field shape {field.shape} does not match lat/lon sizes")
+    if src_lat.size < 2 or src_lon.size < 2:
+        raise ValueError("The snowfall field needs at least two rows and two columns")
+    lat_order = np.argsort(src_lat)
+    lon_order = np.argsort(src_lon)
+    lat_values = src_lat[lat_order]
+    lon_values = src_lon[lon_order]
+    field = field[lat_order][:, lon_order]
+    dlat = float(np.median(np.diff(lat_values)))
+    dlon = float(np.median(np.diff(lon_values)))
+    if dlat <= 0.0 or dlon <= 0.0:
+        raise ValueError("The snowfall axes are not spaced")
+    y_raw = (dst_lat - lat_values[0]) / dlat
+    x_raw = (dst_lon - lon_values[0]) / dlon
+    valid_y = (y_raw >= -0.5) & (y_raw <= lat_values.size - 0.5)
+    valid_x = (x_raw >= -0.5) & (x_raw <= lon_values.size - 0.5)
+    y = np.clip(np.rint(y_raw), 0, lat_values.size - 1).astype(np.int32)
+    x = np.clip(np.rint(x_raw), 0, lon_values.size - 1).astype(np.int32)
+    sampled = field[y[:, None], x[None, :]]
+    return np.where(valid_y[:, None] & valid_x[None, :], sampled, np.nan)
+
+
+def coverage_shares(field: xr.DataArray, clim: xr.DataArray, *, grid=None, land=None) -> tuple[int, int]:
+    """Population and land-area shares at or above 100% of average.
+
+    Both shares use drawn lower-48 land where the average is at least 1 inch.
+    Land area is weighted by the cosine of latitude. Population is the 2020
+    WorldPop count on those cells. The return is (population, land), each an
+    integer percent.
+    """
+    perc = percent_field(field, clim)
+    if grid is None:
+        from lib.population import population_grid
+
+        plat, plon, people = population_grid()
+    else:
+        plat, plon, people = grid
+    people = np.asarray(people, dtype=np.float64)
+    plat = np.asarray(plat, dtype=np.float64)
+    plon = np.asarray(plon, dtype=np.float64)
+    if land is None:
+        from lib.snow_forecast import _drawn_land_mask
+
+        land = _drawn_land_mask(plat, plon)
+    land = np.asarray(land, dtype=bool)
+    if land.shape != people.shape:
+        raise ValueError(f"Land mask shape {land.shape} does not match the population grid")
+    sampled = _sample_nearest(perc.values, perc.lat.values, perc.lon.values, plat, plon)
+    if sampled.shape != people.shape:
+        raise ValueError(f"Sampled field shape {sampled.shape} does not match the population grid")
+    eligible = land & np.isfinite(sampled)
+    if not np.any(eligible):
+        raise RuntimeError("No snowfall cells met the 1 inch average threshold on drawn land")
+    above = eligible & (sampled >= ABOVE_PERCENT)
+    weights = np.cos(np.deg2rad(plat))[:, None]
+    land_share = float((weights * above).sum() / (weights * eligible).sum() * 100.0)
+    counted = float(people[eligible].sum())
+    if counted <= 0.0:
+        raise RuntimeError("No population sits where average snowfall is at least 1 inch")
+    pop_share = float(people[above].sum() / counted * 100.0)
+    return int(np.round(pop_share)), int(np.round(land_share))
+
+
+def _rank_list(rows: list[SeasonRank], on: date, *, scale_to_max: bool, color: str | None) -> str:
+    top = max(max(row.percent for row in rows), 100 if scale_to_max else 1)
     items = []
     for row in rows:
-        width = 0 if row.percent <= 0 else max(1, round(row.percent / top * 100))
+        if scale_to_max:
+            width = 0 if row.percent <= 0 else max(1, round(row.percent / top * 100))
+            bar = color_for(row.percent)
+        else:
+            width = 0 if row.percent <= 0 else min(100, row.percent)
+            bar = color or ABOVE_LABEL
         attr = ' class="now"' if row.current else ""
         items.append(
             f"<li{attr}>"
             f'<span class="n">{row.rank}</span>'
             f'<span class="year">{season_name(row.year, on)}</span>'
-            f'<span class="track"><span class="bar" style="width:{width}%;background:{color_for(row.percent)}"></span></span>'
+            f'<span class="track"><span class="bar" data-color="{bar}" data-width="{width}" '
+            f'style="width:{width}%;background:{bar}"></span></span>'
             f'<span class="pct">{row.percent}%</span>'
             "</li>"
         )
     return '<ol class="rank-list">' + "".join(items) + "</ol>"
+
+
+def _chart_section(
+    title: str,
+    filename: str,
+    download_label: str,
+    data_dek: str,
+    rows: list[SeasonRank],
+    on: date,
+    *,
+    scale_to_max: bool,
+    note: str = "",
+    color: str | None = None,
+) -> str:
+    note_html = f'<p class="chart-dek">{html.escape(note)}</p>' if note else ""
+    return (
+        '<section class="rank-chart" '
+        f'data-file="{html.escape(filename, quote=True)}" '
+        f'data-dek="{html.escape(data_dek, quote=True)}">'
+        '<div class="chart-head">'
+        f'<h2 class="compare">{html.escape(title)}</h2>'
+        f'<button class="download" type="button" aria-label="{html.escape(download_label, quote=True)}">Download</button>'
+        "</div>"
+        f"{note_html}"
+        f"{_rank_list(rows, on, scale_to_max=scale_to_max, color=color)}"
+        "</section>"
+    )
+
+
+def charts_html(
+    rows: list[SeasonRank],
+    on: date,
+    span: str,
+    pop_rows: list[SeasonRank] | None = None,
+    land_rows: list[SeasonRank] | None = None,
+) -> str:
+    """The season chart, plus population and land-area coverage when those rows exist."""
+    parts = [
+        _chart_section(
+            "Percent of average by season",
+            "snowfall-percent-of-average-by-season.png",
+            "Download the percent of average by season chart",
+            span,
+            rows,
+            on,
+            scale_to_max=True,
+        )
+    ]
+    if pop_rows:
+        note = "2020 population where the average is at least 1 inch. Above average is 100% or more."
+        parts.append(
+            _chart_section(
+                "Percentage of population with above-average snowfall",
+                "snowfall-population-above-average.png",
+                "Download the population chart",
+                f"{span}. {note}",
+                pop_rows,
+                on,
+                scale_to_max=False,
+                note=note,
+                color=ABOVE_LABEL,
+            )
+        )
+    if land_rows:
+        note = "Land area where the average is at least 1 inch. Above average is 100% or more."
+        parts.append(
+            _chart_section(
+                "Percentage of land area with above-average snowfall",
+                "snowfall-land-area-above-average.png",
+                "Download the land area chart",
+                f"{span}. {note}",
+                land_rows,
+                on,
+                scale_to_max=False,
+                note=note,
+                color=ABOVE_LABEL,
+            )
+        )
+    return "".join(parts)
 
 
 def _anomaly_view(span: str, rank_label: str, meta: dict, alt: str, source: str) -> dict:
@@ -545,6 +706,8 @@ def render_page(
     on: date,
     forecasts: dict | None = None,
     kind: str = "anomaly",
+    pop_rows: list[SeasonRank] | None = None,
+    land_rows: list[SeasonRank] | None = None,
 ) -> str:
     from lib.snow_forecast import snow_scale_html
 
@@ -603,7 +766,7 @@ def render_page(
         .replace("__SNOW_SCALE__", snow_scale_html(hidden=not forecast_page))
         .replace("__SCALE__", scale_html(hidden=forecast_page))
         .replace("__RANKS_HIDDEN__", " hidden" if forecast_page else "")
-        .replace("__RANKS__", ranks_html(rows, on))
+        .replace("__RANKS__", "" if forecast_page else charts_html(rows, on, span, pop_rows, land_rows))
         .replace("__SOURCE__", shown["source"] if shown else source)
     )
 
@@ -636,15 +799,28 @@ def build(today: date, work: Path) -> Path:
     for year in chosen.climatology_years:
         seasons.append(_load_season(year, chosen.target, data_dir, current))
     clim = xr.concat(seasons, dim="year").mean("year")
-    pairs = [(year, domain_percent(field, clim)) for year, field in zip(chosen.climatology_years, seasons)]
+    pairs = []
+    pop_pairs = []
+    land_pairs = []
+    for year, field in zip(chosen.climatology_years, seasons):
+        pairs.append((year, domain_percent(field, clim)))
+        population, area = coverage_shares(field, clim)
+        pop_pairs.append((year, population))
+        land_pairs.append((year, area))
     current_percent = domain_percent(current, clim)
+    population, area = coverage_shares(current, clim)
     pairs.append((chosen.current_year, current_percent))
+    pop_pairs.append((chosen.current_year, population))
+    land_pairs.append((chosen.current_year, area))
     rows = rank_seasons(pairs, chosen.current_year)
+    pop_rows = rank_seasons(pop_pairs, chosen.current_year)
+    land_rows = rank_seasons(land_pairs, chosen.current_year)
     current_row = next(row for row in rows if row.current)
     perc = percent_field(current, clim)
     colored = float(np.isfinite(perc.values).mean())
     print(f"Colored cells: {colored:.1%} of the grid")
     print(f"Rank {current_row.rank} of {len(rows)} at {current_row.percent}% of average")
+    print(f"Population above average: {population}% ; land area above average: {area}%")
 
     meta, field = pack_field(perc)
     span = format_span(chosen.season_start, chosen.target)
@@ -663,6 +839,8 @@ def build(today: date, work: Path) -> Path:
         source=source_line(chosen.climatology_years),
         on=chosen.target,
         forecasts=forecasts,
+        pop_rows=pop_rows,
+        land_rows=land_rows,
     )
     page = work / "index.html"
     page.write_text(render_page(**page_args), encoding="utf-8")
