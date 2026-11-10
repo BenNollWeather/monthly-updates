@@ -78,9 +78,9 @@ class UrlTests(unittest.TestCase):
 
 
 class ChooseTests(unittest.TestCase):
-    def test_yesterday_is_used_when_every_year_exists(self):
+    def test_today_is_used_when_every_year_exists(self):
         chosen = choose_target(date(2026, 11, 5), lambda url: True)
-        self.assertEqual(chosen.target, date(2026, 11, 4))
+        self.assertEqual(chosen.target, date(2026, 11, 5))
         self.assertEqual(chosen.missing_years, ())
         self.assertEqual(chosen.climatology_years[0], CLIMATOLOGY_FIRST_YEAR)
         self.assertEqual(chosen.climatology_years[-1], 2025)
@@ -89,19 +89,26 @@ class ChooseTests(unittest.TestCase):
     def test_a_day_missing_too_many_years_steps_back(self):
         def exists(url: str) -> bool:
             year = int(url.split("sfav2_CONUS_")[1][:4])
-            return not (year in (2010, 2011, 2012, 2013) and url.endswith("110412.nc"))
+            return not (year in (2010, 2011, 2012, 2013) and url.endswith("110512.nc"))
 
         chosen = choose_target(date(2026, 11, 5), exists, lookback_days=5)
-        self.assertEqual(chosen.target, date(2026, 11, 3))
+        self.assertEqual(chosen.target, date(2026, 11, 4))
         self.assertEqual(chosen.missing_years, ())
 
-    def test_a_missing_current_file_steps_back(self):
+    def test_a_missing_today_file_falls_through_to_the_previous_day(self):
+        today = date(2026, 11, 5)
+        self.assertEqual(
+            nohrsc_url(today.year, today),
+            "https://www.nohrsc.noaa.gov/snowfall/data/202611/"
+            "sfav2_CONUS_2026093012_to_2026110512.nc",
+        )
         chosen = choose_target(
-            date(2026, 11, 5),
-            lambda url: "to_2026110412" not in url,
+            today,
+            lambda url: "to_2026110512" not in url,
             lookback_days=3,
         )
-        self.assertEqual(chosen.target, date(2026, 11, 3))
+        self.assertEqual(chosen.target, date(2026, 11, 4))
+        self.assertEqual(chosen.current_year, 2026)
 
     def test_no_usable_day_fails(self):
         with self.assertRaises(RuntimeError):

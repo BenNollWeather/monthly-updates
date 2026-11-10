@@ -2,9 +2,10 @@
 """Season-to-date snowfall percentage of average for benweather.com/weather/snow-anomaly.
 
 NOHRSC publishes one CONUS file per day, valid at 12 UTC, from Sept. 30.
-Completed seasons from 2008 through the year before the current one are the
-average. A day with more than a few missing seasons is skipped for the latest
-day that still has the current file and enough history.
+The search starts on the current UTC day and steps back when that file is
+not published yet. Completed seasons from 2008 through the year before the
+current one are the average. A day with more than a few missing seasons is
+skipped for the latest day that still has the current file and enough history.
 
 The page draws the map on a canvas. Brown is below average, blue is above,
 and places whose average season-to-date snow is under an inch stay uncolored
@@ -266,13 +267,14 @@ def choose_target(
     lookback_days: int = LOOKBACK_DAYS,
     max_missing: int = MAX_MISSING_YEARS,
 ) -> ChosenDay:
-    """Latest day, starting at yesterday, with the current file and few enough gaps.
+    """Latest day, starting today, with the current file and few enough gaps.
 
     `exists` takes a URL and returns False when that season file is absent.
+    The file is the 12 UTC analysis. A 404 before NOHRSC publishes today's
+    file is a missing day, and the search continues backward.
     """
-    yesterday = today - timedelta(days=1)
     for offset in range(lookback_days):
-        target = yesterday - timedelta(days=offset)
+        target = today - timedelta(days=offset)
         chosen = evaluate_day(target, exists)
         if chosen is None:
             continue
@@ -863,7 +865,7 @@ def build(today: date, work: Path) -> Path:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Build the snowfall percentage-of-average page")
     parser.add_argument("--work", required=True, help="Directory for downloads and the finished page")
-    parser.add_argument("--today", default="", help="UTC date YYYY-MM-DD. The search starts the day before.")
+    parser.add_argument("--today", default="", help="UTC date YYYY-MM-DD. The search starts on this day and works backward.")
     args = parser.parse_args(argv)
     if args.today.strip():
         today = datetime.strptime(args.today.strip(), "%Y-%m-%d").date()

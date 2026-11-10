@@ -4,11 +4,11 @@ Scripts that draw the climate maps and forecast pages. A run fetches what it nee
 
 ## Schedule (UTC)
 
-EventBridge starts the daily snow, rainfall, temperature, and ocean jobs. Forecast jobs use the latest ECMWF run that reaches 7 days. IFS is the 0.1° grid and is published about two hours after the 0.25° dissemination, so the 00 UTC run is refreshed at 10:41 and the 12 UTC run at 22:41. AIFS stays at 0.25° and is also refreshed at 02:41 and 14:41, after the 18 and 06 UTC runs. The NOAA snowfall file is the previous day's 12 UTC analysis and is checked at 18:41. Ocean heatwaves update in the afternoon, US Eastern time. The monthly and yearly jobs start after their source data are usually out.
+EventBridge starts the daily snow, rainfall, temperature, and ocean jobs. Forecast jobs use the latest ECMWF run that reaches 7 days. IFS is the 0.1° grid and is published about two hours after the 0.25° dissemination, so the 00 UTC run is refreshed at 10:41 and the 12 UTC run at 22:41. AIFS stays at 0.25° and is also refreshed at 02:41 and 14:41, after the 18 and 06 UTC runs. The NOAA snowfall file is the current UTC day's 12 UTC analysis when NOHRSC has published it, and the latest earlier day otherwise. It is checked at 18:41. Ocean heatwaves update in the afternoon, US Eastern time. The monthly and yearly jobs start after their source data are usually out.
 
 | Product | When | Detail |
 | --- | --- | --- |
-| Snowfall percentage of average | 18:41 every day | NOAA/NOHRSC season-to-date snowfall for the previous day. Forecast runs also refresh this page. |
+| Snowfall percentage of average | 18:41 every day | NOAA/NOHRSC season-to-date snowfall for the latest published day, starting with today. Forecast runs also refresh this page. |
 | Predicted snowfall | 02:41, 10:41, 14:41, and 22:41 every day | IFS and AIFS snowfall for the next 7 days |
 | Weekly precipitation | 02:41, 10:41, 14:41, and 22:41 every day | IFS and AIFS total precipitation for the next 7 days |
 | Weekly maximum and minimum temperature | 02:41, 10:41, 14:41, and 22:41 every day | IFS maximum and minimum since the previous step, and AIFS temperature every 6 hours. Both maps use 10°F bins, from −10°F and lower through 110°F and higher. |
