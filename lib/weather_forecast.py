@@ -651,6 +651,7 @@ def render_forecast_page(views: dict[str, dict], path: str, title: str) -> str:
         .replace("__SCALE__", scale_html(hidden=True))
         .replace("__RANKS_HIDDEN__", " hidden")
         .replace("__RANKS__", "")
+        .replace("__NOTES_HIDDEN__", "")
         .replace("__SOURCE__", shown["source"])
     )
 

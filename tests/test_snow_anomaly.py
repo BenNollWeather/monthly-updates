@@ -228,10 +228,18 @@ class PageTests(unittest.TestCase):
         self.assertIn("Sept. 30–Nov. 4, 2026", html)
         self.assertIn('id="snow-map"', html)
         self.assertIn(">Download<", html)
-        self.assertIn(">U.S. percentage of average snowfall</h2>", html)
+        self.assertIn(">Percentage of average snowfall across the U.S.</h2>", html)
         self.assertNotIn("Percentage of average snowfall from", html)
-        self.assertIn("U.S. percentage of population with above-average snowfall", html)
-        self.assertIn("U.S. percentage of land area with above-average snowfall", html)
+        self.assertIn("Percentage of U.S. population with above-average snowfall", html)
+        self.assertIn("Percentage of U.S. land area with above-average snowfall", html)
+        self.assertIn('<section class="notes" hidden>', html)
+        notes = html.split('<section class="notes" hidden>', 1)[1].split("</section>", 1)[0]
+        self.assertNotIn("NOAA/NOHRSC", notes)
+        self.assertIn(
+            "NOAA/NOHRSC season-to-date snowfall, compared with the "
+            "2008–2025 average where that average is at least 1 inch.",
+            html,
+        )
         self.assertIn('data-file="snowfall-percent-of-average-by-season.png"', html)
         self.assertIn('data-file="snowfall-population-above-average.png"', html)
         self.assertIn('data-file="snowfall-land-area-above-average.png"', html)
@@ -397,8 +405,10 @@ class PageTests(unittest.TestCase):
         self.assertIn("Maximum 12.4 in.", rank_line)
         self.assertNotIn("through", rank_line)
         self.assertIn('id="anomaly-ranks" hidden', forecast_html)
-        self.assertNotIn("U.S. percentage of average snowfall", forecast_html)
-        self.assertNotIn("U.S. percentage of population with above-average snowfall", forecast_html)
+        self.assertNotIn("Percentage of average snowfall across the U.S.", forecast_html)
+        self.assertNotIn("Percentage of U.S. population with above-average snowfall", forecast_html)
+        self.assertIn('<section class="notes">', forecast_html)
+        self.assertNotIn('<section class="notes" hidden>', forecast_html)
         self.assertNotIn("snowfall-population-above-average.png", forecast_html)
         self.assertNotIn("Data: NOAA/NOHRSC", forecast_html)
         self.assertIn('id="anomaly-scale" hidden', forecast_html)

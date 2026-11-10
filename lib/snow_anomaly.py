@@ -599,7 +599,7 @@ def charts_html(
     window = _from_to(span)
     parts = [
         _chart_section(
-            "U.S. percentage of average snowfall",
+            "Percentage of average snowfall across the U.S.",
             "snowfall-percent-of-average-by-season.png",
             "Download the percentage of average snowfall chart",
             rows,
@@ -612,7 +612,7 @@ def charts_html(
     if pop_rows:
         parts.append(
             _chart_section(
-                "U.S. percentage of population with above-average snowfall",
+                "Percentage of U.S. population with above-average snowfall",
                 "snowfall-population-above-average.png",
                 "Download the population chart",
                 pop_rows,
@@ -626,7 +626,7 @@ def charts_html(
     if land_rows:
         parts.append(
             _chart_section(
-                "U.S. percentage of land area with above-average snowfall",
+                "Percentage of U.S. land area with above-average snowfall",
                 "snowfall-land-area-above-average.png",
                 "Download the land area chart",
                 land_rows,
@@ -775,7 +775,8 @@ def render_page(
         .replace("__SCALE__", scale_html(hidden=forecast_page))
         .replace("__RANKS_HIDDEN__", " hidden" if forecast_page else "")
         .replace("__RANKS__", "" if forecast_page else charts_html(rows, on, span, pop_rows, land_rows))
-        .replace("__SOURCE__", shown["source"] if shown else source)
+        .replace("__NOTES_HIDDEN__", "" if forecast_page else " hidden")
+        .replace("__SOURCE__", shown["source"] if shown else "")
     )
 
 
