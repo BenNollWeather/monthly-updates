@@ -599,7 +599,7 @@ def charts_html(
     window = _from_to(span)
     parts = [
         _chart_section(
-            "Percentage of average snowfall",
+            "U.S. percentage of average snowfall",
             "snowfall-percent-of-average-by-season.png",
             "Download the percentage of average snowfall chart",
             rows,
@@ -612,7 +612,7 @@ def charts_html(
     if pop_rows:
         parts.append(
             _chart_section(
-                "Percentage of population with above-average snowfall",
+                "U.S. percentage of population with above-average snowfall",
                 "snowfall-population-above-average.png",
                 "Download the population chart",
                 pop_rows,
@@ -626,7 +626,7 @@ def charts_html(
     if land_rows:
         parts.append(
             _chart_section(
-                "Percentage of land area with above-average snowfall",
+                "U.S. percentage of land area with above-average snowfall",
                 "snowfall-land-area-above-average.png",
                 "Download the land area chart",
                 land_rows,
