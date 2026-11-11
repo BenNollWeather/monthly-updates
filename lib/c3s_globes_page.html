@@ -1147,8 +1147,7 @@
     ctx.textAlign = "left";
     const logoH = 84;
     const logoW = image ? logoH * (image.naturalWidth / image.naturalHeight) : 0;
-    if (image) ctx.drawImage(image, size - pad - logoW, pad, logoW, logoH);
-    let y = pad + (image ? logoH + 36 : 0);
+    let y = pad;
     ctx.fillStyle = cssRgb(ink);
     ctx.font = '700 48px "Libre Franklin", sans-serif';
     ctx.letterSpacing = "-0.03em";
@@ -1162,7 +1161,7 @@
     ctx.font = '600 28px "Libre Franklin", sans-serif';
     ctx.fillText(payload.period || "", pad, y);
     y += 56;
-    const wordsBottom = size - pad - 64;
+    const wordsBottom = size - pad - (image ? logoH + 28 : 0);
     if (!ranked.length) {
       ctx.fillStyle = cssRgb(ink);
       ctx.font = '700 40px "Libre Franklin", sans-serif';
@@ -1219,11 +1218,7 @@
     }
     ctx.letterSpacing = "0px";
     ctx.shadowColor = "transparent";
-    ctx.textAlign = "right";
-    ctx.textBaseline = "alphabetic";
-    ctx.fillStyle = cssRgb(muted);
-    ctx.font = '600 24px "Libre Franklin", sans-serif';
-    ctx.fillText("benweather.com", size - pad, size - pad);
+    if (image) ctx.drawImage(image, size - pad - logoW, size - pad - logoH, logoW, logoH);
     const slug = fold(state.place.name).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
     const filename = "climate-headlines-" + (slug || "place") + ".png";
     canvas.toBlob((blob) => {
