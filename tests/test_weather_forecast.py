@@ -330,6 +330,9 @@ class PageTests(unittest.TestCase):
         self.assertLess(weather.index("Forecast"), weather.index('href="/weather/rain"'))
         self.assertLess(weather.index('href="/weather/rain"'), weather.index("<summary>Temperatures</summary>"))
         self.assertLess(weather.index(">Maximum</a>"), weather.index(">Minimum</a>"))
+        self.assertIn("header { position: sticky; top: 0; z-index: 20; isolation: isolate;", html)
+        self.assertIn('header::before { content: ""; position: absolute; inset: 0; z-index: -1; background: var(--header); backdrop-filter: blur(8px);', html)
+        self.assertNotIn("backdrop-filter", html.split("header::before", 1)[0])
         long_range = nav.split("<summary>Long range</summary>", 1)[1].split("</details>", 1)[0]
         self.assertNotIn("/weather/rain", long_range)
         self.assertNotIn("temperature-maximum", long_range)
