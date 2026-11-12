@@ -834,8 +834,8 @@
       const roster = field.models.length;
       if (!roster || !vote.n) return;
       const agree = Math.max(vote.up, vote.down);
-      // 75 percent of the full roster. 6/8 and 5/6 pass. 6/9, 2/3, and 4/6 do not.
-      if (agree * 4 < roster * 3) return;
+      // 70 percent of the full roster. 7/10, 5/7, and 6/8 pass. 6/10, 5/8, 6/9, 2/3, and 4/6 do not.
+      if (agree * 10 < roster * 7) return;
       const above = vote.up > vote.down;
       const pair = WORD[field.id] || [field.above, field.below];
       const colors = PALETTE[field.id];
@@ -879,7 +879,7 @@
       words.hidden = true;
       words.innerHTML = "";
       also.hidden = false;
-      also.textContent = "No outcome has 75 percent of the models in agreement.";
+      also.textContent = "No outcome has 70 percent of the models in agreement.";
       return;
     }
     words.hidden = false;
@@ -1165,7 +1165,7 @@
     if (!ranked.length) {
       ctx.fillStyle = cssRgb(ink);
       ctx.font = '700 40px "Libre Franklin", sans-serif';
-      wrapText(ctx, "No outcome has 75 percent of the models in agreement.", size - pad * 2).forEach((line) => {
+      wrapText(ctx, "No outcome has 70 percent of the models in agreement.", size - pad * 2).forEach((line) => {
         ctx.fillText(line, pad, y);
         y += 52;
       });
